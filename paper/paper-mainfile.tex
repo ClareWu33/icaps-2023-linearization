@@ -435,18 +435,21 @@ From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (w
 	Specifically, solutions that require interleaving of sub-tasks will not be preserved, as the example above demonstrates.
 \end{proof}
 
-We will now see that our algorithm preserves at least one solution as long as Algorithm~\ref{alg:Algorithm1} does not have to break cycles.
+\begin{description}
+	\item[Linearization Criteria] If the linearization process does not find a desired ordering contradicting the existing ones for some method, that method is said to meet the linearization criteria.
+	If all methods in a problem meet the linearization criteria, then the problem meets the linearization criteria as well. 
+\end{description}
+We will now see that our algorithm preserves at least one solution as long as Algorithm~\ref{alg:Algorithm1} this criterion is met.
+
 \begin{theorem}\label{thm:SpecialCase}
-	Given a POHTN planning problem $P$ and TOHTN problem
-	$P'$ obtained from $P$ by using Algorithm~\ref{alg:Algorithm1}, if Algorithm~\ref{alg:Algorithm1} did not have to
-	cycle-break, then if $sol(P)$ is non-empty then $sol(P')$, will be non-empty as well.
+	Given a POHTN planning problem $P$ and TOHTN problem $P'$ obtained from $P$ by using Algorithm~\ref{alg:Algorithm1}, if $P$ meets the linearization criteria and $sol(P)$ is non-empty, then $sol(P')$ will be non-empty as well.
 \end{theorem}
 \begin{proof}
 	Assume that there exists a solution in the PO domain. By using the same decomposition sequence in the linearized domain, we can produce the same set of actions as in the PO solution, but with a linearization of the actions decided by the linearized domain. Assume this sequence is $(a_0, a_1, ..., a_n)$. We then prove by induction over the sequence $(a_0, a_1, ..., a_n)$ that it is executable.
 	If $(a_0, a_1, ..., a_n)$ is not executable, that means there exists some action $a_k,  0 < k < n$ that is not executable in the corresponding state. The action $a_k$ could only be non-executable, if one or more of its preconditions was not met. Assume one of these unmet preconditions is for existence of the state variable $A$.
 	The action $a_k$ must be executable in some linearization of $\{a_0, ..., a_n\}$, as we assumed it was a PO solution. So there must exist an action $a_i$, $0 < i < n$, that will add A. Actions $a_0$ and $a_k$ must have a shared parent p in a Task Decomposition Tree. So p has subtasks $t_0$ and $t_k$ that are parents of $a_0$ and $a_k$ respectively. 
 	
-	The linearization of this method would have drawn an ordering $(t_i, t_k)$ due to the way the algorithm defines $prec^{*}, add^{*}$ etc. We are assuming that all methods linearized without conflict, so $(t_i, t_k)$ should not be required. This safely enforces $(a_k, a_0)$ ordering in the final TO plan, meaning $a_0$ is not the first action in the resulting total order imposed by the algorithm. In other words, if $a_k$’s precondition could be met by any action $a_i$, $a_i$ would be ordered in front of it. 
+	The linearization of this method would have drawn an ordering $(t_i, t_k)$ due to the way the algorithm defines $prec^{*}, add^{*}$ etc. We are assuming that all methods meet the linearization criteria, so $(t_i, t_k)$ should not be required. This safely enforces $(a_k, a_0)$ ordering in the final TO plan, meaning $a_0$ is not the first action in the resulting total order imposed by the algorithm. In other words, if $a_k$’s precondition could be met by any action $a_i$, $a_i$ would be ordered in front of it. 
 	
 	If $a_i$ does not exist then $a_k$ can never be executed for any linearization of $\{a_0, ...a_n\}$, contradicting the assumption that this was a PO solution. Since each action in the solution is executable, the entire sequence is executable linearization of actions produced by decomposition of initial task, i.e.\ the solution.
 \end{proof}
@@ -460,11 +463,11 @@ There are several possible levels of \enquote{completeness} for a problem compil
 	\item at least one optimal solution remains 	
 \end{itemize}
 %\end{enumerate}
-Given what's proven in Theorem~\ref{thm:notCompleteness} and \ref{thm:SpecialCase}, Algorithm~\ref{alg:Algorithm1} guarantees at least one solution remains, if no cycle-breaking is needed. If cycle-breaking is needed, Algorithm~\ref{alg:Algorithm1} makes no completeness guarantees at all -- it may remove all possible solutions. Finally, Algorithm~\ref{alg:Algorithm1} makes no decisions on any metric of optimality, so obviously cannot guarantee completeness that any optimal solutions remain.
+Given what's proven in Theorem~\ref{thm:notCompleteness} and \ref{thm:SpecialCase}, Algorithm~\ref{alg:Algorithm1} guarantees at least one solution remains, if linearization criteria is met. Otherwise, Algorithm~\ref{alg:Algorithm1} makes no completeness guarantees at all -- it may remove all possible solutions. Finally, Algorithm~\ref{alg:Algorithm1} makes no decisions on any metric of optimality, so obviously cannot guarantee completeness that any optimal solutions remain.
 
 
 \begin{theorem}\label{thm:newClass}
-	Problems $P$ that satisfy the criterion for linearization without cycle-breaking form a new class of decidable problems.
+	Problems $P$ that satisfy the linearization criteria form a new class of decidable problems.
 \end{theorem}
 \begin{proof}
 	A problem $P'$ obtained from applying Algorithm~\ref{alg:Algorithm1} to any arbitrary $P$ is a totally ordered problem, which are known to be decidable, as proven by \cite{Alford2015TightHTNBounds}.  
@@ -677,10 +680,10 @@ We can identify a subset of decidable problems within POHTN problems, and this s
 \section{Future Work}
 
 
-\subsubsection{MAX-SAT Instead of Cycle-Break} 
+\subsubsection{Encode Linearization Problem as a MAX-SAT Problem} 
 The maximum satisfiability problem (MAX-SAT) is the problem of determining the maximum number of clauses, of a given Boolean formula in conjunctive normal form, that can be made true by an assignment of truth values to the variables of the formula. MAX-SAT is used over SAT as it may not be possible to satisfy all orderings implied by the inferred preconditions and effects.
 
-Cycle-breaking considers each method in isolation, and sub-tasks have their inferred $\PreS, \AddS, \DelS$. Thus we can treat each sub-task as a \enquote{action}, and encode the method the same way as a classical plan, similar to the one described by \cite{RINTANEN201245}, but with the additional constraint that \enquote{actions} chosen from the method sub-tasks can only be selected once, unlike in the domain. Assuming no negative preconditons, the initial state has all state variables true, and goal state can be assumed to be empty (i.e.\ all state variables can have any assignment). The relative success (or failure) of this approach could also lend insight into what about the criteria causes the linearization to be successful.
+The current linearization procedure considers each method in isolation, and sub-tasks have their inferred $\PreS, \AddS, \DelS$. Thus we can treat each sub-task as a \enquote{action}, and encode the method the same way as a classical plan, similar to the one described by \cite{RINTANEN201245}, but with the additional constraint that \enquote{actions} chosen from the method sub-tasks can only be selected once, unlike in the domain. Assuming no negative preconditons, the initial state has all state variables true, and goal state can be assumed to be empty (i.e.\ all state variables can have any assignment). The relative success (or failure) of this approach could also lend insight into what about the criteria causes the linearization to be successful.
 
 
 \subsubsection{Adding a Plan as Additional Input to the Domain}
