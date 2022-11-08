@@ -256,6 +256,8 @@ In terms of complexity classes, \cite{ErolHTNExpressivity} proved that POHTN pla
 \section{Simple Linearization Procedure}
 The basic linearization process consists of inferring preconditions and effects for compound tasks, inferring additional orderings to the sub-tasks based on the preconditions and effects (inferred or \enquote{real} in the case of primitive tasks) of method sub-tasks, and adding them only if they do not conflict with the originally required orderings.
 
+
+\subsection{Simple Inference}
 For a lifted domain, where a predicate $f$ accepts parameters $p_1, ..., p_n$, 
 $f' = f(o_1, ..., o_n)$, where $o_1, ..., o_n$ are arbitrary objects of the appropriate type. For a grounded model, $f' = f$. The inferred preconditions and effects for a task are then defined as below:
 \begin{align*}
@@ -270,9 +272,50 @@ $f' = f(o_1, ..., o_n)$, where $o_1, ..., o_n$ are arbitrary objects of the appr
 & m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \DelS(t') \}   \\ 
 \end{align*}
 
+
+\subsection{Complex Inference}
+The work by \cite{ConnyPreEff}, details a way to infer a subset of the mandatory preconditions and effects.
+
+\emph{Mandatory preconditions} of a compound task $c$ are facts that hold in every state for which there exists an executable refinement. So, they are required in every state in which a refinement of c shall be executed: prec(c) := $\cap_{s \in E(c)}  s$
+if $E(c) \neq \emptyset and prec(c) := undef$ otherwise.
+
+State-independent positive and negative effects (cf. their
+Def. 4) of a compound task c are facts that are added or
+deleted, resp., by the successful execution of a refinement of
+c, independent of the state in which the task is executed, i.e.
+$$ \RelEffPlus := ( \bigcap_{s \in E(c)} \bigcap_{s' \in R_s(c)} s') \backslash  \bigcap_{s \in E(c)} s    $$
+$$ \RelEffMinus := \bigcap_{s \in E(c)}  (F \backslash \bigcap_{s' \in R_s(c)} s' ) $$
+
+Possible state-independent effects of a compound task $c$ are not guaranteed to hold (or not hold, resp.,)
+after every refinement of c but after at least one:
+$$ \RelPossEffPlus(c) := \bigcup_{s \in E(c)}  ( \bigcup_{s' \in R_s(c)}  s' \backslash s) $$
+$$ \RelPossEffMinus(c) := \bigcup_{s \in E(c)} ((\bigcup_{s' \in R_s(c)} (F \backslash s') \cap s ))$$
+if $E(c) \neq \emptyset and prec(c) := undef$ otherwise.
+
+
+The set of executability-enabling states of c is
+$E(c) = \{s \in 2F  \mid  \exists \text{t.o. refinement of c applicable in s} \}$.
+The set of resulting states of c w.r.t. some state $s \in 2^F$ is
+$R_s(c) = \{s' \in 2^F | \exists t.o. refinement appl. in s res. in s' \}$.
+
+So, the precondition-relaxation of a domain D = $(F, A, C, M)$ is the domain $D' = (F, A', C, M)$
+with $A' = \{(\emptyset, add , del ) \mid (prec, add , del ) \in A\}$.
+Then, the precondition-relaxed effects $\RelEffPlus$, $\RelEffMinus$, $\RelPossEffPlus$, $\RelPossEffMinus$. are defined just like the original ones but based on the precondition-
+relaxed variant of D.
+
+There exists a polynomial-time algorithm for inferring the precondition-relaxed effects, see \cite{ConnyPreEstimation} for details.
+
+We can use these as an alternative input to Algorithm~\ref{alg:Algorithm1}. Since the effects and preconditions are guaranteed, it may find a linearization that leads to a problem whose solution is yet faster to find,
+or has better make-span than the simple inference. Specifically, the mandatory precondition-relaxed effects, $\RelEffPlus$, $\RelEffMinus$.
+
+\subsection{Linearization Using Inferred Preconditions and Effects}
+
 From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1}.
 
-\begin{algorithm}\label{alg:Algorithm1}
+
+\begin{algorithm}
+	\caption{Linearization using inferred set of preconditions and effects}
+	\label{alg:Algorithm1}	
 	\KwData{$(F, T_P, T_C, \delta, M)$}
 	\KwResult{$(F, T_P, T_C, \delta, M)$}
 	
@@ -303,7 +346,15 @@ From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (w
 	\caption{Calculation of linearized methods}
 \end{algorithm}
 
-\subsection{Theoretical Properties of Linearization Result}
+
+
+
+
+\section{Theoretical Properties of Linearization Result}
+
+We now discuss the implications of the above-described linearization procedure.
+
+\subsection{Theoretical Properties If Using Simple Inference}
 \begin{theorem}\label{thm:Runtime}
 	Given a problem $P = (F, T_P, T_C, \delta, M)$, Algorithm~\ref{alg:Algorithm1} takes at most quadratic time, $\mathcal{O}( |M| * |F| * |T|^2)$. 
 \end{theorem}
@@ -474,39 +525,8 @@ Given what's proven in Theorem~\ref{thm:notCompleteness} and \ref{thm:SpecialCas
 \end{proof}
 
 
-\section{Complex Linearization Procedure}
-
-The work by \cite{ConnyPreEff}, details a way to infer a subset of the mandatory preconditions and effects.
-
-\emph{Mandatory preconditions} of a compound task $c$ are facts that hold in every state for which there exists an executable refinement. So, they are required in every state in which a refinement of c shall be executed: prec(c) := $\cap_{s \in E(c)}  s$
-if $E(c) \neq \emptyset and prec(c) := undef$ otherwise.
-
-State-independent positive and negative effects (cf. their
-Def. 4) of a compound task c are facts that are added or
-deleted, resp., by the successful execution of a refinement of
-c, independent of the state in which the task is executed, i.e.
-$$ \RelEffPlus := ( \bigcap_{s \in E(c)} \bigcap_{s' \in R_s(c)} s') \backslash  \bigcap_{s \in E(c)} s    $$
-$$ \RelEffMinus := \bigcap_{s \in E(c)}  (F \backslash \bigcap_{s' \in R_s(c)} s' ) $$
-
-Possible state-independent effects of a compound task $c$ are not guaranteed to hold (or not hold, resp.,)
-after every refinement of c but after at least one:
-$$ \RelPossEffPlus(c) := \bigcup_{s \in E(c)}  ( \bigcup_{s' \in R_s(c)}  s' \backslash s) $$
-$$ \RelPossEffMinus(c) := \bigcup_{s \in E(c)} ((\bigcup_{s' \in R_s(c)} (F \backslash s') \cap s ))$$
-if $E(c) \neq \emptyset and prec(c) := undef$ otherwise.
-
-
-The set of executability-enabling states of c is
-$E(c) = \{s \in 2F  \mid  \exists \text{t.o. refinement of c applicable in s} \}$.
-The set of resulting states of c w.r.t. some state $s \in 2^F$ is
-$R_s(c) = \{s' \in 2^F | \exists t.o. refinement appl. in s res. in s' \}$.
-
-So, the precondition-relaxation of a domain D = $(F, A, C, M)$ is the domain $D' = (F, A', C, M)$
-with $A' = \{(\emptyset, add , del ) \mid (prec, add , del ) \in A\}$.
-Then, the precondition-relaxed effects $\RelEffPlus$, $\RelEffMinus$, $\RelPossEffPlus$, $\RelPossEffMinus$. are defined
-just like the original ones but based on the precondition-
-relaxed variant of D.
-
-We can use these as an alternative input to Algorithm~\ref{alg:Algorithm1}.
+\subsection{Theoretical Properties If Using Complex Inference}
+Unfortunately, no criteria for determining if a solution is guaranteed to exist when using the second inference method, since there may always be unknown preconditions and effects in the precondition-relaxed effects.
 
 
 
@@ -585,7 +605,7 @@ We compare the performance of these 4 planner settings on the original problem a
 \subsection{Performance of Complex Linearization}
 
 \begin{table}[h]
-	\scalebox{0.45} {
+	\scalebox{0.4} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
 			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{HTN2SAS} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
@@ -614,7 +634,7 @@ We compare the performance of these 4 planner settings on the original problem a
 \end{table}
 
 \begin{table}[h]
-	\scalebox{0.45} {
+	\scalebox{0.4} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
 			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{HTN2SAS} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
@@ -641,9 +661,10 @@ We compare the performance of these 4 planner settings on the original problem a
 	}
 \end{table}
 
-
+\newpage
 As we can see, using complex inference results in ?  increase/decrease/similar, coverage and IPC score.
-As we can see, the best planner is ? planner.
+The planner that has achieved the highest overall coverage and IPC score is ? planner.
+
 
 \section{Related Work}
 % FROM (https://ojs.aaai.org/index.php/ICAPS/article/view/15944/15755) A Closer Look at Causal Links: Complexity Resultsfor Delete-Relaxation in Partial Order Causal Link (POCL) Planning
