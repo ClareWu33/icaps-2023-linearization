@@ -1,131 +1,36 @@
-\def\year{2022}\relax
-%File: formatting-instructions-latex-2022.tex
-%release 2022.1
-\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
-\usepackage[submission]{aaai23}  % DO NOT CHANGE THIS
-\usepackage{times}  % DO NOT CHANGE THIS
-\usepackage{helvet}  % DO NOT CHANGE THIS
-\usepackage{courier}  % DO NOT CHANGE THIS
-\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\documentclass[letterpaper]{article}
+% DO NOT CHANGE THIS
+% \usepackage[submission]{aaai23} % DO NOT CHANGE THIS
+\usepackage[submission]{../AuthorKit23/AnonymousSubmission/LaTeX/aaai23}
+\usepackage{times} % DO NOT CHANGE THIS
+\usepackage{helvet} % DO NOT CHANGE THIS
+\usepackage{courier} % DO NOT CHANGE THIS
+\usepackage[hyphens]{url} % DO NOT CHANGE THIS
 \usepackage{graphicx} % DO NOT CHANGE THIS
 \urlstyle{rm} % DO NOT CHANGE THIS
-\def\UrlFont{\rm}  % DO NOT CHANGE THIS
-\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
-\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
-\DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
-\frenchspacing  % DO NOT CHANGE THIS
-\setlength{\pdfpagewidth}{8.5in}  % DO NOT CHANGE THIS
-\setlength{\pdfpageheight}{11in}  % DO NOT CHANGE THIS
+\def\UrlFont{\rm} % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\usepackage{natbib} % DO NOT CHANGE THIS
+\usepackage{caption} % DO NOT CHANGE THIS
+\frenchspacing % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in} % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in} % DO NOT CHANGE THIS
 %
-% These are recommended to typeset algorithms but not required. See the subsubsection on algorithms. Remove them if you don't have algorithms in your paper.
-% \usepackage{algorithm}
-% \usepackage{algorithmic}
-% \usepackage[noend]{algpseudocode}
-
-%
-% These are are recommended to typeset listings but not required. See the subsubsection on listing. Remove this block if you don't have listings in your paper.
-\usepackage{newfloat}
-\usepackage{listings}
-\lstset{%
-	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
-	numbers=left,numberstyle=\footnotesize,xleftmargin=2em,% show line numbers, remove this entire line if you don't want the numbers.
-	aboveskip=0pt,belowskip=0pt,%
-	showstringspaces=false,tabsize=2,breaklines=true}
-%\floatstyle{ruled}
-%\newfloat{listing}{tb}{lst}{}
-%\floatname{listing}{Listing}
-
-%
-% user import packages
-\usepackage{amsfonts}
-\usepackage{amsthm}
-\usepackage{amsmath}
-\usepackage{paralist}
-\usepackage{todonotes}
-\usepackage{booktabs}
-\usepackage{varwidth}
-\usepackage{xcolor}
+% Keep the \pdfinfo as shown here. There’s no need
+% for you to add the /Title and /Author tags.
+\pdfinfo{
+	/TemplateVersion (2023.1)
+} 
 \usepackage{booktabs} 
 \usepackage[ruled, noend, linesnumbered]{algorithm2e}  
 \usepackage{csquotes}
 \usepackage{subcaption}
-\usepackage{amssymb} 
+\usepackage{amssymb,amsmath}
+\usepackage{todonotes} 
 \usepackage{tikz}
 
-\nocopyright
-%
-% PDF Info Is REQUIRED.
-% For /Title, write your title in Mixed Case.
-% Don't use accents or commands. Retain the parentheses.
-% For /Author, add all authors within the parentheses,
-% separated by commas. No accents, special characters
-% or commands are allowed.
-% Keep the /TemplateVersion tag as is
-\pdfinfo{
-/Title (Transforming Partially Ordered HTN Problems to Totally Ordered)
-/Author (Anonymous)
-/TemplateVersion (2022.1)
-}
-
-% DISALLOWED PACKAGES
-% \usepackage{authblk} -- This package is specifically forbidden
-% \usepackage{balance} -- This package is specifically forbidden
-% \usepackage{color (if used in text)
-% \usepackage{CJK} -- This package is specifically forbidden
-% \usepackage{float} -- This package is specifically forbidden
-% \usepackage{flushend} -- This package is specifically forbidden
-% \usepackage{fontenc} -- This package is specifically forbidden
-% \usepackage{fullpage} -- This package is specifically forbidden
-% \usepackage{geometry} -- This package is specifically forbidden
-% \usepackage{grffile} -- This package is specifically forbidden
-% \usepackage{hyperref} -- This package is specifically forbidden
-% \usepackage{navigator} -- This package is specifically forbidden
-% (or any other package that embeds links such as navigator or hyperref)
-% \indentfirst} -- This package is specifically forbidden
-% \layout} -- This package is specifically forbidden
-% \multicol} -- This package is specifically forbidden
-% \nameref} -- This package is specifically forbidden
-% \usepackage{savetrees} -- This package is specifically forbidden
-% \usepackage{setspace} -- This package is specifically forbidden
-% \usepackage{stfloats} -- This package is specifically forbidden
-% \usepackage{tabu} -- This package is specifically forbidden
-% \usepackage{titlesec} -- This package is specifically forbidden
-% \usepackage{tocbibind} -- This package is specifically forbidden
-% \usepackage{ulem} -- This package is specifically forbidden
-% \usepackage{wrapfig} -- This package is specifically forbidden
-% DISALLOWED COMMANDS
-% \nocopyright -- Your paper will not be published if you use this command
-% \addtolength -- This command may not be used
-% \balance -- This command may not be used
-% \baselinestretch -- Your paper will not be published if you use this command
-% \clearpage -- No page breaks of any kind may be used for the final version of your paper
-% \columnsep -- This command may not be used
-% \newpage -- No page breaks of any kind may be used for the final version of your paper
-% \pagebreak -- No page breaks of any kind may be used for the final version of your paperr
-% \pagestyle -- This command may not be used
-% \tiny -- This is not an acceptable font size.
-% \vspace{- -- No negative value may be used in proximity of a caption, figure, table, section, subsection, subsubsection, or reference
-% \vskip{- -- No negative value may be used to alter spacing above or below a caption, figure, table, section, subsection, subsubsection, or reference
-
-\setcounter{secnumdepth}{0} %May be changed to 1 or 2 if section numbers are desired.
-
-% The file aaai22.sty is the style file for AAAI Press
-% proceedings, working notes, and technical reports.
-%
-
-% Title
-
-% Your title must be in mixed case, not sentence case.
-% That means all verbs (including short verbs like be, is, using,and go),
-% nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
-% articles, conjunctions, and prepositions are lower case unless they
-% directly follow a colon or long dash
-
-%Example, Single Author, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
-% \iffalse
-
-
-\newtheorem{theorem}{Theorem} 
+\newtheorem{theorem}{Theorem}
+\newtheorem{proof}{Proof}
 
 \newcommand{\Eff} {\ensuremath{\mathit{eff}}}  % example command without arguments
 \newcommand{\Pre} {\ensuremath{\mathit{pre}}}  % (again)
@@ -148,39 +53,8 @@
 \newcommand{\RelPossEffPlus} {\ensuremath{\mathit{\textit{poss-eff}^{\emptyset +}_{*}}}}
 \newcommand{\RelPossEffMinus} {\ensuremath{\mathit{\textit{poss-eff}^{\emptyset -}_{*}}}}
 
-
-\author {
-    Submission
-}
-\affiliations{
-    Anonymous
-}
-% \fi
-
-
-%Example, Multiple Authors, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
-\iffalse
 \title{Transforming Partially Ordered HTN Problems to Totally Ordered}
-\author {
-    % Authors
-    Anonymous
-
-}
-\affiliations {
-    % Affiliations
-    Anonymous
-}
-\fi
-
-\title{Transforming Partially Ordered HTN Problems to Totally Ordered}
-
-% REMOVE THIS: bibentry
-% This is only needed to show inline citations in the guidelines document. You should not need it and can safely delete it.
-% \usepackage{bibentry}
-% END REMOVE bibentry
-
 \begin{document}
-
 \maketitle
 
 \begin{abstract}
@@ -188,16 +62,15 @@ Solving partially ordered hierarchical planning problems is more computationally
 
 This is a complex endeavour, and not even possible in some cases, because even creating \emph{all} possible linearizations of all methods in the original domain does not guarantee that solutions are preserved. 
 
-In this paper, we propose an algorithm for converting partially ordered problems into totally ordered ones and give criterion for when this conversion will retain at least one solution. We test our techniques on the partially-ordered track of the bench-mark set of the IPC 2020 and solve both the linearized and the original partially-ordered problems using state-of-the-art planning systems. We find that in the majority of problems across a variety of domains, the linearized problems remain solvable, and can always be solved faster than the without our proposed pre-processing technique. We can thus conclude our proposed pre-processing technique becomes (part of) the state of the art for solving partially ordered planning problems.
+In this paper, we propose an algorithm for converting partially ordered problems into totally ordered ones and give criterion for when this conversion will retain at least one solution. We test our techniques on the partially-ordered track of the bench-mark set of the IPC 2020 and solve both the linearized and the original partially-ordered problems using state-of-the-art planning systems. We find that in the majority of problems across a variety of domains, the linearized problems remain solvable, and can always be solved faster than the without our proposed pre-processing technique. We can thus conclude our proposed pre-processing technique becomes (part of)
+the state of the art for solving partially ordered planning problems.
 \end{abstract}
- 
- 
- 
- 
+
 \section{Introduction}
+ 
 Hierarchical Task Network (HTN) planning is a hierarchical approach to planning. As defined by \cite{HTNSurvey},  %  and \cite{IntroGhallab},
 tasks in HTN planning are either primitive, corresponding to an action that can be taken, or compound. HTN problems have a set of methods that specify how one might achieve a given compound task, by decomposing it into a set of sub-tasks. A compound task may even decompose into itself, either directly via a method, or indirectly via a sequence of method applications. If decomposition leads to a sequence of primitive tasks executable from the initial state, then this sequence of actions is a solution to the problem, also known as a \enquote{plan}. 
-
+ 
 In totally ordered HTN planning, or TOHTN planning, methods specify a total order on the sub-tasks. In partially ordered HTN planning, or POHTN planning, methods might only specify a partial order on the sub-tasks. 
 
 Certain kinds of problems might be naturally more suited to being modelled as a partially ordered problem, for example, the actions \enquote{deliver package 1 to city A} and \enquote{deliver package 2 to city B} -- these are essentially unrelated goals in a real transport scenario, and so modelling the problem to require that one task be completed before the other would be unnecessarily limiting the possible solution space. For some problems, such over-specification may remove all valid solutions. Thus many problems might be \emph{modelled} as POHTN problems. However, for \emph{solving} the problem, it is desirable to have additional constraints that reduces the search space, while still preserving at least some of the actual solutions. In particular, TOHTN planning as a class of problems has lower computational complexity than POHTN planning, as proven by \cite{ErolHTNExpressivity}, resulting in lower worst-case solving time. Converting the problem to a TOHTN problem allows us to exploit that fact to solve the problem more quickly.
@@ -206,6 +79,11 @@ Another benefit of transforming a POHTN problem to a TOHTN problem is that the a
 
 The drawback to this approach is that, due to the greater expressivity of POHTN planning, there may exist POHTN problems that cannot be solved when converted to a TOHTN problem. For example, \cite{ErolHTNExpressivity} proved that POHTN planning is expressive enough to model undecidable problems, such as the language intersection problem of two context-free languages. On the other hand, TOHTN planning is not expressive enough to model undecideable problems. Fortunately, not every POHTN problem is guaranteed to be undecidable, and so could still be transformed while preserving at least one solution.
 
+% Also, we get another class of decidable partially ordered problems that's orthogonal to recursive ones. 
+% Also, the domain model might be more intuitive: if a task is independent of some others it might be counter-intuitive to demand a certain position of it (if artificially made totally ordered). Plan recognition: independent goals can be described in parallel with POHTN planning but not with TOHTN, as per \cite{DanielPlanRecognition}.
+
+%\subsubsection{Contributions}
+%Gregor Behnke used a similar linearization process to produce the TO benchmark set used for the 2020 International Planning Competition (IPC 2020). That also attempted to linearize the methods by drawing the same links between preconditions and effects as in this paper, and picked a random linearization if that was not possible. However, no attempt was made to analyse if this lead to a easier to solve problem, or if it had any interesting theoretical implications. As Prof. Bercher thought this could be an interesting use for linearization, this paper offers this empirical evaluation and theoretical analysis.
 
 In this paper we present and investigate an algorithm for converting POHTN problems to TOHTN problems. We prove that when certain criteria are met, it guarantees that at least one solution will be preserved. 
 Also, we obtain a new class of decidable problems, namely those that satisfy the above mentioned criterion. Finally, we show that, even when these criteria are not met, very few problems are rendered unsolvable by the transformation, and that it greatly reduces solving time for problems, with gains being bigger for more difficult problems. 
@@ -263,13 +141,13 @@ $f' = f(o_1, ..., o_n)$, where $o_1, ..., o_n$ are arbitrary objects of the appr
 & \forall t \in T_P : \AddS(t) := \Add(t) \\
 & \forall t \in T_P : \DelS(t) := \Del(t)  \\ %  \land
 & \forall t \in T_C : \PreS(t) := \{f'  \mid  \exists m \in M  \\
-& : m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \PreS(t') \}   \\
+								& : m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \PreS(t') \}   \\
 & \forall t \in T_C : \AddS(t) := \{f'  \mid  \exists m \in M : \\
-& m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \AddS(t') \}   \\
+								& m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \AddS(t') \}   \\
 & \forall t \in T_C : \DelS(t) := \{f'  \mid  \exists m \in M : \\
-& m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \DelS(t') \}   \\ 
+								& m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \DelS(t') \}   \\ 
 \end{align*}
-
+ 
 From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1}.
 
 \begin{algorithm}\label{alg:Algorithm1}
@@ -311,12 +189,12 @@ From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (w
 	Let $|T|$ = $|T_P| + |T_C|$.
 	
 	The Floyd-warshall algorithm to calculate transitive closure is used for each method's sub-tasks, resulting in a time complexity of $\mathcal{O}(|M| * |T|^3)$, 
-	
-	
+
+		
 	To calculate $\PreS, \AddS, \DelS$ for each task $t$, we can perform breadth-first search on the task decomposition sub-tree (where tasks are nodes, and edges indicate possible decomposition by methods) rooted at $t$. The size of a sub-tree has an upper limit of $T_C + T_P$ nodes. For each primitive task in the sub-tree, we can iterate over each fact to update $\PreS, \AddS, \DelS$ for the root $t$. Thus calculating  $\PreS, \AddS, \DelS$ for a single compound task has an upper limit of $(3 * |F| * |T_p|) + |T_C|$. This inference occurs for each compound task, so inference for all compound tasks takes $((3 * |F| * |T_P|) + |T_C|) * |T_C|$ time at most, or $\mathcal{O}(|F| * |T|^2)$.
 	
 	Lines~\ref{alg:StartBuildGraph}-\ref{alg:EndBuildGraph} of Algorithm~\ref{alg:Algorithm1} iterates over every method, which iterates over every fact, which iterates over every sub-task in that method, which iterates over every other sub-task in that method. Leading to $(M * F * (t_m)^2)$, where $t_m$ is the average number of sub-tasks per method. So it's at most $\mathcal{O}(|M| * |F| * |T|^2)$, since $t_m$ has an upper bound of $T$, where $T=T_p + T_C$.		
-	
+
 	Line~\ref{alg:TopSort} can be done via topological sort of the graph (which is known to be in $\mathcal{O}(V+E)$ in time and $\mathcal{O}(V)$ in space). In this case, the nodes of the graph are tasks, and the edges are orderings. So that's $M * (t_m+e_m)$, where $e_m$ is the number of \enquote{edges} in the new method, and has an upper bound of $e_m$ to find a topological sort for the sub-tasks of every method. That's approximately $\mathcal{O}(|M| * |T|)$, since both $t_m$ and $t_e$ are upper bounded by $T$, such that $T=T_p + T_C$.
 	
 	So in total the main algorithm takes: \newline
@@ -372,29 +250,29 @@ From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (w
 				\node[main node] (B) [below left = 2em and 2em of Init] {$B$}; 
 				\node[main node] (C) [below right = 2em and 2em of AC] {$C$}; 
 				
-				%		\action{A}{PrimitiveA,
-				%			width  = 2.5em, 
-				%			height = 2.5em, 
-				%			pre length = 2em,
-				%			eff length = 2em,
-				%			body = {below left = 2em and 2em of AC} 
-				%		};			
+		%		\action{A}{PrimitiveA,
+		%			width  = 2.5em, 
+		%			height = 2.5em, 
+		%			pre length = 2em,
+		%			eff length = 2em,
+		%			body = {below left = 2em and 2em of AC} 
+		%		};			
 				
-				%		\action{B}{PrimitiveB,
-				%			width  = 2.5em, 
-				%			height = 2.5em, 
-				%			pre length = 2em,
-				%			eff length = 2em,
-				%			body = {below left = 2em and 2em of Init} 
-				%		};
+		%		\action{B}{PrimitiveB,
+		%			width  = 2.5em, 
+		%			height = 2.5em, 
+		%			pre length = 2em,
+		%			eff length = 2em,
+		%			body = {below left = 2em and 2em of Init} 
+		%		};
 				
-				%		\action{C}{PrimitiveC,
-				%			width  = 2.5em, 
-				%			height = 2.5em, 
-				%			pre length = 2em,
-				%			eff length = 2em,
-				%			body = {below right = 2em and 2em of AC} 
-				%		};
+		%		\action{C}{PrimitiveC,
+		%			width  = 2.5em, 
+		%			height = 2.5em, 
+		%			pre length = 2em,
+		%			eff length = 2em,
+		%			body = {below right = 2em and 2em of AC} 
+		%		};
 				
 				\path[every node/.style={font=\sffamily\small}]
 				(Init) edge [->] node [left] {} (B)
@@ -471,6 +349,10 @@ Given what's proven in Theorem~\ref{thm:notCompleteness} and \ref{thm:SpecialCas
 \end{proof}
 
 
+
+
+
+
 \section{Complex Linearization Procedure}
 
 The work by \cite{ConnyPreEff}, details a way to infer a subset of the mandatory preconditions and effects.
@@ -502,7 +384,7 @@ with $A' = \{(\emptyset, add , del ) \mid (prec, add , del ) \in A\}$.
 Then, the precondition-relaxed effects $\RelEffPlus$, $\RelEffMinus$, $\RelPossEffPlus$, $\RelPossEffMinus$. are defined
 just like the original ones but based on the precondition-
 relaxed variant of D.
-
+ 
 We can use these as an alternative input to Algorithm~\ref{alg:Algorithm1}.
 
 
@@ -527,27 +409,27 @@ We compare the performance of these 4 planner settings on the original problem a
 			\toprule 
 			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{HTN2SAS} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
 			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
-			& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  }   \\ 
-			\midrule 
-			Barman-BDI  \\ 
-			Monroe Fully Observ. \\ 
-			Monroe Part. Observ. \\ 
-			PCP\\ 
-			Rover  \\ 
-			Satellite  \\ 
-			Transport \\ 
-			UM-Translog \\ 
-			Woodworking \\ 
-			\midrule 
-			Monroe  \\ 
-			SmartPhone \\ 
-			Zenotravel \\ 
-			\midrule 
-			Coverage \\ 
-			Norm. coverage  \\ 
-			\bottomrule
-		\end{tabular} 	
-	}
+				& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  }   \\ 
+		\midrule 
+		Barman-BDI  \\ 
+		Monroe Fully Observ. \\ 
+		Monroe Part. Observ. \\ 
+		PCP\\ 
+		Rover  \\ 
+		Satellite  \\ 
+		Transport \\ 
+		UM-Translog \\ 
+		Woodworking \\ 
+		\midrule 
+		Monroe  \\ 
+		SmartPhone \\ 
+		Zenotravel \\ 
+		\midrule 
+		Coverage \\ 
+		Norm. coverage  \\ 
+		\bottomrule
+			\end{tabular} 	
+			}
 \end{table}
 
 \begin{table}[h]
@@ -574,7 +456,7 @@ We compare the performance of these 4 planner settings on the original problem a
 			\midrule 
 			IPC \\
 			\bottomrule
-		\end{tabular} 	
+			\end{tabular} 	
 	}
 \end{table}
 
@@ -606,7 +488,7 @@ We compare the performance of these 4 planner settings on the original problem a
 			Coverage \\ 
 			Norm. coverage  \\ 
 			\bottomrule
-		\end{tabular} 	
+			\end{tabular} 	
 	}
 \end{table}
 
@@ -645,7 +527,7 @@ As we can see, the best planner is ? planner.
 \section{Related Work}
 % FROM (https://ojs.aaai.org/index.php/ICAPS/article/view/15944/15755) A Closer Look at Causal Links: Complexity Resultsfor Delete-Relaxation in Partial Order Causal Link (POCL) Planning
 Our linearization procedure is a pre-processing technique for the search space, is a compilation of an HTN planning problem class to a different class of problems, and can exploit specialised TO planners.
-
+ 
 The panda$_\pi$ grounder by \cite{Behnke2020Grounding} also prunes unreachable tasks, methods, etc.\.  Because the panda$_{\pi}$ planner is a grounded planner, we can ground then linearize, or vice-versa to \enquote{stack} the reduction in search space.
 
 The main optimization of HyperTensioN by \cite{hypertension} is via the Pullup extension - which determines additional preconditions of methods and compound tasks by analysing the preconditions of possible child actions. Unlike ours, no approximation of effects are considered.  
@@ -655,9 +537,9 @@ The HTN2STRIPS planner by \cite{HTN2STRIPS} and HTN2SAS planner by \cite{HTN2SAS
 There exists totSAT planner by \cite{TOtoSAT} that compiles a totally ordered problem to SAT problem. There also exists 2 planners by \cite{POtoSAT, OptimalPOtoSAT} that compiles a partially ordered problem to a SAT problem. One searches for optimal plans, the other focuses on finding any solution as quickly as possible. Lilotane by \cite{Lilotane} directly encodes a lifted problem representation into a SAT problem.
 
 Another planner by \cite{Behnke_Speck_2021} converts TOHTN into Binary Decision Diagrams (BDDs), then use symbolic search on it.
-
+ 
 The BDD planner by \cite{Behnke_Speck_2021}, totSAT planner by \cite{TOtoSAT}, TOAD by \cite{HollerTOAD}, HyperTensioN by \cite{hypertension}, and Lilotane by \cite{Lilotane}, as discussed before, are all specialised TO planners. So are the TFD (Totally Ordered Fast Downward) and PFD (Partially Ordered Fast Downward) hierarchical planners by \cite{PDDL4J}.  Note however that HTN2SAS achieved similar coverage than greedy search with panda$_\pi$, a partial-order planner.
-
+ 
 
 \section{Summary}
 
@@ -681,21 +563,23 @@ We can identify a subset of decidable problems within POHTN problems, and this s
 The maximum satisfiability problem (MAX-SAT) is the problem of determining the maximum number of clauses, of a given Boolean formula in conjunctive normal form, that can be made true by an assignment of truth values to the variables of the formula. MAX-SAT is used over SAT as it may not be possible to satisfy all orderings implied by the inferred preconditions and effects.
 
 Cycle-breaking considers each method in isolation, and sub-tasks have their inferred $\PreS, \AddS, \DelS$. Thus we can treat each sub-task as a \enquote{action}, and encode the method the same way as a classical plan, similar to the one described by \cite{RINTANEN201245}, but with the additional constraint that \enquote{actions} chosen from the method sub-tasks can only be selected once, unlike in the domain. Assuming no negative preconditons, the initial state has all state variables true, and goal state can be assumed to be empty (i.e.\ all state variables can have any assignment). The relative success (or failure) of this approach could also lend insight into what about the criteria causes the linearization to be successful.
-
+  
 
 \subsubsection{Adding a Plan as Additional Input to the Domain}
 Adding a plan as additional input to the PO domain having the
 semantics that this plan shall be in the solution set of the TO output
-model. This reduces the computational complexity of the decision problem from undecidable to something decidable. The specific complexity class of this will have to be proven in further work.  % I assume the resulting problem is PSPACE-complete, but this needs to be proven
+model. This reduces the computational complexity of the decision problem from undecidable to something decidable. The specific complexity class of this will have to be proven in further work.  % I assume the resulting problem is PSPACE-complete, but 
 
 
-
-
-
-
-
-% Use \bibliography{yourbibfile} instead or the References section will not appear in your paper
+% References and End of Paper
+% These lines must be placed at the end of your paper
 \bibliography{bib}
-% \nobibliography{aaai22}
+\end{document}
+
+\begin{document}\\
+\maketitle\\
+...\\
+\bibliography{bib}\\
+\end{document}\\
 
 \end{document}
