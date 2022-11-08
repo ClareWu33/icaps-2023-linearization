@@ -532,15 +532,13 @@ Unfortunately, no criteria for determining if a solution is guaranteed to exist 
 
 
 \section{Empirical Evaluation}
-
-To prove that our technique improves the solving time, we compare the runtime of a state-of-the-art planning system on the original problem vs. the transformed problem, for a number of different PO domains. All problems are taken from two benchmark sets prepared for the International Planning Competition (IPC) 2020. The first set \footnote{https://github.com/panda-planner-dev/ipc2020-domains/tree/master/partial-order} was used in the partially ordered track in the 2020 IPC benchmark, while the second set \footnote{https://github.com/panda-planner-dev/domains/tree/master/partial-order} went un-used for various reasons. Each problem has the standard IPC time limit of 30 minutes. Any grounding and pre-processing time needed is included as part of the 'solving' time. Since the pre-processing may \emph{potentially} remove all solutions, where the planning system can prove that the pre-processing renders a problem unsolvable, we use the remaining time to solve the original problem, called a \textit{re-run}.
+We compare the runtime of several state-of-the-art planning systems on some transformed POHTN problems. All problems are taken from two benchmark sets prepared for the International Planning Competition (IPC) 2020. The first set \footnote{https://github.com/panda-planner-dev/ipc2020-domains/tree/master/partial-order} was used in the partially ordered track in the 2020 IPC benchmark, while the second set \footnote{https://github.com/panda-planner-dev/domains/tree/master/partial-order} went un-used for various reasons. Each problem has the standard IPC time limit of 30 minutes. Any grounding and pre-processing time needed is included as part of the 'solving' time. Since the pre-processing may \emph{potentially} remove all solutions, where the planning system can prove that the pre-processing renders a problem unsolvable, we use the remaining time to solve the original problem, called a \textit{re-run}.
 
 \subsection{Hardware and Planning Systems}
-The empirical evaluation was conducted on a machine with 30GiB of memory and 4 vCPUs, each with 2 GiB RAM. Recent work by \cite{HTN2SAS} shows that the partial-order panda$_\pi$, actually achieved similar coverage and slightly lower IPC score than the best specialised TOHTN planner evaluated. %Lilotane by \cite{Lilotane} is an TOHTN solver and the IPC 2020 runner-up. The winner, HyperTensioN by \cite{hypertension} could not be tested due to lack of support for reading in optimisation metrics. 
+The empirical evaluation was conducted on a machine with 30GiB of memory and 4 vCPUs, each with 2 GiB RAM. Recent work by \cite{HTN2SAS} shows that the PO panda$_\pi$, achieved similar coverage and slightly lower IPC score than all TO planners tested. %Lilotane by \cite{Lilotane} is an TOHTN solver and the IPC 2020 runner-up. The winner, HyperTensioN by \cite{hypertension} could not be tested due to lack of support for reading in optimisation metrics. 
 
-We therefore test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20} on the configuration of Greedy best first search with visited lists, and using RC to turn the problem into a classical planning problem. We try this search with 4 different heuristics: FF by \cite{FF}, Add by \cite{Add}, Filter by \cite{useClassicalHuristicICAPS18} and Landmark-cut by \cite{LM-Cut}.
-
-We compare the performance of these 4 planner settings on the original problem and the pre-processed problem, HTN2SAS, and the latest version of HyperTensioN and Lilotane. For panda$_{\pi}$, the same setting is used for re-runs. For TOHTN planners, re-runs use panda$_{\pi}$ on the best setting (Add heuristic). The comparison is done for grounded linearization variant and the lifted linearization variant 1.
+We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20} configured to use to turn the problem into a classical planning problem (in RC model), and Greedy best first search with visited lists. We try this search with 4 different heuristics: FF by \cite{FF}, Add by \cite{Add}, Filter by \cite{useClassicalHuristicICAPS18} and Landmark-cut by \cite{LM-Cut}. We compare the performance of panda$_\pi$ on the original problem and the pre-processed problem. The same setting is used for re-runs. We also test the latest version of TOHTN planners HTN2SAS, HyperTensioN and Lilotane on the transformed problems. Re-runs use panda$_{\pi}$ with the best heuristic(Add). 
+We test both Complex and Simple Inference for linearization. %The comparison is done for grounded linearization variant and the lifted linearization variant 1.
 
 \subsection{Performance of Simple Linearization}
 
@@ -572,6 +570,7 @@ We compare the performance of these 4 planner settings on the original problem a
 		\end{tabular} 	
 	}
 \end{table}
+
 
 \begin{table}[h]
 	\scalebox{0.45} {
@@ -605,7 +604,7 @@ We compare the performance of these 4 planner settings on the original problem a
 \subsection{Performance of Complex Linearization}
 
 \begin{table}[h]
-	\scalebox{0.4} {
+	\scalebox{0.45} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
 			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{HTN2SAS} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
@@ -634,7 +633,7 @@ We compare the performance of these 4 planner settings on the original problem a
 \end{table}
 
 \begin{table}[h]
-	\scalebox{0.4} {
+	\scalebox{0.45} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
 			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{HTN2SAS} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
@@ -661,20 +660,21 @@ We compare the performance of these 4 planner settings on the original problem a
 	}
 \end{table}
 
-\newpage
+
 As we can see, using complex inference results in ?  increase/decrease/similar, coverage and IPC score.
 The planner that has achieved the highest overall coverage and IPC score is ? planner.
 
-
+\newpage
 \section{Related Work}
 % FROM (https://ojs.aaai.org/index.php/ICAPS/article/view/15944/15755) A Closer Look at Causal Links: Complexity Resultsfor Delete-Relaxation in Partial Order Causal Link (POCL) Planning
 Our linearization procedure is a pre-processing technique for the search space, is a compilation of an HTN planning problem class to a different class of problems, and can exploit specialised TO planners.
 
-The panda$_\pi$ grounder by \cite{Behnke2020Grounding} also prunes unreachable tasks, methods, etc.\.  Because the panda$_{\pi}$ planner is a grounded planner, we can ground then linearize, or vice-versa to \enquote{stack} the reduction in search space.
+The panda$_\pi$ grounder by \cite{Behnke2020Grounding} also prunes unreachable tasks, methods, etc.\.  Because the panda$_{\pi}$ planner is a grounded planner, we can ground then linearize, or vice-versa to \enquote{stack} the reduction in search space. 
 
 The main optimization of HyperTensioN by \cite{hypertension} is via the Pullup extension - which determines additional preconditions of methods and compound tasks by analysing the preconditions of possible child actions. Unlike ours, no approximation of effects are considered.  
 
-The HTN2STRIPS planner by \cite{HTN2STRIPS} and HTN2SAS planner by \cite{HTN2SAS} compiles HTN problems, both totally and partially ordered, to classical problems. The TOAD planner by \cite{HollerTOAD} compiles TOHTN problems into classical planning problems in order to allow the use of classical planning systems. % TOAD over-approximates the set of solutions to the HTN problem. In the empirical evaluation the paper performed, TOAD achieved higher coverage than the base version of HTN2STRIPS, and all systems submitted to the totally ordered track of the 2020 IPC.  
+The HTN2STRIPS planner by \cite{HTN2STRIPS} and HTN2SAS planner by \cite{HTN2SAS} compiles HTN problems, both totally and partially ordered, to classical problems. The TOAD planner by \cite{HollerTOAD} compiles TOHTN problems into classical planning problems in order to allow the use of classical planning systems. The panda$_\pi$ engine progression search configuration, also uses a compilation to classical problems.
+ % TOAD over-approximates the set of solutions to the HTN problem. In the empirical evaluation the paper performed, TOAD achieved higher coverage than the base version of HTN2STRIPS, and all systems submitted to the totally ordered track of the 2020 IPC.  
 
 There exists totSAT planner by \cite{TOtoSAT} that compiles a totally ordered problem to SAT problem. There also exists 2 planners by \cite{POtoSAT, OptimalPOtoSAT} that compiles a partially ordered problem to a SAT problem. One searches for optimal plans, the other focuses on finding any solution as quickly as possible. Lilotane by \cite{Lilotane} directly encodes a lifted problem representation into a SAT problem.
 
