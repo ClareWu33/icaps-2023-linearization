@@ -184,13 +184,15 @@
 \maketitle
 
 \begin{abstract}
-Solving partially ordered hierarchical planning problems is more computationally expensive compared to solving totally ordered ones. Therefore, automatically transforming partially ordered problem domains into totally ordered ones, such that the totally ordered problem still retains at least one solution, would be a desired capability as it would reduce complexity and thus make it easier for planning systems to solve the problem. It also allows the planner to use algorithms and heuristics specialised for the totally ordered case to solve the transformed problem. 
+Solving partially ordered hierarchical planning problems (POHTN) is more computationally expensive than solving TOHTN ones. Therefore, automatically transforming partially ordered problem domains into totally ordered ones, such that the totally ordered problem still retains at least one solution, would be a desired capability as the reduction in complexity could make it easier for planning systems to solve the problem. It also allows the planner to use algorithms and heuristics specialised for the totally ordered case to solve the transformed problem. 
 
 This is a complex endeavour, and not even possible in some cases, because even creating \emph{all} possible linearizations of all methods in the original domain does not guarantee that solutions are preserved. 
 
-In this paper, we propose an algorithm for converting partially ordered problems into totally ordered ones and give criterion for when this conversion will retain at least one solution. We test our techniques on the partially-ordered track of the bench-mark set of the IPC 2020 and solve both the linearized and the original partially-ordered problems using state-of-the-art planning systems. We find that in the majority of problems across a variety of domains, the linearized problems remain solvable, and can always be solved faster than the without our proposed pre-processing technique. We can thus conclude our proposed pre-processing technique becomes (part of) the state of the art for solving partially ordered planning problems.
+In this paper, we propose an algorithm for converting partially ordered problems into totally ordered ones and give criterion for when this conversion will retain at least one solution. We find that in the majority of problems across a variety of domains, the linearized problems remain solvable, and can always be solved faster than the without our proposed pre-processing technique. 
 \end{abstract}
  
+ 
+
  
  
  
@@ -200,21 +202,43 @@ tasks in HTN planning are either primitive, corresponding to an action that can 
 
 In totally ordered HTN planning, or TOHTN planning, methods specify a total order on the sub-tasks. In partially ordered HTN planning, or POHTN planning, methods might only specify a partial order on the sub-tasks. 
 
-Certain kinds of problems might be naturally more suited to being modelled as a partially ordered problem, for example, the actions \enquote{deliver package 1 to city A} and \enquote{deliver package 2 to city B} -- these are essentially unrelated goals in a real transport scenario, and so modelling the problem to require that one task be completed before the other would be unnecessarily limiting the possible solution space. For some problems, such over-specification may remove all valid solutions. Thus many problems might be \emph{modelled} as POHTN problems. However, for \emph{solving} the problem, it is desirable to have additional constraints that reduces the search space, while still preserving at least some of the actual solutions. In particular, TOHTN planning as a class of problems has lower computational complexity than POHTN planning, as proven by \cite{ErolHTNExpressivity}, resulting in lower worst-case solving time. Converting the problem to a TOHTN problem allows us to exploit that fact to solve the problem more quickly.
+% Certain kinds of problems might be naturally more suited to being modelled as a partially ordered problem, for example, the actions \enquote{deliver package 1 to city A} and \enquote{deliver package 2 to city B} -- these are essentially unrelated goals in a real transport scenario, and so modelling the problem to require that one task be completed before the other would be unnecessarily limiting the possible solution space. For some problems, such over-specification may remove all valid solutions. 
 
-Another benefit of transforming a POHTN problem to a TOHTN problem is that the additional structure to the problem could allow us to deploy specialised algorithms and heuristics for the totally ordered case. Also, heuristic design is comparably easy for total-order problems due to the missing interaction between tasks.
+Many problems might be naturally more suited to being modelled as POHTN problems. However, for \emph{solving} the problem, it is desirable to have additional constraints that reduces the search space, while still preserving at least some of the actual solutions. For example, \cite{ErolHTNExpressivity} proved that POHTN planning is expressive enough to model undecidable problems, such as the language intersection problem of two context-free languages. On the other hand, TOHTN planning is not expressive enough to model undecideable problems. Where this is possible, it results in lower worst-case solving time. Converting the problem to a TOHTN problem allows us to exploit that fact to solve the problem more quickly.
 
-The drawback to this approach is that, due to the greater expressivity of POHTN planning, there may exist POHTN problems that cannot be solved when converted to a TOHTN problem. For example, \cite{ErolHTNExpressivity} proved that POHTN planning is expressive enough to model undecidable problems, such as the language intersection problem of two context-free languages. On the other hand, TOHTN planning is not expressive enough to model undecideable problems. Fortunately, not every POHTN problem is guaranteed to be undecidable, and so could still be transformed while preserving at least one solution.
+Another benefit of transforming a POHTN problem to a TOHTN problem is that the additional structure to the problem could allow us to deploy specialised algorithms and heuristics for the totally ordered case. % Also, heuristic design is comparably easy for total-order problems due to the missing interaction between tasks.
 
+The drawback to this approach is that, due to the greater expressivity of POHTN planning, there may exist POHTN problems that cannot be solved when converted to a TOHTN problem. 
+
+Fortunately, not every POHTN problem is guaranteed to be undecidable, and so could still be transformed while preserving at least one solution. In fact, the state-of-the-art panda$_\pi$ planner and \cite{HTN2SAS} both use a compilation to classical planning, another decidable planning class.
+ 
 
 In this paper we present and investigate an algorithm for converting POHTN problems to TOHTN problems. We prove that when certain criteria are met, it guarantees that at least one solution will be preserved. 
 Also, we obtain a new class of decidable problems, namely those that satisfy the above mentioned criterion. Finally, we show that, even when these criteria are not met, very few problems are rendered unsolvable by the transformation, and that it greatly reduces solving time for problems, with gains being bigger for more difficult problems. 
 
 
+\section{Related Work}
+There exist other planners that also compile POHTN problems to decidable planning classes e.g. the planners by \cite{HTN2STRIPS} and HTN2SAS planner by \cite{HTN2SAS} convert POHTN to classical planning problems. To the best of my knowledge, this is the first work that focuses on converting POHTN to TOHTN problems.
+
+\cite{ErolHTNExpressivity} proved that it is NP-complete to decide whether a partially ordered set
+of actions has an executable linearization. Our criteria would work on a problem where the only method is for the initial task, and it’s sub-tasks are actions. That is essentially just ordering a partially ordered plan, so the criteria can also identify a proper subset of all partially ordered plans that can be linearized in polynomial time. It can also find a executable linearization for that subset in polynomial time.
+
+\cite{NEBEL1994125} studied various questions regarding partially ordered plans, such as the complexity of plan existence, plan optimisation, possible or necessary truth of properties before or after plan steps, given various constraints on the types of tasks allowed.  \cite{KambhampatiModalTruth1996} studied related questions and criteria under different assumptions.
+In the paper by \cite{TanGruningerPOPlanComplexity}, the authors refine \cite{NEBEL1994125}'s results and show the impact of the interaction of preconditions and effects thereby giving a more detailed picture for when finding a linearization for a partially-ordered plan is possible in polynomial time, and when it remains NP-hard. 
+
+Criteria presented in \cite{NEBEL1994125} and \cite{KambhampatiModalTruth1996} and  \cite{TanGruningerPOPlanComplexity} analyse cases where actions have singleton precondition and add lists. This is a less general case than our criteria can cover, but their criteria also correctly identifies some cases as linearizable in polynomial time that our criteria is unable to determine. Thus their results are orthogonal to ours. 
+
+The paper by \cite{DeleteRelaxation, Bercher2021POCLComplexities} generalised \cite{NEBEL1994125}'s as well as \cite{ErolHTNExpressivity}'s result (deciding whether a partially ordered
+set of actions possesses an executable linearization) by showing that this problem does not become easier when one is allowed to insert delete-relaxed  actions.
+
+
+ 
+
+
 \section{Hierarchical Planning Formalism}
 Hierarchical task network planning, also known as \textbf{HTN planning}, is one form of hierarchical planning. There are many formalisations for HTN planning. The following one borrows heavily from \cite{HTNSurvey} and \cite{Geier2011TIHTNDecidability}. HTN planning can be partially ordered, also known as POHTN planning, or totally ordered, otherwise known as TOHTN planning. TOHTN planning is a special case of POHTN planning.  % except with the initial task network replaced by a initial compound task. 
 
-A \textbf{Partially Ordered Hierarchical Planning}(POHTN) problem \textbf{P} = $(D, S_I, T_I)$
+A \textbf{Partially Ordered Hierarchical Planning}, also called POHTN, problem P = $(D, S_I, T_I)$
 is defined over some domain $D$, 
 has an initial state $S_I \in 2^F$, and 
 has a initial compound task $T_I$. 
@@ -244,20 +268,21 @@ on the removed task are inherited by its replacement tasks, as defined by $\sing
 A \textbf{solution} to an HTN problem is a task network $tn = (T, \prec, \alpha)$ if and only if
 tn can be reached via decomposing $tn_I$, all tasks are primitive, ($\forall t \in T: \alpha(t) \in T_P$), and there exists a sequence $\langle t_1, t_2 ... t_n \rangle$ of the task ids in $T$ that agrees with $\prec$ such that the application of that sequence $\langle \alpha(t_1), \alpha(t_2) ... \alpha(t_n) \rangle$ in $S_I$ is executable.
 
-In other words, there is no goal state for hierarchical planning -- the goal is to find an decomposition of the initial task, then any executable refinement of the resulting decomposition. For any given hierarchical problem, it is trivial to enforce a goal state is met, by replacing the real initial task with a task whose only decomposition is to the real initial task and a primitive task ordered after it whose preconditions are equivalent to any \enquote{goal state} desired. Thus the fact that a goal state is not strictly required is not a restriction to the expressiveness of hierarchical planning. Whereas in classical planning, one only finds any executable sequence of actions to achieve a goal state, so HTN planning poses additional restrictions on which action sequences may be considered.
+%In other words, there is no goal state for hierarchical planning -- the goal is to find an decomposition of the initial task, then any executable refinement of the resulting decomposition. For any given hierarchical problem, it is trivial to enforce a goal state is met, by replacing the real initial task with a task whose only decomposition is to the real initial task and a primitive task ordered after it whose preconditions are equivalent to any \enquote{goal state} desired. Thus the fact that a goal state is not strictly required is not a restriction to the expressiveness of hierarchical planning. Whereas in classical planning, one only finds any executable sequence of actions to achieve a goal state, so HTN planning poses additional restrictions on which action sequences may be considered.
 
 
 \textbf{Totally Ordered Hierarchical Planning}, also called TOHTN planning, is the same as partially ordered planning in all respects except the kind of task networks it allows.
-For both planning formalisms, a method $m$ maps a task $t$ to a task network \textbf{tn} = $(T, \prec, \alpha)$. TOHTN planning domains require that $\prec$ must specify a total order between task ids in $T$.
-This leads to a difference in expressiveness and decideability of TOHTN vs POHTN planning. POHTN planning is more expressive in general (both in terms of plan existence and in terms of computational complexity). As per \cite{LanguageClassificationPlanning}, if regarded from the standpoint of formal grammars, TOHTN planning is exactly as expressive as context free languages, whereas POHTN planning is strictly more expressive than context-free languages, and strictly less expressive than context-sensitive languages.
+%For both planning formalisms, a method $m$ maps a task $t$ to a task network \textbf{tn} = $(T, \prec, \alpha)$. TOHTN planning domains require that $\prec$ must specify a total order between task ids in $T$. This leads to a difference in expressiveness and decideability of TOHTN vs POHTN planning. POHTN planning is more expressive in general (both in terms of plan existence and in terms of computational complexity). 
+
+% As per \cite{LanguageClassificationPlanning}, if regarded from the standpoint of formal grammars, TOHTN planning is exactly as expressive as context free languages, whereas POHTN planning is strictly more expressive than context-free languages, and strictly less expressive than context-sensitive languages.
 In terms of complexity classes, \cite{ErolHTNExpressivity} proved that POHTN planning is semi-decidable, whereas \cite{Alford2015TightHTNBounds} proved that, assuming arbitrary recursion, TOHTN planning is 2-EXPTIME-complete with variables, and EXPTIME-complete without. 
 
 
-\section{Simple Linearization Procedure}
+\section{Linearization Procedure}
 The basic linearization process consists of inferring preconditions and effects for compound tasks, inferring additional orderings to the sub-tasks based on the preconditions and effects (inferred or \enquote{real} in the case of primitive tasks) of method sub-tasks, and adding them only if they do not conflict with the originally required orderings.
 
 
-\subsection{Simple Inference}
+\subsection{Simple Inference of Preconditions and Effects for Compound Tasks}
 For a lifted domain, where a predicate $f$ accepts parameters $p_1, ..., p_n$, 
 $f' = f(o_1, ..., o_n)$, where $o_1, ..., o_n$ are arbitrary objects of the appropriate type. For a grounded model, $f' = f$. The inferred preconditions and effects for a task are then defined as below:
 \begin{align*}
@@ -273,8 +298,8 @@ $f' = f(o_1, ..., o_n)$, where $o_1, ..., o_n$ are arbitrary objects of the appr
 \end{align*}
 
 
-\subsection{Complex Inference}
-The work by \cite{ConnyPreEff}, details a way to infer a subset of the mandatory preconditions and effects.
+\subsection{Complex Inference of Effects for Compound Tasks}
+The work by~\cite{ConnyPreEstimation}, details a way to infer a subset of the mandatory preconditions and effects. 
 
 \emph{Mandatory preconditions} of a compound task $c$ are facts that hold in every state for which there exists an executable refinement. So, they are required in every state in which a refinement of c shall be executed: prec(c) := $\cap_{s \in E(c)}  s$
 if $E(c) \neq \emptyset and prec(c) := undef$ otherwise.
@@ -290,13 +315,13 @@ Possible state-independent effects of a compound task $c$ are not guaranteed to 
 after every refinement of c but after at least one:
 $$ \RelPossEffPlus(c) := \bigcup_{s \in E(c)}  ( \bigcup_{s' \in R_s(c)}  s' \backslash s) $$
 $$ \RelPossEffMinus(c) := \bigcup_{s \in E(c)} ((\bigcup_{s' \in R_s(c)} (F \backslash s') \cap s ))$$
-if $E(c) \neq \emptyset and prec(c) := undef$ otherwise.
+if $E(c) \neq \emptyset$ and $prec(c) := undef$ otherwise.
 
 
 The set of executability-enabling states of c is
-$E(c) = \{s \in 2F  \mid  \exists \text{t.o. refinement of c applicable in s} \}$.
+$E(c) = \{s \in 2F  \mid  \exists$ t.o. refinement of $c$ applicable in $s \}$.
 The set of resulting states of c w.r.t. some state $s \in 2^F$ is
-$R_s(c) = \{s' \in 2^F | \exists t.o. refinement appl. in s res. in s' \}$.
+$R_s(c) = \{s' \in 2^F | \exists$ t.o. refinement appl. in $s$ res. in $s' \}$.
 
 So, the precondition-relaxation of a domain D = $(F, A, C, M)$ is the domain $D' = (F, A', C, M)$
 with $A' = \{(\emptyset, add , del ) \mid (prec, add , del ) \in A\}$.
@@ -305,16 +330,12 @@ relaxed variant of D.
 
 There exists a polynomial-time algorithm for inferring the precondition-relaxed effects, see \cite{ConnyPreEstimation} for details.
 
-We can use these as an alternative input to Algorithm~\ref{alg:Algorithm1}. Since the effects and preconditions are guaranteed, it may find a linearization that leads to a problem whose solution is yet faster to find,
-or has better make-span than the simple inference. Specifically, the mandatory precondition-relaxed effects, $\RelEffPlus$, $\RelEffMinus$.
 
 \subsection{Linearization Using Inferred Preconditions and Effects}
 
-From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1}.
-
 
 \begin{algorithm}
-	\caption{Linearization using inferred set of preconditions and effects}
+	\caption{Linearization using inferred set of preconditions and effects} %\caption{Calculation of linearized methods}
 	\label{alg:Algorithm1}	
 	\KwData{$(F, T_P, T_C, \delta, M)$}
 	\KwResult{$(F, T_P, T_C, \delta, M)$}
@@ -343,8 +364,13 @@ From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (w
 		$M' = M' \cup  \{m'\}$ \\		
 	}
 	\Return $D' = (F, T_P, T_C, \delta, M')$ \\
-	\caption{Calculation of linearized methods}
 \end{algorithm}
+
+
+From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1}.
+	
+% We can use either sets of preconditions and effects (from either possible inference algorithm) as input to the next linearization phase. Since the effects and preconditions are guaranteed, it may find a linearization that leads to a problem whose solution is yet faster to find,
+% or has better make-span than the simple inference. Specifically, the mandatory precondition-relaxed effects, $\RelEffPlus$, $\RelEffMinus$.
 
 
 
@@ -364,11 +390,12 @@ We now discuss the implications of the above-described linearization procedure.
 	The Floyd-warshall algorithm to calculate transitive closure is used for each method's sub-tasks, resulting in a time complexity of $\mathcal{O}(|M| * |T|^3)$, 
 	
 	
-	To calculate $\PreS, \AddS, \DelS$ for each task $t$, we can perform breadth-first search on the task decomposition sub-tree (where tasks are nodes, and edges indicate possible decomposition by methods) rooted at $t$. The size of a sub-tree has an upper limit of $T_C + T_P$ nodes. For each primitive task in the sub-tree, we can iterate over each fact to update $\PreS, \AddS, \DelS$ for the root $t$. Thus calculating  $\PreS, \AddS, \DelS$ for a single compound task has an upper limit of $(3 * |F| * |T_p|) + |T_C|$. This inference occurs for each compound task, so inference for all compound tasks takes $((3 * |F| * |T_P|) + |T_C|) * |T_C|$ time at most, or $\mathcal{O}(|F| * |T|^2)$.
+	To calculate $\PreS, \AddS, \DelS$ for each task $t$. We explore it's compound sub-tasks until we collect all primitive tasks. Then loop over $\PreS, \AddS, \DelS$ for the root $t$, over each fact, over each primitive task in the sub-tree. This provides an upper limit of $(3 * |F| * |T_p|) + T_C$. This inference occurs for each compound task, so $((3 * |F| * |T_P|) + |T_C|) * |T_C|$ time at most, or $\mathcal{O}(|F| * |T|^2)$. % we explore all poss (at most $|T_C|$)
 	
-	Lines~\ref{alg:StartBuildGraph}-\ref{alg:EndBuildGraph} of Algorithm~\ref{alg:Algorithm1} iterates over every method, which iterates over every fact, which iterates over every sub-task in that method, which iterates over every other sub-task in that method. Leading to $(M * F * (t_m)^2)$, where $t_m$ is the average number of sub-tasks per method. So it's at most $\mathcal{O}(|M| * |F| * |T|^2)$, since $t_m$ has an upper bound of $T$, where $T=T_p + T_C$.		
+	Lines~\ref{alg:StartBuildGraph}-\ref{alg:EndBuildGraph} of Algorithm~\ref{alg:Algorithm1} iterates over every method, which iterates over every fact, which iterates over every sub-task in that method, which iterates over every other sub-task in that method. Leading to at most $\mathcal{O}(|M| * |F| * |T|^2)$, since number of sub-tasks per method is upper bounded by $T$.
 	
-	Line~\ref{alg:TopSort} can be done via topological sort of the graph (which is known to be in $\mathcal{O}(V+E)$ in time and $\mathcal{O}(V)$ in space). In this case, the nodes of the graph are tasks, and the edges are orderings. So that's $M * (t_m+e_m)$, where $e_m$ is the number of \enquote{edges} in the new method, and has an upper bound of $e_m$ to find a topological sort for the sub-tasks of every method. That's approximately $\mathcal{O}(|M| * |T|)$, since both $t_m$ and $t_e$ are upper bounded by $T$, such that $T=T_p + T_C$.
+	Line~\ref{alg:TopSort} can be done via topological sort of a graph where sub-tasks are nodes, and orderings are edges, which is known to be in $\mathcal{O}(V+E)$ in time. % and $\mathcal{O}(V)$ in space.  
+	The number of sub-tasks and edges are upper bounded by $T$, so approximately $\mathcal{O}(|M| * |T|)$.
 	
 	So in total the main algorithm takes: \newline
 	$(|M| * |T|^3)$ +          % Floyd-Warshall
@@ -388,6 +415,7 @@ We now discuss the implications of the above-described linearization procedure.
 \end{proof}
 
 
+
 \begin{theorem}\label{thm:notCompleteness}
 	Given a POHTN planning problem $P$ and TOHTN problem
 	$P'$ obtained from $P$ by using Algorithm~\ref{alg:Algorithm1}
@@ -396,87 +424,6 @@ We now discuss the implications of the above-described linearization procedure.
 \begin{proof}
 	This algorithm linearizes all the methods to be totally ordered. Since sub-tasks inherit the orderings of their parents, it's impossible to preserve a solution that requires the interleaving of sub-tasks if their respective parents that are already ordered with respect to each other. This proves that the algorithm can remove some possible action sequences, assuming the original domain was not already totally ordered. Consider the simple example problem:
 	
-	
-	\begin{figure}
-		\caption{Diagram showing an example problem and its decomposition.}		
-		\begin{subfigure}{3.5cm}
-			\begin{align*}
-			F   = & \{a, b, c \}           \\
-			N_p = & \{A, B, C\}      \\
-			N_c = & \{AC, T_I\}            \\ 
-			M   = & \{  (T_I, \{AC, B\}), \\
-			&    (AC, \{A, C\})  \} \\
-			S_I = & \{ a \} 	             \\ 
-			\end{align*} 
-		\end{subfigure}		
-		\scalebox{0.7}{
-			\begin{subfigure}{7cm}
-				\begin{tikzpicture}[auto,node distance=1.5cm,
-				thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
-				square node/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
-				\node[] (InitState) {}; %{ $\mathbf{S_I = \{a\}}$ };
-				
-				\node[main node] (Init) [right=3cm of InitState] {$T_I$};
-				\node[main node] (AC) [right=2cm of Init, below of=Init] {$AC$}; 
-				
-				\node[main node] (A) [below left = 2em and 2em of AC] {$A$};
-				\node[main node] (B) [below left = 2em and 2em of Init] {$B$}; 
-				\node[main node] (C) [below right = 2em and 2em of AC] {$C$}; 
-				
-				%		\action{A}{PrimitiveA,
-				%			width  = 2.5em, 
-				%			height = 2.5em, 
-				%			pre length = 2em,
-				%			eff length = 2em,
-				%			body = {below left = 2em and 2em of AC} 
-				%		};			
-				
-				%		\action{B}{PrimitiveB,
-				%			width  = 2.5em, 
-				%			height = 2.5em, 
-				%			pre length = 2em,
-				%			eff length = 2em,
-				%			body = {below left = 2em and 2em of Init} 
-				%		};
-				
-				%		\action{C}{PrimitiveC,
-				%			width  = 2.5em, 
-				%			height = 2.5em, 
-				%			pre length = 2em,
-				%			eff length = 2em,
-				%			body = {below right = 2em and 2em of AC} 
-				%		};
-				
-				\path[every node/.style={font=\sffamily\small}]
-				(Init) edge [->] node [left] {} (B)
-				(Init) edge [->] node [left] {} (AC)
-				(AC) edge [->] node [left] {} (A)
-				(AC) edge [->] node [left] {} (C);
-				\end{tikzpicture}
-			\end{subfigure}	
-		}
-	\end{figure}
-	
-	\begin{figure}
-		\caption{The only possible solution $A, B, C$ for E.g.\ 1, requires the children of $AC$ and $B$ to be interleaved, meaning we cannot impose an order between them}
-		\scalebox{0.9}{
-			\begin{tikzpicture}[auto,node distance=3cm,
-			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
-			square node/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
-			
-			\node[] (Invis) [] {$S_I$};
-			\node[square node] (A) [right of=Invis] {$A$};
-			\node[square node] (B) [right of=A] {$B$};
-			\node[square node] (C) [right of=B] {$C$};
-			
-			
-			\path[every node/.style={font=\sffamily\small}]
-			(Invis) edge [->] node [left, label=a] {} (A)
-			(A) edge [->] node [left, label=b] {} (B)
-			(B) edge [->] node [left, label=c] {} (C);
-			\end{tikzpicture}		
-		}
-	\end{figure}
 	
 	The only decomposition for this problem results in the set of un-ordered actions $\{A, B, C\}$.
 	If we consider that for the $3!$ linearizations of this set, the only executable one is $A, B, C$. This is impossible to achieve by linearized methods, since ordering either AB before C or C before AB will exclude the solution. 
@@ -542,13 +489,21 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 
 \subsection{Performance of Simple Linearization}
 
+
+
 \begin{table}[h]
-	\scalebox{0.45} {
+	\scalebox{0.64} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
-			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{HTN2SAS} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
+			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
+			\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
+			\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
+			& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}}  
+			& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
+			& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
+			& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
 			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
-			& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  }   \\ 
+			& &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
 			\midrule 
 			Barman-BDI  \\ 
 			Monroe Fully Observ. \\ 
@@ -573,12 +528,18 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 
 
 \begin{table}[h]
-	\scalebox{0.45} {
+	\scalebox{0.64} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
-			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{HTN2SAS} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
+			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
+			\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
+			\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
+			& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}} 
+			& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
+			& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
+			& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
 			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
-			& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  }   \\ 
+			& &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
 			\midrule 
 			Barman-BDI  \\ 
 			Monroe Fully Observ. \\ 
@@ -604,12 +565,18 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 \subsection{Performance of Complex Linearization}
 
 \begin{table}[h]
-	\scalebox{0.45} {
+	\scalebox{0.64} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
-			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{HTN2SAS} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
+			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
+			\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
+			\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
+			& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}}  
+			& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
+			& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
+			& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
 			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
-			& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  }    \\ 
+			& &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
 			\midrule 
 			Barman-BDI  \\ 
 			Monroe Fully Observ. \\ 
@@ -633,12 +600,18 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 \end{table}
 
 \begin{table}[h]
-	\scalebox{0.45} {
+	\scalebox{0.64} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
-			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{HTN2SAS} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
+			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
+			\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
+			\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
+			& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}}  
+			& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
+& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
+& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
 			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
-			& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  }  \\ 
+			& &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
 			\midrule 
 			Barman-BDI  \\ 
 			Monroe Fully Observ. \\ 
@@ -664,54 +637,36 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 As we can see, using complex inference results in ?  increase/decrease/similar, coverage and IPC score.
 The planner that has achieved the highest overall coverage and IPC score is ? planner.
 
-\newpage
-\section{Related Work}
-% FROM (https://ojs.aaai.org/index.php/ICAPS/article/view/15944/15755) A Closer Look at Causal Links: Complexity Resultsfor Delete-Relaxation in Partial Order Causal Link (POCL) Planning
-Our linearization procedure is a pre-processing technique for the search space, is a compilation of an HTN planning problem class to a different class of problems, and can exploit specialised TO planners.
 
-The panda$_\pi$ grounder by \cite{Behnke2020Grounding} also prunes unreachable tasks, methods, etc.\.  Because the panda$_{\pi}$ planner is a grounded planner, we can ground then linearize, or vice-versa to \enquote{stack} the reduction in search space. 
-
-The main optimization of HyperTensioN by \cite{hypertension} is via the Pullup extension - which determines additional preconditions of methods and compound tasks by analysing the preconditions of possible child actions. Unlike ours, no approximation of effects are considered.  
-
-The HTN2STRIPS planner by \cite{HTN2STRIPS} and HTN2SAS planner by \cite{HTN2SAS} compiles HTN problems, both totally and partially ordered, to classical problems. The TOAD planner by \cite{HollerTOAD} compiles TOHTN problems into classical planning problems in order to allow the use of classical planning systems. The panda$_\pi$ engine progression search configuration, also uses a compilation to classical problems.
- % TOAD over-approximates the set of solutions to the HTN problem. In the empirical evaluation the paper performed, TOAD achieved higher coverage than the base version of HTN2STRIPS, and all systems submitted to the totally ordered track of the 2020 IPC.  
-
-There exists totSAT planner by \cite{TOtoSAT} that compiles a totally ordered problem to SAT problem. There also exists 2 planners by \cite{POtoSAT, OptimalPOtoSAT} that compiles a partially ordered problem to a SAT problem. One searches for optimal plans, the other focuses on finding any solution as quickly as possible. Lilotane by \cite{Lilotane} directly encodes a lifted problem representation into a SAT problem.
-
-Another planner by \cite{Behnke_Speck_2021} converts TOHTN into Binary Decision Diagrams (BDDs), then use symbolic search on it.
-
-The BDD planner by \cite{Behnke_Speck_2021}, totSAT planner by \cite{TOtoSAT}, TOAD by \cite{HollerTOAD}, HyperTensioN by \cite{hypertension}, and Lilotane by \cite{Lilotane}, as discussed before, are all specialised TO planners. So are the TFD (Totally Ordered Fast Downward) and PFD (Partially Ordered Fast Downward) hierarchical planners by \cite{PDDL4J}.  Note however that HTN2SAS achieved similar coverage than greedy search with panda$_\pi$, a partial-order planner.
-
-
-\section{Summary}
-
-The contributions of this paper are as follows:
-
-At least for the POHTN problems in the IPC domain, most of them are not undecideable.
-In another way, it is as if the POHTN domains are compressed TO domains - this linearization
-separates one back out.
-
-For another, this pre-processing technique leads to large gains in time/efficiency for a number of planners, at least for the problems tested here. Furthermore, there is demonstrably much more room for improvement. Though the criteria does not fire all the time, it's producing a linearization that is almost always solvable.
-
-We have a method that can increase the number of TOHTN problems available for purposes like comparing TOHTN planners or grounding techniques. Suppose there were $n$ POHTN problms and $m$ TOHTN problems, and this linearization could make those $n$ POHTN problems into $k$ solvable $TOHTN$ problems. Then $k+m$ (lifted or grounded) TOHTN problems exist now. And from empirical evaluation, $k$ may be close to $n$.
-
-We can identify a subset of decidable problems within POHTN problems, and this subset is orthogonal to all other criteria.
 
 
 \section{Future Work}
-
-
-\subsubsection{Encode Linearization Problem as a MAX-SAT Problem} 
+%Encode Linearization Problem as a MAX-SAT Problem
 The maximum satisfiability problem (MAX-SAT) is the problem of determining the maximum number of clauses, of a given Boolean formula in conjunctive normal form, that can be made true by an assignment of truth values to the variables of the formula. MAX-SAT is used over SAT as it may not be possible to satisfy all orderings implied by the inferred preconditions and effects.
 
 The current linearization procedure considers each method in isolation, and sub-tasks have their inferred $\PreS, \AddS, \DelS$. Thus we can treat each sub-task as a \enquote{action}, and encode the method the same way as a classical plan, similar to the one described by \cite{RINTANEN201245}, but with the additional constraint that \enquote{actions} chosen from the method sub-tasks can only be selected once, unlike in the domain. Assuming no negative preconditons, the initial state has all state variables true, and goal state can be assumed to be empty (i.e.\ all state variables can have any assignment). The relative success (or failure) of this approach could also lend insight into what about the criteria causes the linearization to be successful.
 
 
-\subsubsection{Adding a Plan as Additional Input to the Domain}
+%Adding a Plan as Additional Input to the Domain
 Adding a plan as additional input to the PO domain having the
 semantics that this plan shall be in the solution set of the TO output
 model. This reduces the computational complexity of the decision problem from undecidable to something decidable. The specific complexity class of this will have to be proven in further work.  % I assume the resulting problem is PSPACE-complete, but this needs to be proven
 
+
+
+
+
+\section{Conclusion}
+
+% The contributions of this paper are as follows:
+
+This paper finds that, at least for the POHTN problems in the IPC domain, most of them are not undecidable. In other words, it is as if the POHTN domains are compressed TO domains - this linearization separates one of them back out.
+
+We can also see this pre-processing technique leads to large gains in time/efficiency for a number of planners, at least for the problems tested here. Furthermore, there is demonstrably much more room for improvement. Though the criteria does not fire all the time, it's producing a linearization that is almost always solvable.
+
+This method can also be used to increase the number of TOHTN problems available for purposes like comparing TOHTN planners or grounding techniques. Suppose there were $n$ POHTN problms and $m$ TOHTN problems, and this linearization could make those $n$ POHTN problems into $k$ solvable $TOHTN$ problems. Then $k+m$ (lifted or grounded) TOHTN problems exist now. And from empirical evaluation, $k$ may be close to $n$.
+
+Finally, in this paper we identify a subset of decidable problems within POHTN problems, and this subset is orthogonal to all others discussed in other works.
 
 
 
