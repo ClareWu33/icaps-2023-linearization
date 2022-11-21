@@ -278,8 +278,11 @@ tn can be reached via decomposing $tn_I$, all tasks are primitive, ($\forall t \
 In terms of complexity classes, \cite{ErolHTNExpressivity} proved that POHTN planning is semi-decidable, whereas \cite{Alford2015TightHTNBounds} proved that, assuming arbitrary recursion, TOHTN planning is 2-EXPTIME-complete with variables, and EXPTIME-complete without. 
 
 
-\section{Linearization Procedure}
+\section{Inference of Preconditions and Effects}
 The basic linearization process consists of inferring preconditions and effects for compound tasks, inferring additional orderings to the sub-tasks based on the preconditions and effects (inferred or \enquote{real} in the case of primitive tasks) of method sub-tasks, and adding them only if they do not conflict with the originally required orderings.
+ 
+ 
+
 
 
 \subsection{Simple Inference of Preconditions and Effects for Compound Tasks}
@@ -330,10 +333,21 @@ relaxed variant of D.
 
 There exists a polynomial-time algorithm for inferring the precondition-relaxed effects, see \cite{ConnyPreEstimation} for details.
 
+\subsection{Inference of Preconditions and Effects for Lifted Domain}
+In a lifted format, tasks and methods accept parameters, referring to any object of a specific type. Thus actions within a method have effects and preconditions that are symmetrical in terms of interactions within the method. 
 
-\subsection{Linearization Using Inferred Preconditions and Effects}
+E.g.\ the task \textit{navigate(waypoint1, waypoint2)} will end up with some set of actions  $\bar{a}$ once decomposed. If you replace the passed parameters \textit{waypoint1} with \textit{waypoint3} and \textit{waypoint2} with \textit{waypoint4}, then \textit{navigate(waypoint3, waypoint4)} will have the same set of actions $\bar{a}$. This is true for all possible tasks by simple induction over the decomposition process.
+
+Thus for each method, we can \enquote{ground} it in the standard way, but using an arbitrary object instead of all objects that exist in the domain.
+
+Specifically, let $\sigma$ be the set of parameters for the method. Then for each parameter of the method, the set of typed objects $\omega$ has one object of the corresponding type, and $|\omega| = |\sigma|$. Then $\sigma(a, \omega)$, the groundings of a transition schema $a$ over $\omega$, corresponds to the ground method obtained by substituting $\sigma$ with the corresponding object of correct type taken from $\omega$.
+
+Where a task accepts two parameters of the same type under different names, it is assumed those are different objects. For example, for \textit{Navigate(pt0, pt1, rover)}, \textit{pt0} and \textit{pt1} are assumed as different objects. % This is illustrated in Figure~\ref{CompoundPreEffForLifted}.
+
+This allows actions to have some ground \enquote{predicate} \textit{at\_waypoint1}, rather than $at(?waypoint)$. The resulting \enquote{predicates} can be used to order the sub-tasks, while groundings for methods are discarded. For variant 1, only one linearized lifted method per partially-ordered lifted method is produced.
 
 
+\section{Linearization Using Inferred Preconditions and Effects}
 \begin{algorithm}
 	\caption{Linearization using inferred set of preconditions and effects} %\caption{Calculation of linearized methods}
 	\label{alg:Algorithm1}	
@@ -491,8 +505,8 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 
 
 
-\begin{table}[h]
-	\scalebox{0.64} {
+\begin{table*}[h]
+	\scalebox{1} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
 			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
@@ -524,11 +538,11 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 			\bottomrule
 		\end{tabular} 	
 	}
-\end{table}
+\end{table*}
 
 
-\begin{table}[h]
-	\scalebox{0.64} {
+\begin{table*}[h]
+	\scalebox{1} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
 			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
@@ -559,13 +573,13 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 			\bottomrule
 		\end{tabular} 	
 	}
-\end{table}
+\end{table*}
 
 
 \subsection{Performance of Complex Linearization}
 
-\begin{table}[h]
-	\scalebox{0.64} {
+\begin{table*}[h]
+	\scalebox{1} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
 			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
@@ -597,19 +611,19 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 			\bottomrule
 		\end{tabular} 	
 	}
-\end{table}
+\end{table*}
 
-\begin{table}[h]
-	\scalebox{0.64} {
+\begin{table*}[h]
+	\scalebox{1} {
 		\begin{tabular}{lccccccccccccccccccccccccl} 
 			\toprule 
-			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
-			\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
-			\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
-			& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}}  
-			& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
-& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
-& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
+			&& \multicolumn{2}{c}{  \rotatebox{80}{rc2(Add)}} & 
+			\multicolumn{2}{c}{   \rotatebox{80}{rc2(Filter)}} & 
+			\multicolumn{2}{c}{  \rotatebox{80}{rc2(FF)}}
+			& \multicolumn{2}{c}{   \rotatebox{80}{rc2(LMC)}}  
+			& \multicolumn{2}{c}{  \rotatebox{80}{HTN2SAS}}
+& \multicolumn{2}{c}{  \rotatebox{80}{HyperTensioN}}
+& \multicolumn{2}{c}{  \rotatebox{80}{Lilotane}} \\ 
 			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
 			& &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
 			\midrule 
@@ -631,7 +645,7 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 			\bottomrule
 		\end{tabular} 	
 	}
-\end{table}
+\end{table*}
 
 
 As we can see, using complex inference results in ?  increase/decrease/similar, coverage and IPC score.
