@@ -183,12 +183,27 @@
 
 \maketitle
 
-\begin{abstract}
-Solving partially ordered hierarchical planning problems (POHTN) is more computationally expensive than solving TOHTN ones. Therefore, automatically transforming partially ordered problem domains into totally ordered ones, such that the totally ordered problem still retains at least one solution, would be a desired capability as the reduction in complexity could make it easier for planning systems to solve the problem. It also allows the planner to use algorithms and heuristics specialised for the totally ordered case to solve the transformed problem. 
-
-This is a complex endeavour, and not even possible in some cases, because even creating \emph{all} possible linearizations of all methods in the original domain does not guarantee that solutions are preserved. 
-
-In this paper, we propose an algorithm for converting partially ordered problems into totally ordered ones and give criterion for when this conversion will retain at least one solution. We find that in the majority of problems across a variety of domains, the linearized problems remain solvable, and can always be solved faster than the without our proposed pre-processing technique. 
+\begin{abstract} 
+HTN planning is in general undecidable, yet there exist efficient
+planning algorithms. An important subclass is that of totally ordered
+HTN planning problems. Not only is this class decidable, but also easier
+to handle algorithmically since tasks cannot interleave anymore.
+Consequently, several specialized solvers exist, and dedicated tracks at
+the International Planning Competition (IPC) in both 2020 and 2023. We
+were able to show that almost all currently existing partially ordered
+planning benchmarks can be turned into totally ordered ones without
+sacrificing solvability. Establishing totally ordered problems in a
+preprocessing technique thus allows to use planning systems, heuristics,
+pruning techniques (etc.) that are only available for totally ordered
+problems. This allows solving problems more efficiently and with
+better-informed techniques, at the (little) cost of doing a
+preprocessing technique. We show that in only a very few cases
+linearization isn't possible, and in all others establishing a total
+order pays off \emph{significantly}, thus establishing our technique as
+a significant ingredient in the state of the art for solving partially
+ordered HTN problems. As a side contribution, we identify a new class of
+decidable (EXPTIME-complete) HTN problems, namely those where our
+preprocessing technique is guaranteed to be solvability-preserving.
 \end{abstract}
  
  
@@ -207,12 +222,8 @@ In totally ordered HTN planning, or TOHTN planning, methods specify a total orde
 Many problems might be naturally more suited to being modelled as POHTN problems. However, for \emph{solving} the problem, it is desirable to have additional constraints that reduces the search space, while still preserving at least some of the actual solutions. For example, \cite{ErolHTNExpressivity} proved that POHTN planning is expressive enough to model undecidable problems, such as the language intersection problem of two context-free languages. On the other hand, TOHTN planning is not expressive enough to model undecideable problems. Where this is possible, it results in lower worst-case solving time. Converting the problem to a TOHTN problem allows us to exploit that fact to solve the problem more quickly.
 
 Another benefit of transforming a POHTN problem to a TOHTN problem is that the additional structure to the problem could allow us to deploy specialised algorithms and heuristics for the totally ordered case. % Also, heuristic design is comparably easy for total-order problems due to the missing interaction between tasks.
-
 The drawback to this approach is that, due to the greater expressivity of POHTN planning, there may exist POHTN problems that cannot be solved when converted to a TOHTN problem. 
-
 Fortunately, not every POHTN problem is guaranteed to be undecidable, and so could still be transformed while preserving at least one solution. In fact, the state-of-the-art panda$_\pi$ planner and \cite{HTN2SAS} both use a compilation to classical planning, another decidable planning class.
- 
-
 In this paper we present and investigate an algorithm for converting POHTN problems to TOHTN problems. We prove that when certain criteria are met, it guarantees that at least one solution will be preserved. 
 Also, we obtain a new class of decidable problems, namely those that satisfy the above mentioned criterion. Finally, we show that, even when these criteria are not met, very few problems are rendered unsolvable by the transformation, and that it greatly reduces solving time for problems, with gains being bigger for more difficult problems. 
 
@@ -437,12 +448,9 @@ We now discuss the implications of the above-described linearization procedure.
 \end{theorem}
 \begin{proof}
 	This algorithm linearizes all the methods to be totally ordered. Since sub-tasks inherit the orderings of their parents, it's impossible to preserve a solution that requires the interleaving of sub-tasks if their respective parents that are already ordered with respect to each other. This proves that the algorithm can remove some possible action sequences, assuming the original domain was not already totally ordered. Consider the simple example problem:
-	
-	
 	The only decomposition for this problem results in the set of un-ordered actions $\{A, B, C\}$.
 	If we consider that for the $3!$ linearizations of this set, the only executable one is $A, B, C$. This is impossible to achieve by linearized methods, since ordering either AB before C or C before AB will exclude the solution. 
 	Even if we were to produce $k!$ methods for each partially ordered method with $k$ unordered sub-tasks, we would not be able to preserve any solution for this problem.
-	
 	This proves that the algorithm can remove all solutions, so Algorithm~\ref{alg:Algorithm1} is not complete. Note that incompleteness already follows from complexity theory as it's theoretically impossible to turn an arbitrary undecidable problem into a decidable one.
 	Specifically, solutions that require interleaving of sub-tasks will not be preserved, as the example above demonstrates.
 \end{proof}
@@ -506,72 +514,75 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 
 
 \begin{table*}[h]
+	\centering
+	\subcaption{Coverage achieved, using Simple Inference}
 	\scalebox{1} {
-		\begin{tabular}{lccccccccccccccccccccccccl} 
-			\toprule 
-			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
-			\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
-			\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
-			& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}}  
-			& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
-			& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
-			& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
-			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
-			& &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
-			\midrule 
-			Barman-BDI  \\ 
-			Monroe Fully Observ. \\ 
-			Monroe Part. Observ. \\ 
-			PCP\\ 
-			Rover  \\ 
-			Satellite  \\ 
-			Transport \\ 
-			UM-Translog \\ 
-			Woodworking \\ 
-			\midrule 
-			Monroe  \\ 
-			SmartPhone \\ 
-			Zenotravel \\ 
-			\midrule 
-			Coverage \\ 
-			Norm. coverage  \\ 
-			\bottomrule
-		\end{tabular} 	
+\begin{tabular}{lccccl} 
+	\toprule 
+	&& \multicolumn{2}{c}{rc2(Add)} \\
+	\cmidrule(lr){3-4}  
+	& max &PO & TO \\ 
+	\midrule 
+	Barman-BDI & 20 & 3.0 &\multicolumn{2}{c}{ \textbf{10.0}  } \\ 
+	Monroe Fully Observ.$^{2}$ & 25 & \textbf{25.0} &\multicolumn{2}{c}{ \textbf{25.0}  } \\ 
+	Monroe Part. Observ.$^{2}$ & 24 & \textbf{14.0} &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
+	PCP$^{11}$ & 17 & \textbf{14.0} &\multicolumn{2}{c}{ 8.0  } \\ 
+	Rover & 20 & 10.0 &\multicolumn{2}{c}{ \textbf{13.0}  } \\ 
+	Satellite & 25 & 24.0 &\multicolumn{2}{c}{ \textbf{25.0}  } \\ 
+	Transport & 40 & 12.0 &\multicolumn{2}{c}{ \textbf{23.0}  } \\ 
+	UM-Translog & 22 & \textbf{22.0} &\multicolumn{2}{c}{ 0.0  } \\ 
+	Woodworking$^{1}$ & 30 & 13.0 &\multicolumn{2}{c}{ \textbf{15.0}  } \\ 
+	\midrule 
+	Monroe & 100 & \textbf{100.0} &\multicolumn{2}{c}{ \textbf{100.0}  } \\ 
+	SmartPhone & 7 & \textbf{5.0} &\multicolumn{2}{c}{ 2.0  } \\ 
+	Zenotravel$^{1}$ & 5 & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
+	\midrule 
+	Coverage & 335 & \textbf{247.0} &\multicolumn{2}{c}{ 240.0  } \\ 
+	Norm. coverage & 12 & \textbf{8.46} &\multicolumn{2}{c}{ 7.56  } \\  
+	\bottomrule 
+\end{tabular} 
+	
 	}
 \end{table*}
 
+		%	&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
+%		\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
+%		\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
+%		& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}}  
+%		& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
+%		& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
+%		& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
+
+
 
 \begin{table*}[h]
+	\centering
+	\caption{IPOC score achieved, using Simple Inference}
 	\scalebox{1} {
-		\begin{tabular}{lccccccccccccccccccccccccl} 
-			\toprule 
-			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
-			\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
-			\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
-			& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}} 
-			& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
-			& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
-			& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
-			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
-			& &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
-			\midrule 
-			Barman-BDI  \\ 
-			Monroe Fully Observ. \\ 
-			Monroe Part. Observ. \\ 
-			PCP\\ 
-			Rover  \\ 
-			Satellite  \\ 
-			Transport \\ 
-			UM-Translog \\ 
-			Woodworking \\ 
-			\midrule 
-			Monroe  \\ 
-			SmartPhone \\ 
-			Zenotravel \\ 
-			\midrule 
-			IPC \\
-			\bottomrule
-		\end{tabular} 	
+\begin{tabular}{lccccl} 
+	\toprule 
+	&& \multicolumn{2}{c}{rc2(Add)} \\
+	\cmidrule(lr){3-4}  
+	& max &PO &  TO   \\ 
+	\midrule 
+	Barman-BDI & 1 & 0.08 &\multicolumn{2}{c}{ \textbf{0.39}  } \\ 
+	Monroe Fully Observ.$^{2}$ & 1 & \textbf{0.57} &\multicolumn{2}{c}{ 0.45  } \\ 
+	Monroe Part. Observ.$^{2}$ & 1 & \textbf{0.31} &\multicolumn{2}{c}{ 0.25  } \\ 
+	PCP$^{11}$ & 1 & \textbf{0.82} &\multicolumn{2}{c}{ 0.47  } \\ 
+	Rover & 1 & 0.41 &\multicolumn{2}{c}{ \textbf{0.58}  } \\ 
+	Satellite & 1 & 0.91 &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
+	Transport & 1 & 0.24 &\multicolumn{2}{c}{ \textbf{0.47}  } \\ 
+	UM-Translog & 1 & \textbf{1.0} &\multicolumn{2}{c}{ 0.0  } \\ 
+	Woodworking$^{1}$ & 1 & 0.38 &\multicolumn{2}{c}{ \textbf{0.42}  } \\ 
+	\midrule 
+	Monroe & 1 & \textbf{0.83} &\multicolumn{2}{c}{ 0.69  } \\ 
+	SmartPhone & 1 & \textbf{0.71} &\multicolumn{2}{c}{ 0.29  } \\ 
+	Zenotravel$^{1}$ & 1 & \textbf{1.0} &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
+	\midrule 
+	IPC score & 12 & \textbf{7.3} &\multicolumn{2}{c}{ 6.0  } \\ 
+	\bottomrule 
+\end{tabular} 
+
 	}
 \end{table*}
 
@@ -579,71 +590,63 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 \subsection{Performance of Complex Linearization}
 
 \begin{table*}[h]
-	\scalebox{1} {
-		\begin{tabular}{lccccccccccccccccccccccccl} 
-			\toprule 
-			&& \multicolumn{2}{c}{  \rotatebox{90}{rc2(Add)}} & 
-			\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
-			\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
-			& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}}  
-			& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
-			& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
-			& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
-			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
-			& &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
-			\midrule 
-			Barman-BDI  \\ 
-			Monroe Fully Observ. \\ 
-			Monroe Part. Observ. \\ 
-			PCP\\ 
-			Rover  \\ 
-			Satellite  \\ 
-			Transport \\ 
-			UM-Translog \\ 
-			Woodworking \\ 
-			\midrule 
-			Monroe  \\ 
-			SmartPhone \\ 
-			Zenotravel \\ 
-			\midrule 
-			Coverage \\ 
-			Norm. coverage  \\ 
-			\bottomrule
-		\end{tabular} 	
+	\centering
+	\caption{Coverage achieved, using Complex Inference}
+	\scalebox{0.8} {
+\begin{tabular}{lccccccccccccccccl} 
+	\toprule 
+	&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} \\ 
+	\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}  
+	& max &PO & TO & PO & TO & PO & TO & PO &  TO \\ 
+	\midrule 
+	Barman-BDI & 20 & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 2.0 &\multicolumn{2}{c}{ \textbf{8.0}  } \\ 
+	Monroe Fully Observ. & 25 & \textbf{25.0} & \textbf{25.0} & \textbf{18.0} & \textbf{18.0} & \textbf{22.0} & \textbf{22.0} & \textbf{15.0} &\multicolumn{2}{c}{ \textbf{15.0}  } \\ 
+	Monroe Part. Observ. & 24 & \textbf{14.0} & \textbf{14.0} & \textbf{7.0} & \textbf{7.0} & \textbf{14.0} & \textbf{14.0} & \textbf{10.0} &\multicolumn{2}{c}{ \textbf{10.0}  } \\ 
+	PCP$^{11}$ & 17 & \textbf{14.0} & 8.0 & \textbf{14.0} & 8.0 & \textbf{15.0} & 9.0 & \textbf{15.0} &\multicolumn{2}{c}{ 9.0  } \\ 
+	Rover & 20 & 10.0 & \textbf{18.0} & 4.0 & \textbf{15.0} & 4.0 & \textbf{17.0} & 4.0 &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
+	Satellite & 25 & 24.0 & \textbf{25.0} & 22.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & 24.0 &\multicolumn{2}{c}{ \textbf{25.0}  } \\ 
+	Transport & 40 & 12.0 & \textbf{28.0} & \textbf{2.0} & \textbf{2.0} & 13.0 & \textbf{14.0} & 7.0 &\multicolumn{2}{c}{ \textbf{11.0}  } \\ 
+	UM-Translog & 22 & \textbf{22.0} & 0.0 & \textbf{22.0} & 0.0 & \textbf{22.0} & 0.0 & \textbf{22.0} &\multicolumn{2}{c}{ 0.0  } \\ 
+	Woodworking$^{1}$ & 30 & 13.0 & \textbf{19.0} & 7.0 & \textbf{14.0} & 12.0 & \textbf{18.0} & 9.0 &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
+	\midrule 
+	Monroe & 100 & \textbf{100.0} & \textbf{100.0} & 79.0 & \textbf{88.0} & 92.0 & \textbf{100.0} & 81.0 &\multicolumn{2}{c}{ \textbf{90.0}  } \\ 
+	SmartPhone & 7 & \textbf{5.0} & 4.0 & \textbf{5.0} & 2.0 & \textbf{5.0} & 3.0 & \textbf{5.0} &\multicolumn{2}{c}{ 3.0  } \\ 
+	Zenotravel$^{2}$ & 5 & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
+	\midrule 
+	Coverage & 335 & 247.0 & \textbf{256.0} & 188.0 & \textbf{194.0} & 232.0 & \textbf{237.0} & 199.0 &\multicolumn{2}{c}{ \textbf{204.0}  } \\ 
+	Norm. coverage & 12 & \textbf{8.46} & 8.36 & \textbf{6.85} & 6.41 & \textbf{8.01} & 7.69 & \textbf{7.11} &\multicolumn{2}{c}{ 6.69  } \\  
+	\bottomrule 
+\end{tabular}  
 	}
 \end{table*}
 
 \begin{table*}[h]
-	\scalebox{1} {
-		\begin{tabular}{lccccccccccccccccccccccccl} 
-			\toprule 
-			&& \multicolumn{2}{c}{  \rotatebox{80}{rc2(Add)}} & 
-			\multicolumn{2}{c}{   \rotatebox{80}{rc2(Filter)}} & 
-			\multicolumn{2}{c}{  \rotatebox{80}{rc2(FF)}}
-			& \multicolumn{2}{c}{   \rotatebox{80}{rc2(LMC)}}  
-			& \multicolumn{2}{c}{  \rotatebox{80}{HTN2SAS}}
-& \multicolumn{2}{c}{  \rotatebox{80}{HyperTensioN}}
-& \multicolumn{2}{c}{  \rotatebox{80}{Lilotane}} \\ 
-			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  \cmidrule(lr){13-14} \cmidrule(lr){15-16}    
-			& &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
-			\midrule 
-			Barman-BDI  \\ 
-			Monroe Fully Observ. \\ 
-			Monroe Part. Observ. \\ 
-			PCP\\ 
-			Rover  \\ 
-			Satellite  \\ 
-			Transport \\ 
-			UM-Translog \\ 
-			Woodworking \\ 
-			\midrule 
-			Monroe  \\ 
-			SmartPhone \\ 
-			Zenotravel \\ 
-			\midrule 
-			IPC \\
-			\bottomrule
-		\end{tabular} 	
+	\centering
+	\caption{IPC score achieved, using Complex Inference}
+	\scalebox{0.9} {
+\begin{tabular}{lccccccccccccccccl} 
+	\toprule 
+	&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} \\ 
+	\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}  
+	& max &PO & TO & PO & TO & PO & TO & PO &  TO   \\ 
+	\midrule 
+	Barman-BDI & 1 & 0.08 & \textbf{0.38} & 0.07 & \textbf{0.34} & 0.07 & \textbf{0.36} & 0.05 &\multicolumn{2}{c}{ \textbf{0.22}  } \\ 
+	Monroe Fully Observ. & 1 & \textbf{0.57} & 0.2 & \textbf{0.32} & 0.12 & \textbf{0.47} & 0.16 & \textbf{0.22} &\multicolumn{2}{c}{ 0.08  } \\ 
+	Monroe Part. Observ. & 1 & \textbf{0.31} & 0.11 & \textbf{0.14} & 0.05 & \textbf{0.31} & 0.11 & \textbf{0.17} &\multicolumn{2}{c}{ 0.06  } \\ 
+	PCP$^{11}$ & 1 & \textbf{0.82} & 0.47 & \textbf{0.82} & 0.47 & \textbf{0.83} & 0.5 & \textbf{0.83} &\multicolumn{2}{c}{ 0.5  } \\ 
+	Rover & 1 & 0.41 & \textbf{0.84} & 0.14 & \textbf{0.58} & 0.2 & \textbf{0.69} & 0.17 &\multicolumn{2}{c}{ \textbf{0.47}  } \\ 
+	Satellite & 1 & 0.91 & \textbf{1.0} & 0.76 & \textbf{1.0} & 0.99 & \textbf{1.0} & 0.89 &\multicolumn{2}{c}{ \textbf{0.99}  } \\ 
+	Transport & 1 & 0.24 & \textbf{0.64} & 0.04 & \textbf{0.05} & 0.27 & \textbf{0.31} & 0.12 &\multicolumn{2}{c}{ \textbf{0.19}  } \\ 
+	UM-Translog & 1 & \textbf{1.0} & 0.0 & \textbf{1.0} & 0.0 & \textbf{1.0} & 0.0 & \textbf{1.0} &\multicolumn{2}{c}{ 0.0  } \\ 
+	Woodworking$^{1}$ & 1 & 0.38 & \textbf{0.53} & 0.2 & \textbf{0.38} & 0.35 & \textbf{0.51} & 0.27 &\multicolumn{2}{c}{ \textbf{0.35}  } \\ 
+	\midrule 
+	Monroe & 1 & \textbf{0.83} & 0.48 & \textbf{0.5} & 0.38 & \textbf{0.76} & 0.48 & \textbf{0.54} &\multicolumn{2}{c}{ 0.41  } \\ 
+	SmartPhone & 1 & \textbf{0.71} & 0.57 & \textbf{0.69} & 0.26 & \textbf{0.71} & 0.4 & \textbf{0.71} &\multicolumn{2}{c}{ 0.38  } \\ 
+	Zenotravel$^{2}$ & 1 & \textbf{1.0} & \textbf{1.0} & 0.63 & \textbf{0.88} & \textbf{1.0} & \textbf{1.0} & 0.83 &\multicolumn{2}{c}{ \textbf{0.96}  } \\ 
+	\midrule 
+	IPC score & 12 & \textbf{7.3} & 6.2 & \textbf{5.3} & 4.5 & \textbf{7.0} & 5.5 & \textbf{5.8} &\multicolumn{2}{c}{ 4.6  } \\ 
+	\bottomrule 
+\end{tabular} 	
 	}
 \end{table*}
 
