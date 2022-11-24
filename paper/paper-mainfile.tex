@@ -293,14 +293,25 @@ In terms of complexity classes, \cite{ErolHTNExpressivity} proved that POHTN pla
 
 
 \section{Inference of Preconditions and Effects}
-The basic linearization process consists of inferring preconditions and effects for compound tasks, inferring additional orderings to the sub-tasks based on the preconditions and effects (inferred or \enquote{real} in the case of primitive tasks) of method sub-tasks, and adding them only if they do not conflict with the originally required orderings.
+The basic linearization process consists of inferring preconditions and effects for compound tasks, inferring additional orderings to the sub-tasks based on the preconditions and effects (inferred or \enquote{real} in the case of primitive tasks) of method sub-tasks. We first attempt to add them all, and then randomly remove orderings that conflict with the originally required orderings, or each other.
  
  
+\subsection{Simple Inference of Preconditions and Effects for Compound Tasks (For Lifted and Grounded Domain) }
+In a lifted format, tasks and methods accept parameters, referring to any object of a specific type. Thus actions within a method have effects and preconditions that are symmetrical in terms of interactions within the method. 
 
+E.g.\ the task \textit{navigate(waypoint1, waypoint2)} will end up with some set of actions  $\bar{a}$ once decomposed. If you replace the passed parameters \textit{waypoint1} with \textit{waypoint3} and \textit{waypoint2} with \textit{waypoint4}, then \textit{navigate(waypoint3, waypoint4)} will have the same set of actions $\bar{a}$. This is true for all possible tasks by simple induction over the decomposition process.
 
+Thus for each method, we can \enquote{ground} it in the standard way, but using an arbitrary object instead of all objects that exist in the domain.
 
-\subsection{Simple Inference of Preconditions and Effects for Compound Tasks}
-For a lifted domain, where a predicate $f$ accepts parameters $p_1, ..., p_n$, 
+Specifically, let $\sigma$ be the set of parameters for the method. Then for each parameter of the method, the set of typed objects $\omega$ has one object of the corresponding type, and $|\omega| = |\sigma|$. Then $\sigma(a, \omega)$, the groundings of a transition schema $a$ over $\omega$, corresponds to the ground method obtained by substituting $\sigma$ with the corresponding object of correct type taken from $\omega$.
+
+Where a task accepts two parameters of the same type under different names, it is assumed those are different objects. For example, for \textit{Navigate(pt0, pt1, rover)}, \textit{pt0} and \textit{pt1} are assumed as different objects. % This is illustrated in Figure~\ref{CompoundPreEffForLifted}.
+
+This allows actions to have some ground \enquote{predicate} \textit{at\_waypoint1}, rather than $at(?waypoint)$. The resulting \enquote{predicates} can be used to order the sub-tasks, while groundings for methods are discarded. Only one linearized lifted method per partially-ordered lifted method is produced.
+
+For a grounded method, there are no parameters in a task or method. Methods decompose to specific actions, actions have preconditions and effects on specific state variables. We can then use these to produce a linearized grounded method per grounded method.
+
+In summary, for a lifted domain, where a predicate $f$ accepts parameters $p_1, ..., p_n$, 
 $f' = f(o_1, ..., o_n)$, where $o_1, ..., o_n$ are arbitrary objects of the appropriate type. For a grounded model, $f' = f$. The inferred preconditions and effects for a task are then defined as below:
 \begin{align*}
 & \forall t \in T_P : \PreS(t) := \Pre(t) \\
@@ -315,11 +326,12 @@ $f' = f(o_1, ..., o_n)$, where $o_1, ..., o_n$ are arbitrary objects of the appr
 \end{align*}
 
 
-\subsection{Complex Inference of Effects for Compound Tasks}
+
+\subsection{Complex Inference of Effects for Compound Tasks (for Grounded Domain) }
 The work by~\cite{ConnyPreEstimation}, details a way to infer a subset of the mandatory preconditions and effects. 
 
 \emph{Mandatory preconditions} of a compound task $c$ are facts that hold in every state for which there exists an executable refinement. So, they are required in every state in which a refinement of c shall be executed: prec(c) := $\cap_{s \in E(c)}  s$
-if $E(c) \neq \emptyset and prec(c) := undef$ otherwise.
+if $E(c) \neq \emptyset$ and $prec(c) := undef$ otherwise.
 
 State-independent positive and negative effects (cf. their
 Def. 4) of a compound task c are facts that are added or
@@ -342,60 +354,60 @@ $R_s(c) = \{s' \in 2^F | \exists$ t.o. refinement appl. in $s$ res. in $s' \}$.
 
 So, the precondition-relaxation of a domain D = $(F, A, C, M)$ is the domain $D' = (F, A', C, M)$
 with $A' = \{(\emptyset, add , del ) \mid (prec, add , del ) \in A\}$.
-Then, the precondition-relaxed effects $\RelEffPlus$, $\RelEffMinus$, $\RelPossEffPlus$, $\RelPossEffMinus$. are defined just like the original ones but based on the precondition-
-relaxed variant of D.
+Then, the precondition-relaxed effects $\RelEffPlus$, $\RelEffMinus$, $\RelPossEffPlus$, $\RelPossEffMinus$. are defined just like the original ones but based on the precondition-relaxed variant of D.
 
 There exists a polynomial-time algorithm for inferring the precondition-relaxed effects, see \cite{ConnyPreEstimation} for details.
+In this paper, we will be utilizing the precondition-relaxed possible effects, which guaranteed to hold after at least one refinement of c.
 
-\subsection{Inference of Preconditions and Effects for Lifted Domain}
-In a lifted format, tasks and methods accept parameters, referring to any object of a specific type. Thus actions within a method have effects and preconditions that are symmetrical in terms of interactions within the method. 
+%A fact $f \in F$ is an executability-relaxed precondition of c if and only if for all t.o. refinements (ignoring ex-
+%ecutability) 〈a0 . . . an〉 of c there exists an action ai with
+%f ∈ prec(ai) and there does not exist an action aj with
+%j < i and f ∈ add (aj ), where i, j ∈ {0 . . . n} (cf. Def. 10).
+%The exploitation of the relaxed preconditions and effects
+%is possible because they possess subset properties with regard to the actual ones so that they do not contain false candidates
 
-E.g.\ the task \textit{navigate(waypoint1, waypoint2)} will end up with some set of actions  $\bar{a}$ once decomposed. If you replace the passed parameters \textit{waypoint1} with \textit{waypoint3} and \textit{waypoint2} with \textit{waypoint4}, then \textit{navigate(waypoint3, waypoint4)} will have the same set of actions $\bar{a}$. This is true for all possible tasks by simple induction over the decomposition process.
+\section{Linearization of Methods Using Any Set of Inferred Preconditions and Effects}
 
-Thus for each method, we can \enquote{ground} it in the standard way, but using an arbitrary object instead of all objects that exist in the domain.
-
-Specifically, let $\sigma$ be the set of parameters for the method. Then for each parameter of the method, the set of typed objects $\omega$ has one object of the corresponding type, and $|\omega| = |\sigma|$. Then $\sigma(a, \omega)$, the groundings of a transition schema $a$ over $\omega$, corresponds to the ground method obtained by substituting $\sigma$ with the corresponding object of correct type taken from $\omega$.
-
-Where a task accepts two parameters of the same type under different names, it is assumed those are different objects. For example, for \textit{Navigate(pt0, pt1, rover)}, \textit{pt0} and \textit{pt1} are assumed as different objects. % This is illustrated in Figure~\ref{CompoundPreEffForLifted}.
-
-This allows actions to have some ground \enquote{predicate} \textit{at\_waypoint1}, rather than $at(?waypoint)$. The resulting \enquote{predicates} can be used to order the sub-tasks, while groundings for methods are discarded. For variant 1, only one linearized lifted method per partially-ordered lifted method is produced.
-
-
-\section{Linearization Using Inferred Preconditions and Effects}
-\begin{algorithm}
-	\caption{Linearization using inferred set of preconditions and effects} %\caption{Calculation of linearized methods}
-	\label{alg:Algorithm1}	
+\begin{algorithm}[h]
+	\caption{Calculation of linearized methods}
+	\label{alg:Algorithm1}
 	\KwData{$(F, T_P, T_C, \delta, M)$}
 	\KwResult{$(F, T_P, T_C, \delta, M)$}
 	
 	\For {$m=(t, (T_m, \singlePrec, \alpha)) \in M$} 
 	{
-		
 		\tcc{An edge $(t, t')$ in $G$ means $t$ is ordered before $t'$}  
-		
-		$G \gets$ calculateTransitiveClosure($\singlePrec$) \\
+		$G \gets \singlePrec$ \\
 		\label{alg:StartBuildGraph}
 		\For{a $\in$ F}{  
 			\For{$t \in T_m$}{
 				\For{$t' \in T_m$}{
-					if $a \in \AddS(t)$ and $a \in \PreS(t')$, and $(t', t)$ not in $G$, add $(t, t')$ to $G$  \\ 
-					if $a \in \AddS(t)$ and $a \in \DelS(t')$, and $(t, t')$ not in $G$, add $(t', t)$ to $G$  \\ 
-					if $a \in \DelS(t)$ and $a \in \PreS(t')$, and $(t, t')$ not in $G$, add $(t', t)$ to $G$  \\ 
-					if $a \in \DelS(t)$ and $a \in \AddS(t')$, and $(t', t)$ not in $G$, add $(t, t')$ to $G$ \\  
+					if $a \in \AddS(t)$ and $a \in \PreS(t')$, add $(t, t')$ to $G$  \\ 
+					if $a \in \AddS(t)$ and $a \in \DelS(t')$, add $(t', t)$ to $G$  \\ 
+					if $a \in \DelS(t)$ and $a \in \PreS(t')$, add $(t', t)$ to $G$  \\ 
+					if $a \in \DelS(t)$ and $a \in \AddS(t')$, add $(t, t')$ to $G$ \\  
 				}
 			} 
 			\label{alg:EndBuildGraph}	
-		}	 
+		}	
+		\label{alg:StartCycleBreak}
+		\While{$G$ has cycles in it}{
+			Delete a random ordering in $G$ that is not in $\singlePrec$ \\   % $\PreS, \DelS, \AddS$, rather than $prec$ \;
+		}
+		\label{alg:EndCycleBreak}
+		$\prec'$ = Any linearization of $G$ \\
 		\label{alg:TopSort}
-		$\singlePrec'\gets$ any linearization of $G$ \\
-		$m' = (tasks(m), \singlePrec', \alpha(t))$ \\
-		$M' = M' \cup  \{m'\}$ \\		
+		$m' = (tasks(m), \prec', \alpha(t))$ \\
+		$M' = M' \cup  \{m'\}$ \\
+		
 	}
 	\Return $D' = (F, T_P, T_C, \delta, M')$ \\
 \end{algorithm}
 
 
+
 From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1}.
+
 	
 % We can use either sets of preconditions and effects (from either possible inference algorithm) as input to the next linearization phase. Since the effects and preconditions are guaranteed, it may find a linearization that leads to a problem whose solution is yet faster to find,
 % or has better make-span than the simple inference. Specifically, the mandatory precondition-relaxed effects, $\RelEffPlus$, $\RelEffMinus$.
@@ -408,31 +420,34 @@ From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (w
 
 We now discuss the implications of the above-described linearization procedure.
 
-\subsection{Theoretical Properties If Using Simple Inference}
 \begin{theorem}\label{thm:Runtime}
-	Given a problem $P = (F, T_P, T_C, \delta, M)$, Algorithm~\ref{alg:Algorithm1} takes at most quadratic time, $\mathcal{O}( |M| * |F| * |T|^2)$. 
+	Given a problem $P = (F, T_P, T_C, \delta, M)$, Algorithm~\ref{alg:Algorithm1} takes polynomial time.
 \end{theorem}
 \begin{proof}  % ,  network of tasks it can decompose to as a tree of tasks whose edges are between a task and a task it can decompose to, since it excludes previously seen tasks. 
 	Let $|T|$ = $|T_P| + |T_C|$.
 	
-	The Floyd-warshall algorithm to calculate transitive closure is used for each method's sub-tasks, resulting in a time complexity of $\mathcal{O}(|M| * |T|^3)$, 
+	%The Floyd-Warshall algorithm to calculate transitive closure is used for each method's sub-tasks, resulting in a time complexity of $\mathcal{O}(|M| * |T|^3)$, 
 	
 	
-	To calculate $\PreS, \AddS, \DelS$ for each task $t$. We explore it's compound sub-tasks until we collect all primitive tasks. Then loop over $\PreS, \AddS, \DelS$ for the root $t$, over each fact, over each primitive task in the sub-tree. This provides an upper limit of $(3 * |F| * |T_p|) + T_C$. This inference occurs for each compound task, so $((3 * |F| * |T_P|) + |T_C|) * |T_C|$ time at most, or $\mathcal{O}(|F| * |T|^2)$. % we explore all poss (at most $|T_C|$)
+	To calculate $\PreS, \AddS, \DelS$ for each task $t$. We explore it's compound sub-tasks until we collect all primitive tasks. Then loop over $\PreS, \AddS, \DelS$ for the root $t$, over each fact, over each primitive task in the sub-tree. This is obviously polynomial in terms of $|T|$. %This provides an upper limit of $(3 * |F| * |T_p|) + T_C$. This inference occurs for each compound task, so $((3 * |F| * |T_P|) + |T_C|) * |T_C|$ time at most, or $\mathcal{O}(|F| * |T|^2)$. % we explore all poss (at most $|T_C|$)
 	
 	Lines~\ref{alg:StartBuildGraph}-\ref{alg:EndBuildGraph} of Algorithm~\ref{alg:Algorithm1} iterates over every method, which iterates over every fact, which iterates over every sub-task in that method, which iterates over every other sub-task in that method. Leading to at most $\mathcal{O}(|M| * |F| * |T|^2)$, since number of sub-tasks per method is upper bounded by $T$.
+	
+	Cycle-breaking, done by lines \ref{alg:StartCycleBreak} to \ref{alg:EndCycleBreak} can be done via depth-first search per cycle to break, which is also polynomial to $|T|$.
 	
 	Line~\ref{alg:TopSort} can be done via topological sort of a graph where sub-tasks are nodes, and orderings are edges, which is known to be in $\mathcal{O}(V+E)$ in time. % and $\mathcal{O}(V)$ in space.  
 	The number of sub-tasks and edges are upper bounded by $T$, so approximately $\mathcal{O}(|M| * |T|)$.
 	
-	So in total the main algorithm takes: \newline
-	$(|M| * |T|^3)$ +          % Floyd-Warshall
-	$(|M| * |F| * |T|)$  +    % GetPreEff
-	$\mathcal{O}(|M| * |F| * |T|^2)$ +  % desired orderings
-	$(|M| * |T|)$        % topological sort
+	So the algorithm takes polynomial time.
+	%So in total the main algorithm takes: \newline
+	%$(|M| * |T|^3)$ +          % Floyd-Warshall
+	%$(|M| * |F| * |T|)$  +    % GetPreEff
+	%$\mathcal{O}(|M| * |F| * |T|^2)$ +  % desired orderings
+	%$(|M| * |T|)$        % topological sort
 \end{proof}
 
 
+\subsection{Theoretical Properties If Using Simple Inference (for Grounded Or Lifted)}
 \begin{theorem}\label{thm:Soundness}
 	Given a POHTN planning problem $P$ and TOHTN problem
 	$P'$ obtained from $P$ by using Algorithm~\ref{alg:Algorithm1}
@@ -511,40 +526,36 @@ The empirical evaluation was conducted on a machine with 30GiB of memory and 4 v
 
 We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20} configured to use to turn the problem into a classical planning problem (in RC model), and Greedy best first search with visited lists. We try this search with 4 different heuristics: FF by \cite{FF}, Add by \cite{Add}, Filter by \cite{useClassicalHuristicICAPS18} and Landmark-cut by \cite{LM-Cut}. We compare the performance of panda$_\pi$ on the original problem and the pre-processed problem. The same setting is used for re-runs. We also test the latest version of TOHTN planners HTN2SAS, HyperTensioN and Lilotane on the transformed problems. Re-runs use panda$_{\pi}$ with the best heuristic(Add). 
 We test both Complex and Simple Inference for linearization. %The comparison is done for grounded linearization variant and the lifted linearization variant 1.
-
-\subsection{Performance of Simple Linearization}
-
-
+ 
 
 \begin{table*}[h]
 	\centering
-	\subcaption{Coverage achieved, using Simple Inference}
+	\subcaption{Coverage achieved, using Simple Inference on Grounded (Linearized) Problem}
 	\scalebox{1} {
-\begin{tabular}{lccccl} 
+	\begin{tabular}{lccccccccccccccccl} 
 	\toprule 
-	&& \multicolumn{2}{c}{rc2(Add)} \\
-	\cmidrule(lr){3-4}  
-	& max &PO & TO \\ 
+	&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} \\ 
+	\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}  
+	& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  } \\ 
 	\midrule 
-	Barman-BDI & 20 & 3.0 &\multicolumn{2}{c}{ \textbf{10.0}  } \\ 
-	Monroe Fully Observ.$^{2}$ & 25 & \textbf{25.0} &\multicolumn{2}{c}{ \textbf{25.0}  } \\ 
-	Monroe Part. Observ.$^{2}$ & 24 & \textbf{14.0} &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
-	PCP$^{11}$ & 17 & \textbf{14.0} &\multicolumn{2}{c}{ 8.0  } \\ 
-	Rover & 20 & 10.0 &\multicolumn{2}{c}{ \textbf{13.0}  } \\ 
-	Satellite & 25 & 24.0 &\multicolumn{2}{c}{ \textbf{25.0}  } \\ 
-	Transport & 40 & 12.0 &\multicolumn{2}{c}{ \textbf{23.0}  } \\ 
-	UM-Translog & 22 & \textbf{22.0} &\multicolumn{2}{c}{ 0.0  } \\ 
-	Woodworking$^{1}$ & 30 & 13.0 &\multicolumn{2}{c}{ \textbf{15.0}  } \\ 
+	Barman-BDI & 20 & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 2.0 &\multicolumn{2}{c}{ \textbf{9.0}  } \\ 
+	Monroe Fully Observ.$^{2}$ & 25 & \textbf{25.0} & \textbf{25.0} & 18.0 & \textbf{25.0} & 22.0 & \textbf{25.0} & 15.0 &\multicolumn{2}{c}{ \textbf{16.0}  } \\ 
+	Monroe Part. Observ.$^{2}$ & 24 & \textbf{14.0} & \textbf{14.0} & \textbf{7.0} & \textbf{7.0} & 14.0 & \textbf{15.0} & \textbf{10.0} &\multicolumn{2}{c}{ \textbf{10.0}  } \\ 
+	PCP$^{17}$ & 17 & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
+	Rover & 20 & 6.0 & \textbf{20.0} & 4.0 & \textbf{14.0} & 4.0 & \textbf{19.0} & 4.0 &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
+	Satellite & 25 & 24.0 & \textbf{25.0} & 22.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & 24.0 &\multicolumn{2}{c}{ \textbf{25.0}  } \\  
+	Transport & 40 & 12.0 & \textbf{28.0} & \textbf{2.0} & \textbf{2.0} & 13.0 & \textbf{14.0} & 7.0 &\multicolumn{2}{c}{ \textbf{12.0}  } \\ 
+	UM-Translog$^{1}$ & 22 & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} &\multicolumn{2}{c}{ \textbf{22.0}  } \\ 
+	Woodworking$^{2}$ & 30 & 13.0 & \textbf{19.0} & 7.0 & \textbf{15.0} & 12.0 & \textbf{20.0} & 9.0 &\multicolumn{2}{c}{ \textbf{15.0}  } \\ 
 	\midrule 
-	Monroe & 100 & \textbf{100.0} &\multicolumn{2}{c}{ \textbf{100.0}  } \\ 
-	SmartPhone & 7 & \textbf{5.0} &\multicolumn{2}{c}{ 2.0  } \\ 
-	Zenotravel$^{1}$ & 5 & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
+	Monroe & 100 & 96.0 & \textbf{100.0} & 79.0 & \textbf{88.0} & 92.0 & \textbf{100.0} & 81.0 &\multicolumn{2}{c}{ \textbf{90.0}  } \\ 
+	SmartPhone$^{1}$ & 7 & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
+	Zenotravel & 5 & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
 	\midrule 
-	Coverage & 335 & \textbf{247.0} &\multicolumn{2}{c}{ 240.0  } \\ 
-	Norm. coverage & 12 & \textbf{8.46} &\multicolumn{2}{c}{ 7.56  } \\  
+	Coverage & 335 & 239.0 & \textbf{287.0} & 188.0 & \textbf{232.0} & 231.0 & \textbf{274.0} & 198.0 &\multicolumn{2}{c}{ \textbf{237.0}  } \\ 
+	Norm. coverage & 12 & 8.22 & \textbf{9.95} & 6.85 & \textbf{8.46} & 8.0 & \textbf{9.63} & 7.1 &\multicolumn{2}{c}{ \textbf{8.44}  } \\ 
 	\bottomrule 
-\end{tabular} 
-	
+	\end{tabular}
 	}
 \end{table*}
 
@@ -560,37 +571,96 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 
 \begin{table*}[h]
 	\centering
-	\caption{IPOC score achieved, using Simple Inference}
+	\caption{IPC score achieved, using Simple Inference, on Grounded Problems}
 	\scalebox{1} {
-\begin{tabular}{lccccl} 
+\begin{tabular}{lccccccccccccccccl} 
 	\toprule 
-	&& \multicolumn{2}{c}{rc2(Add)} \\
-	\cmidrule(lr){3-4}  
-	& max &PO &  TO   \\ 
+	&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} \\ 
+	\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}  
+	& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  } \\ 
 	\midrule 
-	Barman-BDI & 1 & 0.08 &\multicolumn{2}{c}{ \textbf{0.39}  } \\ 
-	Monroe Fully Observ.$^{2}$ & 1 & \textbf{0.57} &\multicolumn{2}{c}{ 0.45  } \\ 
-	Monroe Part. Observ.$^{2}$ & 1 & \textbf{0.31} &\multicolumn{2}{c}{ 0.25  } \\ 
-	PCP$^{11}$ & 1 & \textbf{0.82} &\multicolumn{2}{c}{ 0.47  } \\ 
-	Rover & 1 & 0.41 &\multicolumn{2}{c}{ \textbf{0.58}  } \\ 
-	Satellite & 1 & 0.91 &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
-	Transport & 1 & 0.24 &\multicolumn{2}{c}{ \textbf{0.47}  } \\ 
-	UM-Translog & 1 & \textbf{1.0} &\multicolumn{2}{c}{ 0.0  } \\ 
-	Woodworking$^{1}$ & 1 & 0.38 &\multicolumn{2}{c}{ \textbf{0.42}  } \\ 
+	Barman-BDI & 1 & 0.08 & \textbf{0.4} & 0.07 & \textbf{0.34} & 0.07 & \textbf{0.36} & 0.05 &\multicolumn{2}{c}{ \textbf{0.22}  } \\ 
+	Monroe Fully Observ.$^{2}$ & 1 & \textbf{0.56} & 0.45 & \textbf{0.31} & 0.3 & \textbf{0.46} & 0.41 & \textbf{0.22} &\multicolumn{2}{c}{ 0.18  } \\ 
+	Monroe Part. Observ.$^{2}$ & 1 & \textbf{0.31} & 0.25 & \textbf{0.13} & 0.11 & \textbf{0.31} & 0.26 & \textbf{0.17} &\multicolumn{2}{c}{ 0.14  } \\ 
+	PCP$^{17}$ & 1 & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} &\multicolumn{2}{c}{ \textbf{0.82}  } \\ 
+	Rover & 1 & 0.29 & \textbf{0.95} & 0.14 & \textbf{0.52} & 0.2 & \textbf{0.78} & 0.16 &\multicolumn{2}{c}{ \textbf{0.48}  } \\ 
+	Satellite & 1 & 0.91 & \textbf{1.0} & 0.76 & \textbf{1.0} & 0.99 & \textbf{1.0} & 0.89 &\multicolumn{2}{c}{ \textbf{0.99}  } \\ 
+	Transport & 1 & 0.24 & \textbf{0.61} & 0.04 & \textbf{0.05} & 0.27 & \textbf{0.32} & 0.12 &\multicolumn{2}{c}{ \textbf{0.2}  } \\ 
+	UM-Translog$^{1}$ & 1 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
+	Woodworking$^{2}$ & 1 & 0.38 & \textbf{0.58} & 0.2 & \textbf{0.41} & 0.36 & \textbf{0.57} & 0.27 &\multicolumn{2}{c}{ \textbf{0.39}  } \\ 
 	\midrule 
-	Monroe & 1 & \textbf{0.83} &\multicolumn{2}{c}{ 0.69  } \\ 
-	SmartPhone & 1 & \textbf{0.71} &\multicolumn{2}{c}{ 0.29  } \\ 
-	Zenotravel$^{1}$ & 1 & \textbf{1.0} &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
+	Monroe & 1 & \textbf{0.77} & 0.69 & \textbf{0.5} & 0.47 & \textbf{0.75} & 0.71 & \textbf{0.53} &\multicolumn{2}{c}{ \textbf{0.53}  } \\ 
+	SmartPhone$^{1}$ & 1 & \textbf{0.71} & \textbf{0.71} & 0.69 & \textbf{0.71} & \textbf{0.71} & \textbf{0.71} & \textbf{0.71} &\multicolumn{2}{c}{ \textbf{0.71}  } \\ 
+	Zenotravel & 1 & \textbf{1.0} & \textbf{1.0} & 0.63 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & 0.83 &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
 	\midrule 
-	IPC score & 12 & \textbf{7.3} &\multicolumn{2}{c}{ 6.0  } \\ 
+	IPC score & 12 & 7.1 & \textbf{8.4} & 5.3 & \textbf{6.7} & 7.0 & \textbf{7.9} & 5.8 &\multicolumn{2}{c}{ \textbf{6.7}  } \\
 	\bottomrule 
 \end{tabular} 
-
 	}
 \end{table*}
 
 
-\subsection{Performance of Complex Linearization}
+\begin{table*}[h]
+	\centering
+	\caption{Coverage achieved, using Simple Inference, Lifted Problems}
+\begin{tabular}{lccccccccccccccccccl} 
+	\toprule 
+	&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{Lilotane}\\ 
+	\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  
+	& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  } \\ 
+	\midrule 
+	Barman-BDI & 20 & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 2.0 & \textbf{9.0} &\multicolumn{2}{c}{ \textbf{17.0}  } \\ 
+	Monroe Fully Observ.$^{7,7,7,5,0}$ & 25 & \textbf{25.0} & \textbf{25.0} & 18.0 & \textbf{22.0} & 22.0 & \textbf{23.0} & \textbf{15.0} & \textbf{15.0} &\multicolumn{2}{c}{ 18.0  } \\ 
+	Monroe Part. Observ.$^{2,2,2,2,0}$ & 24 & \textbf{14.0} & 13.0 & \textbf{7.0} & 6.0 & \textbf{14.0} & 13.0 & \textbf{11.0} & 9.0 &\multicolumn{2}{c}{ \textbf{20.0}  } \\ 
+	PCP$^{18,18,17,17}$ & 18 & \textbf{15.0} & \textbf{15.0} & \textbf{15.0} & \textbf{15.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} &\multicolumn{2}{c}{ 0.0  } \\ 
+	Rover & 20 & 6.0 & \textbf{15.0} & 4.0 & \textbf{13.0} & 4.0 & \textbf{14.0} & 4.0 & \textbf{13.0} &\multicolumn{2}{c}{ \textbf{20.0}  } \\ 
+	Satellite & 25 & 24.0 & \textbf{25.0} & 22.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & 24.0 & \textbf{25.0} &\multicolumn{2}{c}{ \textbf{25.0}  } \\ 
+	Transport & 40 & 12.0 & \textbf{27.0} & \textbf{2.0} & \textbf{2.0} & 13.0 & \textbf{14.0} & 7.0 & \textbf{12.0} &\multicolumn{2}{c}{ \textbf{35.0}  } \\ 
+	UM-Translog$^{1,1,1,1,0}$ & 22 & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} &\multicolumn{2}{c}{ 21.0  } \\ 
+	Woodworking & 30 & \textbf{13.0} & 7.0 & \textbf{8.0} & 7.0 & \textbf{12.0} & 7.0 & \textbf{9.0} & 7.0 &\multicolumn{2}{c}{ 6.0  } \\ 
+	\midrule 
+	Monroe & 100 & \textbf{96.0} & 92.0 & 79.0 & \textbf{87.0} & \textbf{92.0} & 90.0 & 81.0 & \textbf{89.0} &\multicolumn{2}{c}{ \textbf{100.0}  } \\ 
+	SmartPhone$^{3,3,3,3,0}$ & 7 & 5.0 & \textbf{7.0} & 5.0 & \textbf{6.0} & 5.0 & \textbf{6.0} & 5.0 & \textbf{6.0} &\multicolumn{2}{c}{ 1.0  } \\ 
+	Zenotravel & 5 & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
+	\midrule 
+	Coverage & 336 & 240.0 & \textbf{263.0} & 190.0 & \textbf{220.0} & 231.0 & \textbf{243.0} & 199.0 & \textbf{226.0} &\multicolumn{2}{c}{ \textbf{268.0}  } \\ 
+	Norm. coverage & 12 & 8.23 & \textbf{9.45} & 6.9 & \textbf{8.12} & 8.0 & \textbf{8.83} & 7.14 & \textbf{8.18} &\multicolumn{2}{c}{ 8.58  } \\ 
+	\bottomrule 
+\end{tabular} 
+\end{table*}
+
+
+
+
+\begin{table*}[h]
+	\centering
+	\caption{IPC score achieved, using Simple Inference, Lifted Problems}
+\begin{tabular}{lccccccccccccccccccl} 
+	\toprule 
+	&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{Lilotane} \\ 
+	\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}  
+	& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  } \\ 
+	\midrule 
+	Barman-BDI & 1 & 0.07 & \textbf{0.38} & 0.07 & \textbf{0.34} & 0.07 & \textbf{0.35} & 0.05 & \textbf{0.23} &\multicolumn{2}{c}{ \textbf{0.72}  } \\ 
+	Monroe Fully Observ.$^{7,7,7,5,0}$ & 1 & \textbf{0.56} & 0.52 & 0.32 & \textbf{0.33} & \textbf{0.47} & 0.45 & \textbf{0.22} & 0.21 &\multicolumn{2}{c}{ 0.54  } \\ 
+	Monroe Part. Observ.$^{2,2,2,2,0}$ & 1 & \textbf{0.31} & 0.28 & \textbf{0.14} & 0.13 & \textbf{0.31} & 0.29 & \textbf{0.17} & 0.16 &\multicolumn{2}{c}{ \textbf{0.63}  } \\ 
+	PCP$^{18,18,17,17}$ & 1 & \textbf{0.83} & \textbf{0.83} & \textbf{0.83} & \textbf{0.83} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} &\multicolumn{2}{c}{ 0.0  } \\ 
+	Rover & 1 & 0.28 & \textbf{0.61} & 0.14 & \textbf{0.49} & 0.2 & \textbf{0.56} & 0.17 & \textbf{0.42} &\multicolumn{2}{c}{ \textbf{0.97}  } \\ 
+	Satellite & 1 & 0.9 & \textbf{1.0} & 0.76 & \textbf{1.0} & 0.99 & \textbf{1.0} & 0.89 & \textbf{0.99} &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
+	Transport & 1 & 0.24 & \textbf{0.6} & 0.04 & \textbf{0.05} & 0.27 & \textbf{0.32} & 0.12 & \textbf{0.2} &\multicolumn{2}{c}{ \textbf{0.78}  } \\ 
+	UM-Translog$^{1,1,1,1,0}$ & 1 & \textbf{1.0} & 0.99 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} &\multicolumn{2}{c}{ 0.92  } \\ 
+	Woodworking & 1 & \textbf{0.38} & 0.23 & 0.2 & \textbf{0.23} & \textbf{0.36} & 0.23 & \textbf{0.27} & 0.23 &\multicolumn{2}{c}{ 0.2  } \\ 
+	\midrule 
+	Monroe & 1 & \textbf{0.77} & 0.74 & \textbf{0.5} & 0.47 & \textbf{0.76} & 0.73 & \textbf{0.54} & 0.51 &\multicolumn{2}{c}{ \textbf{0.96}  } \\ 
+	SmartPhone$^{3,3,3,3,0}$ & 1 & 0.71 & \textbf{1.0} & 0.69 & \textbf{0.85} & 0.71 & \textbf{0.86} & 0.71 & \textbf{0.83} &\multicolumn{2}{c}{ 0.14  } \\  
+	Zenotravel & 1 & \textbf{1.0} & \textbf{1.0} & 0.64 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & 0.83 & \textbf{1.0} &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
+	\midrule 
+	IPC score & 12 & 7.1 & \textbf{8.2} & 5.3 & \textbf{6.7} & 7.0 & \textbf{7.6} & 5.8 & \textbf{6.6} &\multicolumn{2}{c}{ 7.9  } \\ 
+	\bottomrule 
+\end{tabular} 
+\end{table*} 
+
+
 
 \begin{table*}[h]
 	\centering
@@ -598,27 +668,6 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 	\scalebox{0.8} {
 \begin{tabular}{lccccccccccccccccl} 
 	\toprule 
-	&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} \\ 
-	\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}  
-	& max &PO & TO & PO & TO & PO & TO & PO &  TO \\ 
-	\midrule 
-	Barman-BDI & 20 & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 2.0 &\multicolumn{2}{c}{ \textbf{8.0}  } \\ 
-	Monroe Fully Observ. & 25 & \textbf{25.0} & \textbf{25.0} & \textbf{18.0} & \textbf{18.0} & \textbf{22.0} & \textbf{22.0} & \textbf{15.0} &\multicolumn{2}{c}{ \textbf{15.0}  } \\ 
-	Monroe Part. Observ. & 24 & \textbf{14.0} & \textbf{14.0} & \textbf{7.0} & \textbf{7.0} & \textbf{14.0} & \textbf{14.0} & \textbf{10.0} &\multicolumn{2}{c}{ \textbf{10.0}  } \\ 
-	PCP$^{11}$ & 17 & \textbf{14.0} & 8.0 & \textbf{14.0} & 8.0 & \textbf{15.0} & 9.0 & \textbf{15.0} &\multicolumn{2}{c}{ 9.0  } \\ 
-	Rover & 20 & 10.0 & \textbf{18.0} & 4.0 & \textbf{15.0} & 4.0 & \textbf{17.0} & 4.0 &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
-	Satellite & 25 & 24.0 & \textbf{25.0} & 22.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & 24.0 &\multicolumn{2}{c}{ \textbf{25.0}  } \\ 
-	Transport & 40 & 12.0 & \textbf{28.0} & \textbf{2.0} & \textbf{2.0} & 13.0 & \textbf{14.0} & 7.0 &\multicolumn{2}{c}{ \textbf{11.0}  } \\ 
-	UM-Translog & 22 & \textbf{22.0} & 0.0 & \textbf{22.0} & 0.0 & \textbf{22.0} & 0.0 & \textbf{22.0} &\multicolumn{2}{c}{ 0.0  } \\ 
-	Woodworking$^{1}$ & 30 & 13.0 & \textbf{19.0} & 7.0 & \textbf{14.0} & 12.0 & \textbf{18.0} & 9.0 &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
-	\midrule 
-	Monroe & 100 & \textbf{100.0} & \textbf{100.0} & 79.0 & \textbf{88.0} & 92.0 & \textbf{100.0} & 81.0 &\multicolumn{2}{c}{ \textbf{90.0}  } \\ 
-	SmartPhone & 7 & \textbf{5.0} & 4.0 & \textbf{5.0} & 2.0 & \textbf{5.0} & 3.0 & \textbf{5.0} &\multicolumn{2}{c}{ 3.0  } \\ 
-	Zenotravel$^{2}$ & 5 & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
-	\midrule 
-	Coverage & 335 & 247.0 & \textbf{256.0} & 188.0 & \textbf{194.0} & 232.0 & \textbf{237.0} & 199.0 &\multicolumn{2}{c}{ \textbf{204.0}  } \\ 
-	Norm. coverage & 12 & \textbf{8.46} & 8.36 & \textbf{6.85} & 6.41 & \textbf{8.01} & 7.69 & \textbf{7.11} &\multicolumn{2}{c}{ 6.69  } \\  
-	\bottomrule 
 \end{tabular}  
 	}
 \end{table*}
@@ -629,28 +678,8 @@ We test both Complex and Simple Inference for linearization. %The comparison is 
 	\scalebox{0.9} {
 \begin{tabular}{lccccccccccccccccl} 
 	\toprule 
-	&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} \\ 
-	\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}  
-	& max &PO & TO & PO & TO & PO & TO & PO &  TO   \\ 
-	\midrule 
-	Barman-BDI & 1 & 0.08 & \textbf{0.38} & 0.07 & \textbf{0.34} & 0.07 & \textbf{0.36} & 0.05 &\multicolumn{2}{c}{ \textbf{0.22}  } \\ 
-	Monroe Fully Observ. & 1 & \textbf{0.57} & 0.2 & \textbf{0.32} & 0.12 & \textbf{0.47} & 0.16 & \textbf{0.22} &\multicolumn{2}{c}{ 0.08  } \\ 
-	Monroe Part. Observ. & 1 & \textbf{0.31} & 0.11 & \textbf{0.14} & 0.05 & \textbf{0.31} & 0.11 & \textbf{0.17} &\multicolumn{2}{c}{ 0.06  } \\ 
-	PCP$^{11}$ & 1 & \textbf{0.82} & 0.47 & \textbf{0.82} & 0.47 & \textbf{0.83} & 0.5 & \textbf{0.83} &\multicolumn{2}{c}{ 0.5  } \\ 
-	Rover & 1 & 0.41 & \textbf{0.84} & 0.14 & \textbf{0.58} & 0.2 & \textbf{0.69} & 0.17 &\multicolumn{2}{c}{ \textbf{0.47}  } \\ 
-	Satellite & 1 & 0.91 & \textbf{1.0} & 0.76 & \textbf{1.0} & 0.99 & \textbf{1.0} & 0.89 &\multicolumn{2}{c}{ \textbf{0.99}  } \\ 
-	Transport & 1 & 0.24 & \textbf{0.64} & 0.04 & \textbf{0.05} & 0.27 & \textbf{0.31} & 0.12 &\multicolumn{2}{c}{ \textbf{0.19}  } \\ 
-	UM-Translog & 1 & \textbf{1.0} & 0.0 & \textbf{1.0} & 0.0 & \textbf{1.0} & 0.0 & \textbf{1.0} &\multicolumn{2}{c}{ 0.0  } \\ 
-	Woodworking$^{1}$ & 1 & 0.38 & \textbf{0.53} & 0.2 & \textbf{0.38} & 0.35 & \textbf{0.51} & 0.27 &\multicolumn{2}{c}{ \textbf{0.35}  } \\ 
-	\midrule 
-	Monroe & 1 & \textbf{0.83} & 0.48 & \textbf{0.5} & 0.38 & \textbf{0.76} & 0.48 & \textbf{0.54} &\multicolumn{2}{c}{ 0.41  } \\ 
-	SmartPhone & 1 & \textbf{0.71} & 0.57 & \textbf{0.69} & 0.26 & \textbf{0.71} & 0.4 & \textbf{0.71} &\multicolumn{2}{c}{ 0.38  } \\ 
-	Zenotravel$^{2}$ & 1 & \textbf{1.0} & \textbf{1.0} & 0.63 & \textbf{0.88} & \textbf{1.0} & \textbf{1.0} & 0.83 &\multicolumn{2}{c}{ \textbf{0.96}  } \\ 
-	\midrule 
-	IPC score & 12 & \textbf{7.3} & 6.2 & \textbf{5.3} & 4.5 & \textbf{7.0} & 5.5 & \textbf{5.8} &\multicolumn{2}{c}{ 4.6  } \\ 
-	\bottomrule 
-\end{tabular} 	
-	}
+\end{tabular}
+}
 \end{table*}
 
 
