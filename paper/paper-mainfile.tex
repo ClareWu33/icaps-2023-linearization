@@ -230,22 +230,6 @@ Fortunately, not every POHTN problem is guaranteed to be undecidable, and so cou
 In this paper we present and investigate an algorithm for converting POHTN problems to TOHTN problems. We prove that when certain criteria are met, it guarantees that at least one solution will be preserved. 
 Also, we obtain a new class of decidable problems, namely those that satisfy the above mentioned criterion. Finally, we show that, even when these criteria are not met, very few problems are rendered unsolvable by the transformation, and that it greatly reduces solving time for problems, with gains being bigger for more difficult problems. 
 
-
-\section{Related Work}
-There exist other planners that also compile POHTN problems to decidable planning classes e.g. the planners by \cite{HTN2STRIPS} and HTN2SAS planner by \cite{HTN2SAS} convert POHTN to classical planning problems. To the best of my knowledge, this is the first work that focuses on converting POHTN to TOHTN problems.
-
-\cite{ErolHTNExpressivity} proved that it is NP-complete to decide whether a partially ordered set
-of actions has an executable linearization. Our criteria would work on a problem where the only method is for the initial task, and it’s sub-tasks are actions. That is essentially just ordering a partially ordered plan, so the criteria can also identify a proper subset of all partially ordered plans that can be linearized in polynomial time. It can also find a executable linearization for that subset in polynomial time.
-
-\cite{NEBEL1994125} studied various questions regarding partially ordered plans, such as the complexity of plan existence, plan optimisation, possible or necessary truth of properties before or after plan steps, given various constraints on the types of tasks allowed.  \cite{KambhampatiModalTruth1996} studied related questions and criteria under different assumptions.
-In the paper by \cite{TanGruningerPOPlanComplexity}, the authors refine \cite{NEBEL1994125}'s results and show the impact of the interaction of preconditions and effects thereby giving a more detailed picture for when finding a linearization for a partially-ordered plan is possible in polynomial time, and when it remains NP-hard. 
-
-Criteria presented in \cite{NEBEL1994125} and \cite{KambhampatiModalTruth1996} and  \cite{TanGruningerPOPlanComplexity} analyse cases where actions have singleton precondition and add lists. This is a less general case than our criteria can cover, but their criteria also correctly identifies some cases as linearizable in polynomial time that our criteria is unable to determine. Thus their results are orthogonal to ours. 
-
-The paper by \cite{DeleteRelaxation, Bercher2021POCLComplexities} generalised \cite{NEBEL1994125}'s as well as \cite{ErolHTNExpressivity}'s result (deciding whether a partially ordered
-set of actions possesses an executable linearization) by showing that this problem does not become easier when one is allowed to insert delete-relaxed  actions.
-
-
  
 
 
@@ -443,12 +427,7 @@ We now discuss the implications of the above-described linearization procedure.
 	Line~\ref{alg:TopSort} can be done via topological sort of a graph where sub-tasks are nodes, and orderings are edges, which is known to be in $\mathcal{O}(V+E)$ in time. % and $\mathcal{O}(V)$ in space.  
 	The number of sub-tasks and edges are upper bounded by $T$, so approximately $\mathcal{O}(|M| * |T|)$.
 	
-	So the algorithm takes polynomial time.
-	%So in total the main algorithm takes: \newline
-	%$(|M| * |T|^3)$ +          % Floyd-Warshall
-	%$(|M| * |F| * |T|)$  +    % GetPreEff
-	%$\mathcal{O}(|M| * |F| * |T|^2)$ +  % desired orderings
-	%$(|M| * |T|)$        % topological sort
+	So the algorithm takes polynomial time. 
 \end{proof}
 
 
@@ -467,7 +446,7 @@ We now discuss the implications of the above-described linearization procedure.
 	then $sol(P')$ may be empty.
 \end{theorem}
 \begin{proof}
-	This algorithm linearizes all the methods to be totally ordered. Since sub-tasks inherit the orderings of their parents, it's impossible to preserve a solution that requires the interleaving of sub-tasks if their respective parents that are already ordered with respect to each other. This proves that the algorithm can remove some possible action sequences, assuming the original domain was not already totally ordered. Consider the simple example problem:
+	This algorithm linearizes all the methods to be totally ordered. Since sub-tasks inherit the orderings of their parents, it's impossible to preserve a solution that requires the interleaving of sub-tasks if their respective parents are already ordered with respect to each other. This proves that the algorithm can remove some possible action sequences, assuming the original domain was not already totally ordered. Consider the simple example problem:
 	The only decomposition for this problem results in the set of un-ordered actions $\{A, B, C\}$.
 	If we consider that for the $3!$ linearizations of this set, the only executable one is $A, B, C$. This is impossible to achieve by linearized methods, since ordering either AB before C or C before AB will exclude the solution. 
 	Even if we were to produce $k!$ methods for each partially ordered method with $k$ unordered sub-tasks, we would not be able to preserve any solution for this problem.
@@ -498,7 +477,7 @@ We now discuss the implications of the above-described linearization procedure.
 	For some method with at least two sub-tasks, $a$ and $b$,
 	the desired orderings are to put $a$ with $f \in \Add(a)$ before $b$ with $f \in \Pre(b)$. We're assuming no cycle-breaking, so this was actually achieved. If such a precondition can't be met this way, (such an $a$ does not exist, or the method already enforces that $b$ executes before $a$) by definition it must be in the executability-relaxed preconditions calculated. 
 
-	Therefore, any precondition of $c$'s children that can't be met by placing  other children of $c$ before it is part - so it is indeed a super-set of actual preconditions, assuming no cycle-breaking was needed.
+	Therefore, any precondition of $c$'s children that can't be met by placing other children of $c$ before it is part - so it is indeed a super-set of actual preconditions, assuming no cycle-breaking was needed.
 	
 	If even one partially ordered method did need cycle-breaking, than of course it means nothing - we may indeed need other preconditions to make refinements of $c$ executable. Then those results no longer hold.
 \end{proof}
@@ -776,10 +755,6 @@ IPC score \\
 	}
 \end{table*}
 
-
-
-
-
 %\begin{figure*}
 %	\caption{Percentage of Problems Linearized Without Cycle-break for each Domain and each Inference Method}
 %	\label{fig:ProblemsLinearizedWOCycleBreak}
@@ -795,6 +770,20 @@ IPC score \\
 	\includegraphics[width=14cm]{figures/Lin_average_C_vs_S.jpg}
 \end{figure*} 
 
+
+\section{Related Work}
+There exist other planners that also compile POHTN problems to decidable planning classes e.g. the planners by \cite{HTN2STRIPS} and HTN2SAS planner by \cite{HTN2SAS} convert POHTN to classical planning problems. To the best of my knowledge, this is the first work that focuses on converting POHTN to TOHTN problems.
+
+\cite{ErolHTNExpressivity} proved that it is NP-complete to decide whether a partially ordered set
+of actions has an executable linearization. Our criteria would work on a problem where the only method is for the initial task, and it’s sub-tasks are actions. That is essentially just ordering a partially ordered plan, so the criteria can also identify a proper subset of all partially ordered plans that can be linearized in polynomial time. It can also find a executable linearization for that subset in polynomial time.
+
+\cite{NEBEL1994125} studied various questions regarding partially ordered plans, such as the complexity of plan existence, plan optimisation, possible or necessary truth of properties before or after plan steps, given various constraints on the types of tasks allowed.  \cite{KambhampatiModalTruth1996} studied related questions and criteria under different assumptions.
+In the paper by \cite{TanGruningerPOPlanComplexity}, the authors refine \cite{NEBEL1994125}'s results and show the impact of the interaction of preconditions and effects thereby giving a more detailed picture for when finding a linearization for a partially-ordered plan is possible in polynomial time, and when it remains NP-hard. 
+
+Criteria presented in \cite{NEBEL1994125} and \cite{KambhampatiModalTruth1996} and  \cite{TanGruningerPOPlanComplexity} analyse cases where actions have singleton precondition and add lists. This is a less general case than our criteria can cover, but their criteria also correctly identifies some cases as linearizable in polynomial time that our criteria is unable to determine. Thus their results are orthogonal to ours. 
+
+The paper by \cite{DeleteRelaxation, Bercher2021POCLComplexities} generalised \cite{NEBEL1994125}'s as well as \cite{ErolHTNExpressivity}'s result (deciding whether a partially ordered
+set of actions possesses an executable linearization) by showing that this problem does not become easier when one is allowed to insert delete-relaxed  actions.
 
 \section{Future Work}
 %Encode Linearization Problem as a MAX-SAT Problem
