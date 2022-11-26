@@ -481,8 +481,7 @@ We now discuss the implications of the above-described linearization procedure.
 
 
 \begin{description}
-	\item[Linearization Criteria] If the linearization process does not find any desired ordering contradicting the existing ones for some method, (i.e.\ nothing needs to be removed when cycle-breaking) that method is said to meet the linearization criteria.
-	If all methods in a problem meet the linearization criteria, then the problem meets the linearization criteria as well. 
+	\item[Linearization Criteria] If the linearization process does not find any desired ordering contradicting the existing ones for some method, or in other words, \emph{cycle-breaking} did not occur, that method is said to meet the linearization criteria. If all methods in a problem meet the linearization criteria, then the problem meets the linearization criteria as well. 
 \end{description}
 
 
@@ -494,12 +493,12 @@ We now discuss the implications of the above-described linearization procedure.
 	then we know executability-relaxed preconditions for any $c$ are indeed the only ones needed to execute any refinement of $c$.
 \end{theorem}
 \begin{proof}
-	At least in our special case, we can be assured that the executability-relaxed preconditions actually work for us.
+%	At least in the case where the linearization criteria is met for all methods, we can be assured that the executability-relaxed preconditions actually work for us.
 	
 	For some method with at least two sub-tasks, $a$ and $b$,
-	the desired orderings are to put $a$ with $f \in \Add(a)$ before $a_i$ with $f \in \Pre(a_i)$. We're assuming no cycle-breaking, so this was actually achieved. If such a precondition can't be met this way, (such an $a_j$ does not exist, or the method already enforces that $b$ executes after $a_i$) by definition it must be in the executability-relaxed preconditions calculated. 
+	the desired orderings are to put $a$ with $f \in \Add(a)$ before $b$ with $f \in \Pre(b)$. We're assuming no cycle-breaking, so this was actually achieved. If such a precondition can't be met this way, (such an $a$ does not exist, or the method already enforces that $b$ executes before $a$) by definition it must be in the executability-relaxed preconditions calculated. 
 
-	Therefore, any precondition of $c$'s children that can't be met by other placing $c$'s children before it is part - \emph{so it is indeed a super-set of actual preconditions}(assuming no cycle-breaking was needed).
+	Therefore, any precondition of $c$'s children that can't be met by placing  other children of $c$ before it is part - so it is indeed a super-set of actual preconditions, assuming no cycle-breaking was needed.
 	
 	If even one partially ordered method did need cycle-breaking, than of course it means nothing - we may indeed need other preconditions to make refinements of $c$ executable. Then those results no longer hold.
 \end{proof}
