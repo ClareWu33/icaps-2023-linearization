@@ -51,6 +51,43 @@
 \usepackage{subcaption}
 \usepackage{amssymb} 
 \usepackage{tikz}
+\usetikzlibrary{aiplans}
+
+
+\scheme{SinglePrec}{0}{
+	text = {\textbf{A}},
+	pre  = {a}
+}
+
+\scheme{SingleAdd}{0}{
+	text = {\textbf{B}},
+	effs = { a}
+}
+
+\scheme{SingleDelete}{0}{
+	text = {\textbf{C}},
+	effs = { {{$\neg$}a} }
+}
+
+
+
+\scheme{PrimitiveA}{0}{
+	text = {\textbf{A}},
+	pre  = {a},
+	effs = { {{$\neg$}a}, {b} }
+}
+
+\scheme{PrimitiveB}{0}{
+	text = {\textbf{B}},
+	pre = {b},
+	effs = {{{$\neg$}b}, {c}}
+}
+
+\scheme{PrimitiveC}{0}{
+	text = {\textbf{C}},
+	pre = {c},
+	eff = {{$\neg$}c}
+}
 
 \nocopyright
 %
@@ -395,8 +432,191 @@ In this paper, we will be utilising both of these, as seen in the next section.
 
 
 
-From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1}.
+From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1} to get an linearized problem.
+For an visual demonstration of what this algorithm is doing:
 
+ \begin{figure}[h]
+	\scalebox{0.75}{
+		\begin{subfigure}{4.5cm} 
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
+			
+			
+			
+			\action{first}{SingleAdd,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em 
+			};			
+			
+			\action{second}{SinglePrec,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of first} 		
+			};  			 
+			
+			\path[every node/.style={font=\sffamily\small}]
+			(first) edge [->,bend right] node [left]  {} (second);
+			\end{tikzpicture}
+			
+			\caption{B adds a fact in preconditions of A -- so B before A}
+			
+			
+			
+		\end{subfigure}
+	}  
+	\scalebox{0.75}{
+		\begin{subfigure}{4.5cm} 
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
+			
+			\action{A}{SingleDelete,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em
+				%body = {below left = 2em and 2em of } 
+			};			
+			
+			\action{B}{SinglePrec,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em,
+				body = {left = 4em of A} 
+			};  			 
+			
+			\path[every node/.style={font=\sffamily\small}]
+			(B) edge [->,bend right] node [left]  {} (A);
+			\end{tikzpicture}
+			\caption{C deletes a fact in preconditions of A  -- so A before C}	
+		\end{subfigure}
+	} 
+	
+	\scalebox{0.75}{
+		\begin{subfigure}{4.5cm} 
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
+			
+			\action{A}{SingleAdd,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em
+				%body = {below left = 2em and 2em of } 
+			};			
+			
+			\action{B}{SingleDelete,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em,
+				body = {left = 4em of A} 
+			};  			 
+			
+			\path[every node/.style={font=\sffamily\small}]
+			(B) edge [->, bend right] node [left]  {} (A);
+			\end{tikzpicture}
+			\caption{B adds a fact that C deletes -- so C before B}
+		\end{subfigure}
+	} 
+\end{figure}
+ 
+
+\begin{figure}[h]
+	\scalebox{0.75}{
+		\begin{subfigure}{7cm} 
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
+			
+			
+			\action{B}{SingleAdd,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em 
+			};			
+			
+			\action{A}{SinglePrec,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of first} 		
+			};  
+		
+			\action{C}{SingleDelete,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of second} 	
+				%body = {below left = 2em and 2em of } 
+			};				 
+			
+			\path[every node/.style={font=\sffamily\small}]
+			(B) edge [->,bend right] node [left]  {} (A)
+			(A) edge [->,bend right] node [left]  {} (C)
+			(C) edge [->,bend right] node [left]  {} (B);
+			\end{tikzpicture}
+			
+			\caption{Resulting method ordering has a cycle}
+			
+		\end{subfigure}
+	}   
+
+	\scalebox{0.75}{
+		\begin{subfigure}{6cm} 
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
+			
+			
+			\action{B}{SingleAdd,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em 
+			};			
+			
+			\action{A}{SinglePrec,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of first} 		
+			};  
+			
+			\action{C}{SingleDelete,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of second} 	
+				%body = {below left = 2em and 2em of } 
+			};				 
+			
+			\path[every node/.style={font=\sffamily\small}]
+			(B) edge [->,bend right] node [left]  {} (A)
+		%	(A) edge [->,bend right] node [left]  {} (C)
+			(C) edge [->,bend right] node [left]  {} (B);
+			\end{tikzpicture}
+			
+			\caption{Delete any random ordering to break it}
+		\end{subfigure}
+	}  
+\end{figure}
+
+
+
+	
 	
 % We can use either sets of preconditions and effects (from either possible inference algorithm) as input to the next linearization phase. Since the effects and preconditions are guaranteed, it may find a linearization that leads to a problem whose solution is yet faster to find,
 % or has better make-span than the simple inference. Specifically, the mandatory precondition-relaxed effects, $\RelEffPlus$, $\RelEffMinus$.
@@ -434,7 +654,7 @@ We now discuss the implications of the above-described linearization procedure.
 \begin{theorem}\label{thm:Soundness}
 	Given a POHTN planning problem $P$ and TOHTN problem
 	$P'$ obtained from $P$ by using Algorithm~\ref{alg:Algorithm1}
-	then the solution set of $P'$, denoted $sol(P')$ is a strict subset of $sol(P)$.
+	then the solution set of $P'$, denoted $sol(P')$ is a subset of $sol(P)$.
 \end{theorem}
 \begin{proof}
 	The new desired orderings for a method include all of the orderings already required by the method originally. The algorithm then turns the tasks and new desired orderings between them into a directed graph, and the new ordering is produced by performing a topological sort on the nodes of that graph. This means we do not modify the sub-tasks a method produces, just the ordering between them, so the set of plans from the totally ordered method is just a subset of the plans possible from the partially ordered one. Any solution to the linearized problem is then obviously a solution to the original problem.
@@ -523,27 +743,41 @@ Given what's proven in Theorem~\ref{thm:notCompleteness} and \ref{thm:SpecialCas
 
 
 
+
+
 \section{Empirical Evaluation}
 We compare the runtime of several state-of-the-art planning systems on some transformed POHTN problems. All problems are taken from two benchmark sets prepared for the International Planning Competition (IPC) 2020. The first set \footnote{https://github.com/panda-planner-dev/ipc2020-domains/tree/master/partial-order} was used in the partially ordered track in the 2020 IPC benchmark, while the second set \footnote{https://github.com/panda-planner-dev/domains/tree/master/partial-order} went un-used for various reasons. Each problem has the standard IPC time limit of 30 minutes. Any grounding and pre-processing time needed is included as part of the 'solving' time. Since the pre-processing may \emph{potentially} remove all solutions, where the planning system can prove that the pre-processing renders a problem unsolvable, we use the remaining time to solve the original problem, called a \textit{re-run}.
 
 \subsection{Hardware and Planning Systems}
 The empirical evaluation was conducted on a machine with 30GiB of memory and 4 vCPUs, each with 2 GiB RAM. Recent work by \cite{HTN2SAS} shows that the PO panda$_\pi$, achieved similar coverage and slightly lower IPC score than the best TO planner tested. Also tested is HyperTensioN by \cite{hypertension} an TOHTN solver and the IPC 2020 winner, and Lilotane by \cite{Lilotane} another TOHTN solver and the IPC 2020 runner-up. 
 
-We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20} configured to use to turn the problem into a classical planning problem (in RC model), and Greedy best first search with visited lists. We try this search with 4 different heuristics: FF by \cite{FF}, Add by \cite{Add}, Filter by \cite{useClassicalHuristicICAPS18} and Landmark-cut by \cite{LM-Cut}. We compare the performance of panda$_\pi$ on the original problem and the pre-processed problem. The same setting is used for re-runs. We also test the latest version of TOHTN planners HTN2SAS, HyperTensioN and Lilotane on the transformed problems. Re-runs use panda$_{\pi}$ with the best heuristic(Add). 
+We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20}, on their default configuration. This is when it's configured to turn the problem into a classical planning problem (in RC model), and Greedy best first search, using FF by \cite{FF}, and using visited lists. The visited lists use task sequence hashing, visited checking with task sequences which makes totally-ordered visited lists incomplete (with order), layer hashing, order pairs hashing, no optimisation for parallel sequences,  GI-complete equivalence checking for
+partially ordered task networks (with GI-complete checking).
+
+\todo{Most notably, note that TO problems allow for other visited list
+	configurations than PO problems. So we should also use a TO
+	configuration there (this is however not reported)}
+
+We also try that configuration with FF swapped for the Add heuristic by \cite{Add}.
+%Filter by \cite{useClassicalHuristicICAPS18} and Landmark-cut by \cite{LM-Cut}. 
+We compare the performance of panda$_\pi$ on the original problem and the pre-processed problem. The same setting is used for re-runs. For other planners, panda$_\pi$ with rc2(Add) is used for re-runs. We also test the latest version of TOHTN planners HTN2SAS, HyperTensioN and Lilotane on the transformed problems. Re-runs use panda$_{\pi}$ with the best heuristic(Add). 
 We test both Complex and Simple Inference for linearization.
 
 The results table for both coverage and IPC score can be seen on page \pageref{table:GroundedSimpleIPC}--\pageref{table:GroundedComplexIPC}.
 As we can see from those figures, using complex inference results in ?  increase/decrease/similar, coverage and IPC score.
-The planner that has achieved the highest overall coverage and IPC score is ? planner.
 
+The planner that has achieved the highest overall coverage is panda$_\pi$ with FF, and highest IPC score is panda$_\pi$ planner with Add heuristic, which reflects findings in previous papers.
 
+For each partial-order planner, e.g. RC Add represents panda$_\pi$ using RC and Add heuristic,
+the PO column shows it's performance on the original problem, and the TO column shows performance on the linearized problem. For each total-order planner, the column beneath it shows performance on the linearized problem.
+The IPC score has a maximum of 1 per domain, for the 12 domains in total.
 
 %The comparison is done for grounded  linearization variant and the lifted linearization variant 1. # \value{page}
  
  
 Unfortunately, when using simple inference, there are very few problems for which all partially ordered methods are linearized without conflict.
 Fortunately, when using complex inference, most partially ordered methods in all problems are linearized without conflict.
-Figure~\ref{ffig:MethodsLinearizedWOCycleBreak} shows the comparison between the two.
+%Figure~\ref{fig:MethodsLinearizedWOCycleBreak} shows the comparison between the two.
 
 
 
@@ -555,153 +789,158 @@ Figure~\ref{ffig:MethodsLinearizedWOCycleBreak} shows the comparison between the
 %		& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
 %		& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
 %		& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
-
-
-\begin{table*}
+\begin{table}
 	\centering
 	\caption{Coverage achieved, using Simple Inference on Grounded Problems}
 	\label{table:GroundedSimpleCoverage}
 	\scalebox{0.8} {
-		\begin{tabular}{lccccccccccccccccl} 
-			\toprule 
-			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} \\ 
-			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}  
-			& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  } \\ 
+\begin{tabular}{lccccccl} 
+	\toprule 
+	& \multicolumn{2}{c}{ RC Add} & \multicolumn{2}{c}{ RC FF} \\
+	\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
+	&PO & TO &PO & TO\\  
+	\midrule 
+	Barman-BDI & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0}   \\ 
+	Monroe Fully Observ.$^{2}$ & \textbf{25.0} & \textbf{25.0} & 22.0 & \textbf{25.0}   \\ 
+	Monroe Part. Observ.$^{2}$ & \textbf{14.0} & \textbf{14.0} & 14.0 & \textbf{15.0}  \\ 
+	PCP$^{17}$ & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0}   \\ 
+	Rover & 6.0 & \textbf{20.0} & 4.0 & \textbf{19.0}   \\ 
+	Satellite & 24.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0}   \\ 
+	Transport & 12.0 & \textbf{28.0} & 13.0 & \textbf{14.0}   \\ 
+	UM-Translog$^{1}$ & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0}   \\ 
+	Woodworking$^{2}$ & 13.0 & \textbf{19.0} & 12.0 & \textbf{20.0}   \\ 
 			\midrule 
-			Barman-BDI & 20 & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 2.0 &\multicolumn{2}{c}{ \textbf{9.0}  } \\ 
-			Monroe Fully Observ.$^{2}$ & 25 & \textbf{25.0} & \textbf{25.0} & 18.0 & \textbf{25.0} & 22.0 & \textbf{25.0} & 15.0 &\multicolumn{2}{c}{ \textbf{16.0}  } \\ 
-			Monroe Part. Observ.$^{2}$ & 24 & \textbf{14.0} & \textbf{14.0} & \textbf{7.0} & \textbf{7.0} & 14.0 & \textbf{15.0} & \textbf{10.0} &\multicolumn{2}{c}{ \textbf{10.0}  } \\ 
-			PCP$^{17}$ & 17 & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
-			Rover & 20 & 6.0 & \textbf{20.0} & 4.0 & \textbf{14.0} & 4.0 & \textbf{19.0} & 4.0 &\multicolumn{2}{c}{ \textbf{14.0}  } \\ 
-			Satellite & 25 & 24.0 & \textbf{25.0} & 22.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & 24.0 &\multicolumn{2}{c}{ \textbf{25.0}  } \\  
-			Transport & 40 & 12.0 & \textbf{28.0} & \textbf{2.0} & \textbf{2.0} & 13.0 & \textbf{14.0} & 7.0 &\multicolumn{2}{c}{ \textbf{12.0}  } \\ 
-			UM-Translog$^{1}$ & 22 & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} &\multicolumn{2}{c}{ \textbf{22.0}  } \\ 
-			Woodworking$^{2}$ & 30 & 13.0 & \textbf{19.0} & 7.0 & \textbf{15.0} & 12.0 & \textbf{20.0} & 9.0 &\multicolumn{2}{c}{ \textbf{15.0}  } \\ 
+	Monroe & 96.0 & \textbf{100.0} & 92.0 & \textbf{100.0}  \\ 
+	SmartPhone$^{1}$ & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0}   \\ 
+	Zenotravel & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0}   \\ 
 			\midrule 
-			Monroe & 100 & 96.0 & \textbf{100.0} & 79.0 & \textbf{88.0} & 92.0 & \textbf{100.0} & 81.0 &\multicolumn{2}{c}{ \textbf{90.0}  } \\ 
-			SmartPhone$^{1}$ & 7 & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
-			Zenotravel & 5 & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
-			\midrule 
-			Coverage & 335 & 239.0 & \textbf{287.0} & 188.0 & \textbf{232.0} & 231.0 & \textbf{274.0} & 198.0 &\multicolumn{2}{c}{ \textbf{237.0}  } \\ 
-			Norm. coverage & 12 & 8.22 & \textbf{9.95} & 6.85 & \textbf{8.46} & 8.0 & \textbf{9.63} & 7.1 &\multicolumn{2}{c}{ \textbf{8.44}  } \\ 
-			\bottomrule 
-		\end{tabular}
+	Coverage & 239.0 & \textbf{287.0} & 231.0 & \textbf{274.0}   \\ 
+	Norm. coverage & 8.22 & \textbf{9.95} & 8.0 & \textbf{9.63}   \\ 
+	\bottomrule 
+\end{tabular} 
 	}
-\end{table*}
+\end{table}
 
 
 
-\begin{table*}
+\begin{table}
 	\centering
 	\caption{IPC score achieved, using Simple Inference on Grounded Problems}
 	\label{table:GroundedSimpleIPC}
 	\scalebox{0.85} {
-		\begin{tabular}{lccccccccccccccccl} 
-			\toprule 
-			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} \\ 
-			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}  
-			& max &PO & TO & PO & TO & PO & TO & PO &\multicolumn{2}{c}{ TO  } \\ 
-			\midrule 
-			Barman-BDI & 1 & 0.08 & \textbf{0.4} & 0.07 & \textbf{0.34} & 0.07 & \textbf{0.36} & 0.05 &\multicolumn{2}{c}{ \textbf{0.22}  } \\ 
-			Monroe Fully Observ.$^{2}$ & 1 & \textbf{0.56} & 0.45 & \textbf{0.31} & 0.3 & \textbf{0.46} & 0.41 & \textbf{0.22} &\multicolumn{2}{c}{ 0.18  } \\ 
-			Monroe Part. Observ.$^{2}$ & 1 & \textbf{0.31} & 0.25 & \textbf{0.13} & 0.11 & \textbf{0.31} & 0.26 & \textbf{0.17} &\multicolumn{2}{c}{ 0.14  } \\ 
-			PCP$^{17}$ & 1 & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} &\multicolumn{2}{c}{ \textbf{0.82}  } \\ 
-			Rover & 1 & 0.29 & \textbf{0.95} & 0.14 & \textbf{0.52} & 0.2 & \textbf{0.78} & 0.16 &\multicolumn{2}{c}{ \textbf{0.48}  } \\ 
-			Satellite & 1 & 0.91 & \textbf{1.0} & 0.76 & \textbf{1.0} & 0.99 & \textbf{1.0} & 0.89 &\multicolumn{2}{c}{ \textbf{0.99}  } \\ 
-			Transport & 1 & 0.24 & \textbf{0.61} & 0.04 & \textbf{0.05} & 0.27 & \textbf{0.32} & 0.12 &\multicolumn{2}{c}{ \textbf{0.2}  } \\ 
-			UM-Translog$^{1}$ & 1 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
-			Woodworking$^{2}$ & 1 & 0.38 & \textbf{0.58} & 0.2 & \textbf{0.41} & 0.36 & \textbf{0.57} & 0.27 &\multicolumn{2}{c}{ \textbf{0.39}  } \\ 
-			\midrule 
-			Monroe & 1 & \textbf{0.77} & 0.69 & \textbf{0.5} & 0.47 & \textbf{0.75} & 0.71 & \textbf{0.53} &\multicolumn{2}{c}{ \textbf{0.53}  } \\ 
-			SmartPhone$^{1}$ & 1 & \textbf{0.71} & \textbf{0.71} & 0.69 & \textbf{0.71} & \textbf{0.71} & \textbf{0.71} & \textbf{0.71} &\multicolumn{2}{c}{ \textbf{0.71}  } \\ 
-			Zenotravel & 1 & \textbf{1.0} & \textbf{1.0} & 0.63 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & 0.83 &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
-			\midrule 
-			IPC score & 12 & 7.1 & \textbf{8.4} & 5.3 & \textbf{6.7} & 7.0 & \textbf{7.9} & 5.8 &\multicolumn{2}{c}{ \textbf{6.7}  } \\
-			\bottomrule 
-		\end{tabular} 
+	\begin{tabular}{lccccccccl} 
+	\toprule 
+	&  \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{ RC FF} \\
+	\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
+	& PO & TO & PO & TO  \\ 
+	\midrule 
+	Barman-BDI & 0.08 & \textbf{0.4} & 0.07 & \textbf{0.36}  \\ 
+
+	Monroe Fully Observ.$^{2}$ & \textbf{0.56} & 0.45 & \textbf{0.46} & 0.41  \\ 
+	Monroe Part. Observ.$^{2}$ & \textbf{0.31} & 0.25 & \textbf{0.31} & 0.26   \\ 
+	PCP$^{17}$ & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82}   \\ 
+	Rover & 0.29 & \textbf{0.95} & 0.2 & \textbf{0.78}  \\ 
+	Satellite & 0.91 & \textbf{1.0} & 0.99 & \textbf{1.0}  \\ 
+
+	Transport & 0.24 & \textbf{0.61} & 0.27 & \textbf{0.32}   \\ 
+	UM-Translog$^{1}$ & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0}   \\ 
+	Woodworking$^{2}$ & 0.38 & \textbf{0.58} & 0.36 & \textbf{0.57}  \\ 
+	\midrule 
+	Monroe & \textbf{0.77} & 0.69 & \textbf{0.75} & 0.71   \\ 
+	SmartPhone$^{1}$ & \textbf{0.71} & \textbf{0.71} & \textbf{0.71} & \textbf{0.71}   \\ 
+	Zenotravel & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0}   \\ 
+	
+	\midrule 
+	IPC score & 7.1 & \textbf{8.4} & 7.0 & \textbf{7.9}  \\ 
+
+	\bottomrule 
+		\end{tabular} 		
 	}
-\end{table*}
+\end{table}
 
 
 
-\begin{table*}
+\begin{table}
 	\centering
 	\caption{Coverage achieved, using Simple Inference on Lifted Problems}
 	\label{table:LiftedSimpleCoverage}
-	\scalebox{0.6} {
-		\begin{tabular}{lccccccccccccccccccl} 
+	\scalebox{0.65} {
+		\begin{tabular}{lccccccccccl} 
 			\toprule 
-			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{Lilotane} & \multicolumn{2}{c}{HyperTensioN} \\  
-			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}   \cmidrule(lr){13-14} 
-			& max &PO & TO & PO & TO & PO & TO & PO &  TO  \\ 
+			& \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{RC FF} & HyperTensioN & Lilotane \\ 
+			\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
+			&PO & TO & PO & TO  \\ 
 			\midrule 
-			Barman-BDI & 20 & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 2.0 & \textbf{9.0} &\multicolumn{2}{c}{ \textbf{17.0}  } \\ 
-			Monroe Fully Observ.$^{7,7,7,5,0}$ & 25 & \textbf{25.0} & \textbf{25.0} & 18.0 & \textbf{22.0} & 22.0 & \textbf{23.0} & \textbf{15.0} & \textbf{15.0} &\multicolumn{2}{c}{ 18.0  } \\ 
-			Monroe Part. Observ.$^{2,2,2,2,0}$ & 24 & \textbf{14.0} & 13.0 & \textbf{7.0} & 6.0 & \textbf{14.0} & 13.0 & \textbf{11.0} & 9.0 &\multicolumn{2}{c}{ \textbf{20.0}  } \\ 
-			PCP$^{18,18,17,17}$ & 18 & \textbf{15.0} & \textbf{15.0} & \textbf{15.0} & \textbf{15.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} & \textbf{14.0} &\multicolumn{2}{c}{ 0.0  } \\ 
-			Rover & 20 & 6.0 & \textbf{15.0} & 4.0 & \textbf{13.0} & 4.0 & \textbf{14.0} & 4.0 & \textbf{13.0} &\multicolumn{2}{c}{ \textbf{20.0}  } \\ 
-			Satellite & 25 & 24.0 & \textbf{25.0} & 22.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & 24.0 & \textbf{25.0} &\multicolumn{2}{c}{ \textbf{25.0}  } \\ 
-			Transport & 40 & 12.0 & \textbf{27.0} & \textbf{2.0} & \textbf{2.0} & 13.0 & \textbf{14.0} & 7.0 & \textbf{12.0} &\multicolumn{2}{c}{ \textbf{35.0}  } \\ 
-			UM-Translog$^{1,1,1,1,0}$ & 22 & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} &\multicolumn{2}{c}{ 21.0  } \\ 
-			Woodworking & 30 & \textbf{13.0} & 7.0 & \textbf{8.0} & 7.0 & \textbf{12.0} & 7.0 & \textbf{9.0} & 7.0 &\multicolumn{2}{c}{ 6.0  } \\ 
+			Barman-BDI & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 0.0 & \textbf{17.0}  \\ 
+			Monroe Fully Observ.$^{7}$ & \textbf{25.0} & \textbf{25.0} & 22.0 & \textbf{23.0} & 0.0 & \textbf{18.0}   \\ 
+			Monroe Part. Observ.$^{2}$ & \textbf{14.0} & 13.0 & \textbf{14.0} & 13.0 & 3.0 & \textbf{20.0}   \\ 
+			PCP$^{18}$ & \textbf{15.0} & \textbf{15.0} & \textbf{14.0} & \textbf{14.0} & 0.0 & 0.0   \\ 
+			Rover & 6.0 & \textbf{15.0} & 4.0 & \textbf{14.0} & 0.0 & 20.0   \\ 
+			Satellite & 24.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & 0.0 & \textbf{25.0}   \\ 
+			Transport & 12.0 & \textbf{27.0} & 13.0 & \textbf{14.0} & 2.0 & \textbf{35.0}   \\ 
+			UM-Translog$^{1}$ & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & 0.0 & \textbf{21.0}   \\ 
+			Woodworking & \textbf{13.0} & 7.0 & \textbf{12.0} & 7.0 & 9.0 & 6.0  \\ 
+			\midrule
+			Monroe & \textbf{96.0} & 92.0 & \textbf{92.0} & 90.0 & \textbf{100.0} & \textbf{100.0}  \\ 
+			SmartPhone$^{3}$ & 5.0 & \textbf{7.0} & 5.0 & \textbf{6.0} & 0.0 & 1.0  \\ 
+			Zenotravel & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & 0.0 & 5.0  \\ 
 			\midrule 
-			Monroe & 100 & \textbf{96.0} & 92.0 & 79.0 & \textbf{87.0} & \textbf{92.0} & 90.0 & 81.0 & \textbf{89.0} &\multicolumn{2}{c}{ \textbf{100.0}  } \\ 
-			SmartPhone$^{3,3,3,3,0}$ & 7 & 5.0 & \textbf{7.0} & 5.0 & \textbf{6.0} & 5.0 & \textbf{6.0} & 5.0 & \textbf{6.0} &\multicolumn{2}{c}{ 1.0  } \\ 
-			Zenotravel & 5 & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} &\multicolumn{2}{c}{ \textbf{5.0}  } \\ 
-			\midrule 
-			Coverage & 336 & 240.0 & \textbf{263.0} & 190.0 & \textbf{220.0} & 231.0 & \textbf{243.0} & 199.0 & \textbf{226.0} &\multicolumn{2}{c}{ \textbf{268.0}  } \\ 
-			Norm. coverage & 12 & 8.23 & \textbf{9.45} & 6.9 & \textbf{8.12} & 8.0 & \textbf{8.83} & 7.14 & \textbf{8.18} &\multicolumn{2}{c}{ 8.58  } \\ 
+			Coverage & 240.0 & \textbf{263.0} & 231.0 & \textbf{243.0} & \textbf{114.0} & \textbf{268.0}  \\ 
+			Norm. coverage & 8.23 & \textbf{9.45} & 8.0 & \textbf{8.83} & 1.65 & 8.58  \\ 
 			\bottomrule 
 		\end{tabular} 
+		
 	}
-\end{table*}
+\end{table}
 
 
 
 
-\begin{table*}
+\begin{table}
 	\centering
 	\caption{IPC score achieved, using Simple Inference on Lifted Problems}
 	\label{table:LiftedSimpleIPC}
-	\scalebox{0.6} {
-		\begin{tabular}{lccccccccccccccccccl} 
-			\toprule 
-			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)}  & \multicolumn{2}{c}{Lilotane} & \multicolumn{2}{c}{HyperTensioN} \\ 
-			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-12}   \cmidrule(lr){13-14} 
-			& max &PO & TO & PO & TO & PO & TO & PO & TO   \\ 
-			\midrule 
-			Barman-BDI & 1 & 0.07 & \textbf{0.38} & 0.07 & \textbf{0.34} & 0.07 & \textbf{0.35} & 0.05 & \textbf{0.23} &\multicolumn{2}{c}{ \textbf{0.72}  } \\ 
-			Monroe Fully Observ.$^{7,7,7,5,0}$ & 1 & \textbf{0.56} & 0.52 & 0.32 & \textbf{0.33} & \textbf{0.47} & 0.45 & \textbf{0.22} & 0.21 &\multicolumn{2}{c}{ 0.54  } \\ 
-			Monroe Part. Observ.$^{2,2,2,2,0}$ & 1 & \textbf{0.31} & 0.28 & \textbf{0.14} & 0.13 & \textbf{0.31} & 0.29 & \textbf{0.17} & 0.16 &\multicolumn{2}{c}{ \textbf{0.63}  } \\ 
-			PCP$^{18,18,17,17}$ & 1 & \textbf{0.83} & \textbf{0.83} & \textbf{0.83} & \textbf{0.83} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} & \textbf{0.82} &\multicolumn{2}{c}{ 0.0  } \\ 
-			Rover & 1 & 0.28 & \textbf{0.61} & 0.14 & \textbf{0.49} & 0.2 & \textbf{0.56} & 0.17 & \textbf{0.42} &\multicolumn{2}{c}{ \textbf{0.97}  } \\ 
-			Satellite & 1 & 0.9 & \textbf{1.0} & 0.76 & \textbf{1.0} & 0.99 & \textbf{1.0} & 0.89 & \textbf{0.99} &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
-			Transport & 1 & 0.24 & \textbf{0.6} & 0.04 & \textbf{0.05} & 0.27 & \textbf{0.32} & 0.12 & \textbf{0.2} &\multicolumn{2}{c}{ \textbf{0.78}  } \\ 
-			UM-Translog$^{1,1,1,1,0}$ & 1 & \textbf{1.0} & 0.99 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} &\multicolumn{2}{c}{ 0.92  } \\ 
-			Woodworking & 1 & \textbf{0.38} & 0.23 & 0.2 & \textbf{0.23} & \textbf{0.36} & 0.23 & \textbf{0.27} & 0.23 &\multicolumn{2}{c}{ 0.2  } \\ 
-			\midrule 
-			Monroe & 1 & \textbf{0.77} & 0.74 & \textbf{0.5} & 0.47 & \textbf{0.76} & 0.73 & \textbf{0.54} & 0.51 &\multicolumn{2}{c}{ \textbf{0.96}  } \\ 
-			SmartPhone$^{3,3,3,3,0}$ & 1 & 0.71 & \textbf{1.0} & 0.69 & \textbf{0.85} & 0.71 & \textbf{0.86} & 0.71 & \textbf{0.83} &\multicolumn{2}{c}{ 0.14  } \\  
-			Zenotravel & 1 & \textbf{1.0} & \textbf{1.0} & 0.64 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & 0.83 & \textbf{1.0} &\multicolumn{2}{c}{ \textbf{1.0}  } \\ 
-			\midrule 
-			IPC score & 12 & 7.1 & \textbf{8.2} & 5.3 & \textbf{6.7} & 7.0 & \textbf{7.6} & 5.8 & \textbf{6.6} &\multicolumn{2}{c}{ 7.9  } \\ 
-			\bottomrule 
-		\end{tabular} 
+	\scalebox{0.7} {
+\begin{tabular}{lccccccccccl} 
+	\toprule 
+	& \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{RC FF} & HyperTensioN & Lilotane \\ 
+	\cmidrule(lr){2-3} \cmidrule(lr){4-5} 
+	&PO & TO & PO & TO  \\  
+	\midrule 
+	Barman-BDI & 0.07 & \textbf{0.38} & 0.07 & \textbf{0.35} & 0.0 & \textbf{0.72}  \\ 
+
+
+	Monroe Fully Observ.$^{7}$ & \textbf{0.56} & 0.52 & \textbf{0.47} & 0.45 & 0.0 & 0.54   \\ 
+	Monroe Part. Observ.$^{2}$ & \textbf{0.31} & 0.28 & \textbf{0.31} & 0.29 & 0.09 & 0.63   \\ 
+	PCP$^{18}$ & \textbf{0.83} & \textbf{0.83} & \textbf{0.82} & \textbf{0.82} & 0.0 & 0.0   \\ 
+	Rover & 0.28 & \textbf{0.61} & 0.2 & \textbf{0.56} & 0.0 & \textbf{0.97}  \\ 
+	Satellite & 0.9 & \textbf{1.0} & 0.99 & \textbf{1.0} & 0.0 & \textbf{1.0}   \\ 
+	Transport & 0.24 & \textbf{0.6} & 0.27 & \textbf{0.32} & 0.22 & 0.78   \\ 
+	UM-Translog$^{1}$ & \textbf{1.0} & 0.99 & \textbf{1.0} & \textbf{1.0} & 0.0 & 0.92   \\ 
+	Woodworking & \textbf{0.38} & 0.23 & \textbf{0.36} & 0.23 & 0.26 & 0.2  \\ 
+	\midrule 
+	Monroe & \textbf{0.77} & 0.74 & \textbf{0.76} & 0.73 & \textbf{1.0} & 0.96  \\ 
+	SmartPhone$^{3}$ & 0.71 & \textbf{1.0} & 0.71 & \textbf{0.86} & 0.0 & 0.14   \\ 
+	Zenotravel & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & 0.0 & 1.0   \\ 
+	\midrule 
+	IPC score & 7.1 & \textbf{8.2} & 7.0 & \textbf{7.6} & \textbf{1.6} & \textbf{7.9}   \\ 
+	\bottomrule 
+\end{tabular} 
 	}
-\end{table*} 
+\end{table} 
 
 
 
-\begin{table*}
+\begin{table}
 	\centering
-	\caption{Coverage achieved, using Complex Inference}
+	\caption{Coverage achieved, using Complex Inference on Grounded Problems}
 	\label{table:GroundedComplexCoverage}.
-	\scalebox{0.8} {
+	\scalebox{0.7} {
 		\begin{tabular}{lccccccccccccccccl} 
 			\toprule 
-			&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
-			\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}     \cmidrule(lr){11-12} \cmidrule(lr){13-14}  
-			& max &PO & TO & PO & TO & PO & TO & PO & TO \\ 
+	&  \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{ RC FF} & HyperTensioN & Lilotane \\ 
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}   
+			&PO & TO & PO & TO \\
 			\midrule 
 			Barman-BDI  \\ 
 			Monroe Fully Observ.$^{2}$   \\ 
@@ -722,18 +961,18 @@ Figure~\ref{ffig:MethodsLinearizedWOCycleBreak} shows the comparison between the
 			\bottomrule 
 		\end{tabular}  
 	}
-\end{table*}
+\end{table}
 
-\begin{table*}
+\begin{table}
 	\centering
-	\caption{IPC score achieved, using Complex Inference}
+	\caption{IPC score achieved, using Complex Inference on Grounded Problems}
 	\label{table:GroundedComplexIPC}.
-	\scalebox{0.8} {
+	\scalebox{0.7} {
 		\begin{tabular}{lccccccccccccccccl} 
 			\toprule 
-&& \multicolumn{2}{c}{rc2(Add)} & \multicolumn{2}{c}{rc2(Filter)} & \multicolumn{2}{c}{rc2(FF)} & \multicolumn{2}{c}{rc2(LMC)} & \multicolumn{2}{c}{HyperTensioN} & \multicolumn{2}{c}{Lilotane} \\ 
-\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}   \cmidrule(lr){11-12} \cmidrule(lr){13-14}  
-& max &PO & TO & PO & TO & PO & TO & PO & TO \\ 
+	& \multicolumn{2}{c}{ RC Add} & \multicolumn{2}{c}{ RC FF} & HyperTensioN & Lilotane \\ 
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
+ &PO & TO & PO & TO \\
 \midrule 
 Barman-BDI  \\ 
 Monroe Fully Observ.$^{2}$   \\ 
@@ -753,7 +992,7 @@ IPC score \\
 \bottomrule 
 \end{tabular}  
 	}
-\end{table*}
+\end{table}
 
 %\begin{figure*}
 %	\caption{Percentage of Problems Linearized Without Cycle-break for each Domain and each Inference Method}
@@ -763,12 +1002,12 @@ IPC score \\
 %\end{figure*}
 
 
-\begin{figure*}
-	\caption{For Grounded Problems, Average Percentage of Methods Linearized Without Cycle-break for Each Domain and for Each Inference Method}
-	\label{fig:MethodsLinearizedWOCycleBreak}
-	\centering
-	\includegraphics[width=14cm]{figures/Lin_average_C_vs_S.jpg}
-\end{figure*} 
+%\begin{figure*}
+%	\caption{For Grounded Problems, Average Percentage of Methods Linearized Without %Cycle-break for Each Domain and for Each Inference Method}
+%	\label{fig:MethodsLinearizedWOCycleBreak}
+%	\centering
+%	\includegraphics[width=14cm]{figures/Lin_average_C_vs_S.jpg}
+%\end{figure*} 
 
 
 \section{Related Work}
@@ -777,25 +1016,25 @@ There exist other planners that also compile POHTN problems to decidable plannin
 \cite{ErolHTNExpressivity} proved that it is NP-complete to decide whether a partially ordered set
 of actions has an executable linearization. Our criteria would work on a problem where the only method is for the initial task, and it’s sub-tasks are actions. That is essentially just ordering a partially ordered plan, so the criteria can also identify a proper subset of all partially ordered plans that can be linearized in polynomial time. It can also find a executable linearization for that subset in polynomial time.
 
+
 \cite{NEBEL1994125} studied various questions regarding partially ordered plans, such as the complexity of plan existence, plan optimisation, possible or necessary truth of properties before or after plan steps, given various constraints on the types of tasks allowed.  \cite{KambhampatiModalTruth1996} studied related questions and criteria under different assumptions.
 In the paper by \cite{TanGruningerPOPlanComplexity}, the authors refine \cite{NEBEL1994125}'s results and show the impact of the interaction of preconditions and effects thereby giving a more detailed picture for when finding a linearization for a partially-ordered plan is possible in polynomial time, and when it remains NP-hard. 
 
 Criteria presented in \cite{NEBEL1994125} and \cite{KambhampatiModalTruth1996} and  \cite{TanGruningerPOPlanComplexity} analyse cases where actions have singleton precondition and add lists. This is a less general case than our criteria can cover, but their criteria also correctly identifies some cases as linearizable in polynomial time that our criteria is unable to determine. Thus their results are orthogonal to ours. 
 
-The paper by \cite{DeleteRelaxation, Bercher2021POCLComplexities} generalised \cite{NEBEL1994125}'s as well as \cite{ErolHTNExpressivity}'s result (deciding whether a partially ordered
+The paper by \citet{DeleteRelaxation, Bercher2021POCLComplexities} generalised \cite{NEBEL1994125}'s as well as \cite{ErolHTNExpressivity}'s result (deciding whether a partially ordered
 set of actions possesses an executable linearization) by showing that this problem does not become easier when one is allowed to insert delete-relaxed  actions.
 
 \section{Future Work}
 %Encode Linearization Problem as a MAX-SAT Problem
 The maximum satisfiability problem (MAX-SAT) is the problem of determining the maximum number of clauses, of a given Boolean formula in conjunctive normal form, that can be made true by an assignment of truth values to the variables of the formula. MAX-SAT is used over SAT as it may not be possible to satisfy all orderings implied by the inferred preconditions and effects.
 
-The current linearization procedure considers each method in isolation, and sub-tasks have their inferred $\PreS, \AddS, \DelS$. Thus we can treat each sub-task as a \enquote{action}, and encode the method the same way as a classical plan, similar to the one described by \cite{RINTANEN201245}, but with the additional constraint that \enquote{actions} chosen from the method sub-tasks can only be selected once, unlike in the domain. Assuming no negative preconditons, the initial state has all state variables true, and goal state can be assumed to be empty (i.e.\ all state variables can have any assignment). The relative success (or failure) of this approach could also lend insight into what about the criteria causes the linearization to be successful.
+The current linearization procedure considers each method in isolation, and sub-tasks have their inferred $\PreS, \AddS, \DelS$. Thus we can treat each sub-task as a \enquote{action}, and encode the method the same way as a classical plan, as described by \cite{RINTANEN201245}, but with the additional constraint that \enquote{actions} chosen from the method sub-tasks can only be selected once, unlike in the domain.
+% Assuming no negative preconditions, the initial state has all state variables true, and goal state can be assumed to be empty (i.e.\ all state variables can have any assignment). The relative success (or failure) of this approach could also lend insight into what about the criteria causes the linearization to be successful.
 
 
 %Adding a Plan as Additional Input to the Domain
-Adding a plan as additional input to the PO domain having the
-semantics that this plan shall be in the solution set of the TO output
-model. This reduces the computational complexity of the decision problem from undecidable to something decidable. The specific complexity class of this will have to be proven in further work.  % I assume the resulting problem is PSPACE-complete, but this needs to be proven
+%Adding a plan as additional input to the PO domain having the semantics that this plan shall be in the solution set of the TO output model. This reduces the computational complexity of the decision problem from undecidable.  % I assume the resulting problem is PSPACE-complete, but this needs to be proven
 
 
 
