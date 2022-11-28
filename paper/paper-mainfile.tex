@@ -751,12 +751,11 @@ We compare the runtime of several state-of-the-art planning systems on some tran
 \subsection{Hardware and Planning Systems}
 The empirical evaluation was conducted on a machine with 30GiB of memory and 4 vCPUs, each with 2 GiB RAM. Recent work by \cite{HTN2SAS} shows that the PO panda$_\pi$, achieved similar coverage and slightly lower IPC score than the best TO planner tested. Also tested is HyperTensioN by \cite{hypertension} an TOHTN solver and the IPC 2020 winner, and Lilotane by \cite{Lilotane} another TOHTN solver and the IPC 2020 runner-up. 
 
-We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20}, on their default configuration. This is when it's configured to turn the problem into a classical planning problem (in RC model), and Greedy best first search, using FF by \cite{FF}, and using visited lists. The visited lists use task sequence hashing, visited checking with task sequences which makes totally-ordered visited lists incomplete (with order), layer hashing, order pairs hashing, no optimisation for parallel sequences,  GI-complete equivalence checking for
-partially ordered task networks (with GI-complete checking).
+We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20}, on their default configuration. This turns problem into a classical planning problem (in RC model), uses Greedy best first search, FF heuristic by \cite{FF}, and visited lists. The visited lists use task sequence hashing, visited checking with task sequences, layer hashing, order pairs hashing, and GI-complete equivalence checking for partially-ordered task networks.
 
-\todo{Most notably, note that TO problems allow for other visited list
-	configurations than PO problems. So we should also use a TO
-	configuration there (this is however not reported)}
+% visited checking with task sequences makes totally-ordered visited lists incomplete (with order)
+
+%\todo{Most notably, note that TO problems allow for other visited list	configurations than PO problems. So we should also use a TO configuration there (this is however not reported)}
 
 We also try that configuration with FF swapped for the Add heuristic by \cite{Add}.
 %Filter by \cite{useClassicalHuristicICAPS18} and Landmark-cut by \cite{LM-Cut}. 
@@ -773,10 +772,12 @@ the PO column shows it's performance on the original problem, and the TO column 
 The IPC score has a maximum of 1 per domain, for the 12 domains in total.
 
 %The comparison is done for grounded  linearization variant and the lifted linearization variant 1. # \value{page}
+
+The best results for Simple Inference on Grounded problems, as in Table~\ref{table:GroundedSimpleCoverage} and ~\ref{table:GroundedSimpleIPC},
+achieve lower coverage but higher IPC score than Complex Inference on Grounded problems, as seen in Table~\ref{table:GroundedComplexCoverage} and ~\ref{table:GroundedComplexIPC}. This is due to complex inference taking a much greater ~98 seconds on average, where simple inference takes ~3 seconds on average. However, the slightly higher coverage does make it appear the complex inference pays off with \enquote{better} linearized domains. E.g.\ using complex inference consistently makes 7 problems solvable, whereas using simple inference, or no pre-processing, only solves for 5.
  
- 
-Unfortunately, when using simple inference, there are very few problems for which all partially ordered methods are linearized without conflict.
-Fortunately, when using complex inference, most partially ordered methods in all problems are linearized without conflict.
+Unfortunately, when using simple inference, there are no problems for which all methods are linearized without conflict.
+When using complex inference, the number of methods in all problems that are linearized without conflict is generally higher, with a few problems being provably solvable. 
 %Figure~\ref{fig:MethodsLinearizedWOCycleBreak} shows the comparison between the two.
 
 
@@ -935,31 +936,35 @@ Fortunately, when using complex inference, most partially ordered methods in all
 	\centering
 	\caption{Coverage achieved, using Complex Inference on Grounded Problems}
 	\label{table:GroundedComplexCoverage}.
-	\scalebox{0.7} {
-		\begin{tabular}{lccccccccccccccccl} 
-			\toprule 
-	&  \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{ RC FF} & HyperTensioN & Lilotane \\ 
-\cmidrule(lr){2-3} \cmidrule(lr){4-5}   
-			&PO & TO & PO & TO \\
-			\midrule 
-			Barman-BDI  \\ 
-			Monroe Fully Observ.$^{2}$   \\ 
-			Monroe Part. Observ.$^{2}$  \\ 
-			PCP$^{17}$  \\ 
-			Rover  \\ 
-			Satellite   \\  
-			Transport   \\ 
-			UM-Translog$^{1}$  \\ 
-			Woodworking$^{2}$  \\ 
-			\midrule 
-			Monroe   \\ 
-			SmartPhone$^{1}$   \\ 
-			Zenotravel   \\ 
-			\midrule 
-			Coverage  \\ 
-			Norm. coverage  \\ 
-			\bottomrule 
-		\end{tabular}  
+	\scalebox{0.8} {
+
+\begin{tabular}{lccccccl} 
+	\toprule 
+	&  \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{ RC FF} \\ %& HyperTensioN & Lilotane \\ 
+	\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
+	&PO & TO &PO & TO  \\ 
+	\midrule 
+	Barman-BDI & 5.0 & \textbf{13.0} & 4.0 & \textbf{11.0}  \\ 
+	Monroe Fully Observ.$^{5}$ & \textbf{25.0} & \textbf{25.0} & \textbf{22.0} & \textbf{22.0}  \\ 
+	Monroe Part. Observ. & \textbf{14.0} & 13.0 & \textbf{14.0} & \textbf{14.0}  \\ 
+	Norm. coverage & 8.44 & \textbf{10.07} & 8.02 & \textbf{9.59}  \\ 
+	PCP$^{17}$ & \textbf{14.0} & \textbf{14.0} & \textbf{15.0} & \textbf{15.0}  \\ 
+	Rover & 10.0 & \textbf{18.0} & 4.0 & \textbf{17.0}  \\ 
+	Satellite & 24.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0}  \\ 
+	Transport & 12.0 & \textbf{28.0} & 13.0 & \textbf{14.0}  \\ 
+	UM-Translog$^{1}$ & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0}  \\ 
+	Woodworking$^{1}$ & 13.0 & \textbf{20.0} & 12.0 & \textbf{19.0}  \\ 
+	
+	\midrule 
+	Monroe & 96.0 & \textbf{100.0} & 92.0 & \textbf{100.0}  \\ 
+	SmartPhone$^{3}$ & 5.0 & \textbf{7.0} & 5.0 & \textbf{7.0}  \\ 
+	Zenotravel$^{2}$ & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0}  \\ 
+	
+		\midrule 
+	Coverage & 245.0 & \textbf{290.0} & 233.0 & \textbf{271.0}  \\ 
+	Norm. coverage & 8.44 & \textbf{10.07} & 8.02 & \textbf{9.59}  \\ 
+	\bottomrule 
+\end{tabular} 
 	}
 \end{table}
 
@@ -967,32 +972,129 @@ Fortunately, when using complex inference, most partially ordered methods in all
 	\centering
 	\caption{IPC score achieved, using Complex Inference on Grounded Problems}
 	\label{table:GroundedComplexIPC}.
-	\scalebox{0.7} {
-		\begin{tabular}{lccccccccccccccccl} 
+	\scalebox{0.8} { 
+\begin{tabular}{lccccccl} 
 			\toprule 
-	& \multicolumn{2}{c}{ RC Add} & \multicolumn{2}{c}{ RC FF} & HyperTensioN & Lilotane \\ 
-\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
- &PO & TO & PO & TO \\
-\midrule 
-Barman-BDI  \\ 
-Monroe Fully Observ.$^{2}$   \\ 
-Monroe Part. Observ.$^{2}$  \\ 
-PCP$^{17}$  \\ 
-Rover  \\ 
-Satellite   \\  
-Transport   \\ 
-UM-Translog$^{1}$  \\ 
-Woodworking$^{2}$  \\ 
-\midrule 
-Monroe   \\ 
-SmartPhone$^{1}$   \\ 
-Zenotravel   \\ 
-\midrule 
-IPC score \\
-\bottomrule 
+		& \multicolumn{2}{c}{ RC Add} & \multicolumn{2}{c}{ RC FF} \\ %& HyperTensioN & Lilotane \\ 
+		\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
+	&PO & TO  &PO & TO  \\ 
+	\midrule 
+	Barman-BDI & 0.09 & \textbf{0.34} & 0.06 & \textbf{0.34}  \\ 
+
+	Monroe Fully Observ.$^{5}$ & \textbf{0.57} & 0.18 & \textbf{0.47} & 0.16  \\ 
+	Monroe Part. Observ. & \textbf{0.31} & 0.1 & \textbf{0.31} & 0.11  \\ 
+	PCP$^{17}$ & \textbf{0.82} & \textbf{0.82} & \textbf{0.83} & \textbf{0.83}  \\ 
+	Rover & 0.41 & \textbf{0.84} & 0.2 & \textbf{0.69}  \\ 
+	Satellite & 0.91 & \textbf{1.0} & 0.99 & \textbf{1.0}  \\ 
+	Transport & 0.24 & \textbf{0.65} & 0.27 & \textbf{0.31}  \\ 
+	UM-Translog$^{1}$ & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0}  \\ 
+	Woodworking$^{1}$ & 0.38 & \textbf{0.57} & 0.35 & \textbf{0.54}  \\ 
+	\midrule 
+	Monroe & \textbf{0.77} & 0.48 & \textbf{0.75} & 0.48  \\ 
+	SmartPhone$^{3}$ & 0.71 & \textbf{1.0} & 0.71 & \textbf{0.87}  \\ 
+	Zenotravel$^{2}$ & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0}  \\ 
+		\midrule 
+	IPC score & 7.2 & \textbf{8.0} & 7.0 & \textbf{7.3}  \\ 
+	\bottomrule 
 \end{tabular}  
 	}
 \end{table}
+
+
+\begin{table} 
+	\centering  
+	\caption{Number of Problems per Domain for Which \emph{all} methods were linearizable, and the Average Number of Methods with more than 1 sub-task that were in that Domain}
+	\scalebox{0.75} { 
+	\begin{tabular}{lcccl} 
+		\toprule
+		Domain      & Avg. Num. Methods ($>$ 1) & Num. Problems \\
+		\midrule
+		SmartPhone  & 4.0                   &  1     \\
+		Transport   & 1144.9                & 40       \\
+		UM-Translog & 1.1                    & 17   \\
+		Woodworking & 2035              &   21    \\
+				\bottomrule 
+	\end{tabular} 
+	}
+\end{table}
+
+ 
+\begin{table} 
+	\centering
+	\caption{These results are from using Simple Inference. Table shows the average number of methods per domain with more than 1 sub-task, the average number of those methods that needed cycle-breaking, and the percentage of successfully linearized methods.}
+	\label{table:SimpleLinearizable} 
+		\scalebox{0.65} { 
+	\begin{tabular}{lcccl} 
+		\toprule 
+		& Avg. Num. Methods ($>$ 1) & Cycle-breaking & Percentage &  \\ 
+		\midrule
+Barman-BDI & 4870.0 & 3717.1 & 28.6  \\ 
+Monroe & 12127.3 & 3447.8 & 72.4  \\ 
+Monroe Fully Observ. & 49450.6 & 15813.0 & 68.0  \\ 
+Monroe Part. Observ. & 49470.9 & 15809.3 & 68.0  \\ 
+PCP & 12.3 & 12.3 & 0.0  \\ 
+Rover & 509.4 & 355.2 & 32.3  \\ 
+Satellite & 70.6 & 36.1 & 50.9  \\ 
+SmartPhone & 6.3 & 4.0 & 21.8  \\ 
+Transport & 1144.9 & 1144.9 & 0.0  \\ 
+UM-Translog & 1.5 & 1.5 & 0.0  \\ 
+Woodworking & 1927.3 & 1927.3 & 0.0  \\ 
+Zenotravel & 190.2 & 99.4 & 47.0  \\ 
+		\bottomrule 
+	\end{tabular} 
+}
+\end{table} 
+
+
+\begin{table} 
+	\centering
+	\caption{These results are the same as Table~\ref{table:SimpleLinearizable}, but from using Complex Inference.}
+	\label{table:ComplexLinearizable} 
+	\scalebox{0.65} { 
+	\begin{tabular}{lcccl} 
+		\toprule 
+		&  Avg. Num. Methods ($>$ 1)& Cycle-breaking & Percentage &  \\ 
+		\midrule
+			Barman-BDI &  4870.0 & 1836.0 & 62.2  \\ 
+			Monroe & 12127.3 & 216.9 & 98.2  \\ 
+			Monroe Fully Observ. & 49450.6 & 1016.2 & 97.9  \\ 
+			Monroe Part. Observ. & 49470.9 & 1010.0 & 98.0  \\ 
+			PCP & 12.3 & 4.9 & 59.8  \\ 
+			Rover & 509.4 & 134.8 & 72.4  \\ 
+			Satellite & 70.6 & 10.7 & 77.9  \\ 
+			SmartPhone & 6.3 & 0.9 & 77.4  \\ 
+			Transport & 1144.9 & 0.0 & 100.0  \\ 
+			UM-Translog & 1.5 & 0.4 & 87.9  \\ 
+			Woodworking & 1927.3 & 476.0 & 85.5  \\
+			Zenotravel & 190.2 & 16.4 & 91.6  \\ 
+			\bottomrule 
+		\end{tabular} 
+		}
+\end{table} 
+
+While simple linearization can linearize almost none of the actaully partially ordered methods, with complex linearization, we can successfully linearize a fair amount of the partially-ordered methods too. (Note that this does not result in a guaranteed solvability-preserving problem unless all methods conform to the criteria though.)
+\begin{table} 
+	\caption{For the Problems in Each Domain, Average Percentage of Partially-Ordered Methods Linearized Without Cycle-break per Problem, for each Domain. Shows Results for Both Inference Methods.}\label{} 
+	\begin{tabular}{lccl} 
+		\toprule 
+		Domain & Complex & Simple &  \\ 
+		\midrule
+		Transport & 1.0 & 0.0  \\ 
+		UM-Translog & 0.8 & 0.0  \\ 
+		Satellite & 1.0 & 0.0  \\ 
+		Monroe Fully Observ. & 1.0 & 0.0  \\ 
+		Rover & 1.0 & 0.0  \\ 
+		Woodworking & 0.9 & 0.0  \\ 
+		Monroe Part. Observ. & 1.0 & 0.0  \\ 
+		PCP & 0.0 & 0.0  \\ 
+		Barman-BDI & 1.0 & 0.0  \\ 
+		SmartPhone & 0.1 & 0.1  \\ 
+		Monroe & 0.8 & 0.0  \\ 
+		Zenotravel & 1.0 & 0.0  \\ 
+		\bottomrule 
+	\end{tabular} 
+\end{table}  
+
 
 %\begin{figure*}
 %	\caption{Percentage of Problems Linearized Without Cycle-break for each Domain and each Inference Method}
