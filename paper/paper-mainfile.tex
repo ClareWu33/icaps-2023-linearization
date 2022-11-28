@@ -754,9 +754,7 @@ The empirical evaluation was conducted on a machine with 30GiB of memory and 4 v
 We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20}, on their default configuration. This is when it's configured to turn the problem into a classical planning problem (in RC model), and Greedy best first search, using FF by \cite{FF}, and using visited lists. The visited lists use task sequence hashing, visited checking with task sequences which makes totally-ordered visited lists incomplete (with order), layer hashing, order pairs hashing, no optimisation for parallel sequences,  GI-complete equivalence checking for
 partially ordered task networks (with GI-complete checking).
 
-\todo{Most notably, note that TO problems allow for other visited list
-	configurations than PO problems. So we should also use a TO
-	configuration there (this is however not reported)}
+%\todo{Most notably, note that TO problems allow for other visited list	configurations than PO problems. So we should also use a TO configuration there (this is however not reported)}
 
 We also try that configuration with FF swapped for the Add heuristic by \cite{Add}.
 %Filter by \cite{useClassicalHuristicICAPS18} and Landmark-cut by \cite{LM-Cut}. 
@@ -773,7 +771,9 @@ the PO column shows it's performance on the original problem, and the TO column 
 The IPC score has a maximum of 1 per domain, for the 12 domains in total.
 
 %The comparison is done for grounded  linearization variant and the lifted linearization variant 1. # \value{page}
- 
+
+The best results for Simple Inference on Grounded problems, as in Table~\ref{table:GroundedSimpleCoverage} and ~\ref{table:GroundedSimpleIPC},
+achieve lower coverage but higher IPC score than Complex Inference on Grounded problems, as seen in Table~\ref{table:GroundedComplexCoverage} and ~\ref{table:GroundedComplexIPC}. This is due to complex inference taking a much greater ~98 seconds on average, where simple inference takes ~3 seconds on average. However, the slightly higher coverage does make it appear the complex inference pays off with \enquote{better} linearized domains. E.g.\ using complex inference consistently makes 7 problems solvable, whereas using simple inference, or no pre-processing, only solves for 5.
  
 Unfortunately, when using simple inference, there are very few problems for which all partially ordered methods are linearized without conflict.
 Fortunately, when using complex inference, most partially ordered methods in all problems are linearized without conflict.
@@ -935,11 +935,11 @@ Fortunately, when using complex inference, most partially ordered methods in all
 	\centering
 	\caption{Coverage achieved, using Complex Inference on Grounded Problems}
 	\label{table:GroundedComplexCoverage}.
-	\scalebox{0.7} {
+	\scalebox{0.8} {
 
 \begin{tabular}{lccccccl} 
 	\toprule 
-	&  \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{ RC FF} & HyperTensioN & Lilotane \\ 
+	&  \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{ RC FF} \\ %& HyperTensioN & Lilotane \\ 
 	\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
 	&PO & TO &PO & TO  \\ 
 	\midrule 
@@ -971,10 +971,10 @@ Fortunately, when using complex inference, most partially ordered methods in all
 	\centering
 	\caption{IPC score achieved, using Complex Inference on Grounded Problems}
 	\label{table:GroundedComplexIPC}.
-	\scalebox{0.7} { 
+	\scalebox{0.8} { 
 \begin{tabular}{lccccccl} 
 			\toprule 
-		& \multicolumn{2}{c}{ RC Add} & \multicolumn{2}{c}{ RC FF} & HyperTensioN & Lilotane \\ 
+		& \multicolumn{2}{c}{ RC Add} & \multicolumn{2}{c}{ RC FF} \\ %& HyperTensioN & Lilotane \\ 
 		\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
 	&PO & TO  &PO & TO  \\ 
 	\midrule 
@@ -998,6 +998,64 @@ Fortunately, when using complex inference, most partially ordered methods in all
 \end{tabular}  
 	}
 \end{table}
+
+
+
+\begin{table} 
+	\centering
+	\caption{These results are from using Simple Inference. Table shows the average number of methods per domain with more than 1 sub-task, the average number of those methods that needed cycle-breaking, and the percentage of successfully linearized methods.}
+	\label{table:SimpleLinearizable} 
+		\scalebox{0.75} { 
+	\begin{tabular}{lcccl} 
+		\toprule 
+		&$>$ 1 subtasks & Cycle-breaking & Percentage &  \\ 
+		\midrule
+Barman-BDI & 4870.0 & 3717.1 & 28.6  \\ 
+Monroe & 12127.3 & 3447.8 & 72.4  \\ 
+Monroe Fully Observ. & 49450.6 & 15813.0 & 68.0  \\ 
+Monroe Part. Observ. & 49470.9 & 15809.3 & 68.0  \\ 
+PCP & 12.3 & 12.3 & 0.0  \\ 
+Rover & 509.4 & 355.2 & 32.3  \\ 
+Satellite & 70.6 & 36.1 & 50.9  \\ 
+SmartPhone & 6.3 & 4.0 & 21.8  \\ 
+Transport & 1144.9 & 1144.9 & 0.0  \\ 
+UM-Translog & 1.5 & 1.5 & 0.0  \\ 
+Woodworking & 1927.3 & 1927.3 & 0.0  \\ 
+Zenotravel & 190.2 & 99.4 & 47.0  \\ 
+		\bottomrule 
+	\end{tabular} 
+}
+\end{table} 
+
+
+\begin{table} 
+	\centering
+	\caption{These results are the same as Table~\ref{table:SimpleLinearizable}, but from using Complex Inference.}
+	\label{table:ComplexLinearizable} 
+	\scalebox{0.75} { 
+	\begin{tabular}{lcccl} 
+		\toprule 
+		&$>$ 1 subtasks & Cycle-breaking & Percentage &  \\ 
+		\midrule
+			Barman-BDI &  4870.0 & 1836.0 & 62.2  \\ 
+			Monroe & 12127.3 & 216.9 & 98.2  \\ 
+			Monroe Fully Observ. & 49450.6 & 1016.2 & 97.9  \\ 
+			Monroe Part. Observ. & 49470.9 & 1010.0 & 98.0  \\ 
+			PCP & 12.3 & 4.9 & 59.8  \\ 
+			Rover & 509.4 & 134.8 & 72.4  \\ 
+			Satellite & 70.6 & 10.7 & 77.9  \\ 
+			SmartPhone & 6.3 & 0.9 & 77.4  \\ 
+			Transport & 1144.9 & 0.0 & 100.0  \\ 
+			UM-Translog & 1.5 & 0.4 & 87.9  \\ 
+			Woodworking & 1927.3 & 476.0 & 85.5  \\
+			Zenotravel & 190.2 & 16.4 & 91.6  \\ 
+			\bottomrule 
+		\end{tabular} 
+		}
+\end{table} 
+
+
+
 
 %\begin{figure*}
 %	\caption{Percentage of Problems Linearized Without Cycle-break for each Domain and each Inference Method}
