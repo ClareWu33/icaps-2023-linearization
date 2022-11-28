@@ -775,8 +775,8 @@ The IPC score has a maximum of 1 per domain, for the 12 domains in total.
 The best results for Simple Inference on Grounded problems, as in Table~\ref{table:GroundedSimpleCoverage} and ~\ref{table:GroundedSimpleIPC},
 achieve lower coverage but higher IPC score than Complex Inference on Grounded problems, as seen in Table~\ref{table:GroundedComplexCoverage} and ~\ref{table:GroundedComplexIPC}. This is due to complex inference taking a much greater ~98 seconds on average, where simple inference takes ~3 seconds on average. However, the slightly higher coverage does make it appear the complex inference pays off with \enquote{better} linearized domains. E.g.\ using complex inference consistently makes 7 problems solvable, whereas using simple inference, or no pre-processing, only solves for 5.
  
-Unfortunately, when using simple inference, there are very few problems for which all partially ordered methods are linearized without conflict.
-Fortunately, when using complex inference, most partially ordered methods in all problems are linearized without conflict.
+Unfortunately, when using simple inference, there are no problems for which all methods are linearized without conflict.
+When using complex inference, the number of methods in all problems that are linearized without conflict is generally higher, with a few problems being provably solvable. 
 %Figure~\ref{fig:MethodsLinearizedWOCycleBreak} shows the comparison between the two.
 
 
@@ -1000,15 +1000,32 @@ Fortunately, when using complex inference, most partially ordered methods in all
 \end{table}
 
 
+\begin{table} 
+	\centering  
+	\caption{Number of Problems per Domain for Which \emph{all} methods were linearizable, and the Average Number of Methods with more than 1 sub-task that were in that Domain}
+	\scalebox{0.75} { 
+	\begin{tabular}{lcccl} 
+		\toprule
+		Domain      & Avg. Num. Methods ($>$ 1) & Num. Problems \\
+		\midrule
+		SmartPhone  & 4.0                   &  1     \\
+		Transport   & 1144.9                & 40       \\
+		UM-Translog & 1.1                    & 17   \\
+		Woodworking & 2035              &   21    \\
+				\bottomrule 
+	\end{tabular} 
+	}
+\end{table}
 
+ 
 \begin{table} 
 	\centering
 	\caption{These results are from using Simple Inference. Table shows the average number of methods per domain with more than 1 sub-task, the average number of those methods that needed cycle-breaking, and the percentage of successfully linearized methods.}
 	\label{table:SimpleLinearizable} 
-		\scalebox{0.75} { 
+		\scalebox{0.65} { 
 	\begin{tabular}{lcccl} 
 		\toprule 
-		&$>$ 1 subtasks & Cycle-breaking & Percentage &  \\ 
+		& Avg. Num. Methods ($>$ 1) & Cycle-breaking & Percentage &  \\ 
 		\midrule
 Barman-BDI & 4870.0 & 3717.1 & 28.6  \\ 
 Monroe & 12127.3 & 3447.8 & 72.4  \\ 
@@ -1032,10 +1049,10 @@ Zenotravel & 190.2 & 99.4 & 47.0  \\
 	\centering
 	\caption{These results are the same as Table~\ref{table:SimpleLinearizable}, but from using Complex Inference.}
 	\label{table:ComplexLinearizable} 
-	\scalebox{0.75} { 
+	\scalebox{0.65} { 
 	\begin{tabular}{lcccl} 
 		\toprule 
-		&$>$ 1 subtasks & Cycle-breaking & Percentage &  \\ 
+		&  Avg. Num. Methods ($>$ 1)& Cycle-breaking & Percentage &  \\ 
 		\midrule
 			Barman-BDI &  4870.0 & 1836.0 & 62.2  \\ 
 			Monroe & 12127.3 & 216.9 & 98.2  \\ 
