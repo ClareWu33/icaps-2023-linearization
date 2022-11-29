@@ -1,0 +1,7 @@
+We now introduce how to transform a general (i.e., partially ordered) grounded HTN planning problem into a totally ordered one. Given a grounded HTN planning problem, our goal is to linearize every method's task network by adding ordering constraints to them. In particular, in order to decide which ordering constraints are to be added to a task network, we want to \emph{infer} the precondition and effects of each compound task in the task network from all primitive tasks into which it can be decomposed. 
+
+The reason for doing such inference is that our intent is to let every linearized task network be able to be decomposed into at least one executable action sequence (though it is not always possible), and hence, we want to capture the state transition information about the action sequences that can be obtained from the task network. % which can be loosely acquired by inferring the preconditions and the effects of the compound tasks. 
+
+Thus, generally speaking, our linearization approach consists of two phases. The first one is to infer preconditions and effects of compound tasks, and the second one is to add ordering constraints to each method's task network according to those inferred preconditions and effects. We now elaborate these two phases in detail as follows.
+
+\subsection{Inferring Preconditions and Effects}

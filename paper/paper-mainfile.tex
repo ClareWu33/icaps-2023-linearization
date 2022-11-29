@@ -257,53 +257,14 @@ preprocessing technique is guaranteed to be solvability-preserving.
 \section{Hierarchical Planning Formalism}
 \input{02--htn.tex}
 
-Hierarchical task network planning, also known as \textbf{HTN planning}, is one form of hierarchical planning. There are many formalisations for HTN planning. The following one borrows heavily from \cite{HTNSurvey} and \cite{Geier2011TIHTNDecidability}. HTN planning can be partially ordered, also known as POHTN planning, or totally ordered, otherwise known as TOHTN planning. TOHTN planning is a special case of POHTN planning.  % except with the initial task network replaced by a initial compound task. 
-
-A \textbf{Partially Ordered Hierarchical Planning}, also called POHTN, problem P = $(D, S_I, T_I)$
-is defined over some domain $D$, 
-has an initial state $S_I \in 2^F$, and 
-has a initial compound task $T_I$. 
-The closed world assumption also holds for HTN planning.
-
-The domain is defined as \textbf{D} = $(F, T_P, T_C, \delta, M)$.
-$F$ is the finite set of facts or state variables, $T_P$ is the finite set of all possible primitive task names, $T_C$ is the finite set of all possible compound task names, and
-$\delta$ is a mapping from primitive task name to action. Actions in POHTN domain also have preconditions, adds, and delete effects.
-$M$ is the finite set of decomposition methods. Each one maps a compound task name to a task network. If $m \in M$, then $m=(c, tn)$, where $c \in T_C$.
-
-A task network \textbf{tn} = $(T, \singlePrec, \alpha)$ consists of
-T, which is a finite set of task identifiers (ids); 
-$\singlePrec$, which is a partial order over T; and
-$\alpha$, which maps task ids $\in$ T to task names in $T_C$ and $T_P$. 
-
-% replacing t  (i.e. $tn_1 \rightarrow_{t,m} tn_2$)
-A method $m = (c, tn_m)$ decomposes a task network $tn_1 = (T_1, \singlePrec_1, \alpha_1)$ into
-a new task network $tn_2$ by replacing $t$, if and only if $t \in T_1$, $\alpha_1(t) = c$, and $\exists tn' = (T', \singlePrec' \alpha')$ with $tn' \cong tn_m$ and $T' \cap T = \emptyset$ and
-\begin{align}
-tn_2 :=     &((T_1 \setminus \{t\}) \cup T',    \singlePrec_1 \cup \singlePrec' \cup \singlePrec_X,        \alpha_1 \cup \alpha') \\
-\singlePrec_X :=  &\{(t_1, t_2) \in T_1 \times T'  \mid  (t_1,t) \in \singlePrec_1 \} \cup \\
-&\{(t_1, t_2) \in T' \times T_1 \mid (t, t_2) \in \singlePrec_1 \}  
-\end{align}
-In other words, the decomposition of a compound task results in it being removed from the task network and replaced by a copy of the method’s task network. The ordering constraints
-on the removed task are inherited by its replacement tasks, as defined by $\singlePrec_X$. 
-
-A \textbf{solution} to an HTN problem is a task network $tn = (T, \prec, \alpha)$ if and only if
-tn can be reached via decomposing $tn_I$, all tasks are primitive, ($\forall t \in T: \alpha(t) \in T_P$), and there exists a sequence $\langle t_1, t_2 ... t_n \rangle$ of the task ids in $T$ that agrees with $\prec$ such that the application of that sequence $\langle \alpha(t_1), \alpha(t_2) ... \alpha(t_n) \rangle$ in $S_I$ is executable.
-
-%In other words, there is no goal state for hierarchical planning -- the goal is to find an decomposition of the initial task, then any executable refinement of the resulting decomposition. For any given hierarchical problem, it is trivial to enforce a goal state is met, by replacing the real initial task with a task whose only decomposition is to the real initial task and a primitive task ordered after it whose preconditions are equivalent to any \enquote{goal state} desired. Thus the fact that a goal state is not strictly required is not a restriction to the expressiveness of hierarchical planning. Whereas in classical planning, one only finds any executable sequence of actions to achieve a goal state, so HTN planning poses additional restrictions on which action sequences may be considered.
-
-
-\textbf{Totally Ordered Hierarchical Planning}, also called TOHTN planning, is the same as partially ordered planning in all respects except the kind of task networks it allows.
-%For both planning formalisms, a method $m$ maps a task $t$ to a task network \textbf{tn} = $(T, \prec, \alpha)$. TOHTN planning domains require that $\prec$ must specify a total order between task ids in $T$. This leads to a difference in expressiveness and decideability of TOHTN vs POHTN planning. POHTN planning is more expressive in general (both in terms of plan existence and in terms of computational complexity). 
-
-% As per \cite{LanguageClassificationPlanning}, if regarded from the standpoint of formal grammars, TOHTN planning is exactly as expressive as context free languages, whereas POHTN planning is strictly more expressive than context-free languages, and strictly less expressive than context-sensitive languages.
-In terms of complexity classes, \cite{ErolHTNExpressivity} proved that POHTN planning is semi-decidable, whereas \cite{Alford2015TightHTNBounds} proved that, assuming arbitrary recursion, TOHTN planning is 2-EXPTIME-complete with variables, and EXPTIME-complete without. 
-
-
 \section{Inference of Preconditions and Effects}
+\input{03--linearization-ground.tex}
+
 The basic linearization process consists of inferring preconditions and effects for compound tasks, inferring additional orderings to the sub-tasks based on the preconditions and effects (inferred or \enquote{real} in the case of primitive tasks) of method sub-tasks. We first attempt to add them all, and then randomly remove orderings that conflict with the originally required orderings, or each other. This random removal of contradicting orderings is called \textbf{\textit{cycle-breaking}}.
  
  
 \subsection{Simple Inference of Preconditions and Effects for Compound Tasks (For Lifted and Grounded Domain) }
+
 In a lifted format, tasks and methods accept parameters, referring to any object of a specific type. Thus actions within a method have effects and preconditions that are symmetrical in terms of interactions within the method. 
 
 E.g.\ the task \textit{navigate(waypoint1, waypoint2)} will end up with some set of actions  $\bar{a}$ once decomposed. If you replace the passed parameters \textit{waypoint1} with \textit{waypoint3} and \textit{waypoint2} with \textit{waypoint4}, then \textit{navigate(waypoint3, waypoint4)} will have the same set of actions $\bar{a}$. This is true for all possible tasks by simple induction over the decomposition process.
