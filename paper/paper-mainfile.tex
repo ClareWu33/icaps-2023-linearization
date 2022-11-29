@@ -753,7 +753,7 @@ The empirical evaluation was conducted on a machine with 30GiB of memory and 4 v
 
 We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20}, on their default configuration. This turns problem into a classical planning problem (in RC model), uses Greedy best first search, FF heuristic by \cite{FF}, and visited lists. The visited lists use task sequence hashing, visited checking with task sequences, layer hashing, order pairs hashing, and GI-complete equivalence checking for partially-ordered task networks.
 
-% visited checking with task sequences makes totally-ordered visited lists incomplete (with order)
+% \todo{visited checking with task sequences makes totally-ordered visited lists incomplete (with order) }
 
 %\todo{Most notably, note that TO problems allow for other visited list	configurations than PO problems. So we should also use a TO configuration there (this is however not reported)}
 
@@ -789,7 +789,10 @@ When using complex inference, the number of methods in all problems that are lin
 %		& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}}  
 %		& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
 %		& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
-%		& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
+%		& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\
+
+\todo{proven unsolvable should not be in superscripts}
+ 
 \begin{table}
 	\centering
 	\caption{Coverage achieved, using Simple Inference on Grounded Problems}
@@ -871,24 +874,24 @@ When using complex inference, the number of methods in all problems that are lin
 			& \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{RC FF} & HyperTensioN & Lilotane \\ 
 			\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
 			&PO & TO & PO & TO  \\ 
-			\midrule 
-			Barman-BDI & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 0.0 & \textbf{17.0}  \\ 
-			Monroe Fully Observ.$^{7}$ & \textbf{25.0} & \textbf{25.0} & 22.0 & \textbf{23.0} & 0.0 & \textbf{18.0}   \\ 
-			Monroe Part. Observ.$^{2}$ & \textbf{14.0} & 13.0 & \textbf{14.0} & 13.0 & 3.0 & \textbf{20.0}   \\ 
-			PCP$^{18}$ & \textbf{15.0} & \textbf{15.0} & \textbf{14.0} & \textbf{14.0} & 0.0 & 0.0   \\ 
-			Rover & 6.0 & \textbf{15.0} & 4.0 & \textbf{14.0} & 0.0 & 20.0   \\ 
-			Satellite & 24.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & 0.0 & \textbf{25.0}   \\ 
-			Transport & 12.0 & \textbf{27.0} & 13.0 & \textbf{14.0} & 2.0 & \textbf{35.0}   \\ 
-			UM-Translog$^{1}$ & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & 0.0 & \textbf{21.0}   \\ 
-			Woodworking & \textbf{13.0} & 7.0 & \textbf{12.0} & 7.0 & 9.0 & 6.0  \\ 
-			\midrule
-			Monroe & \textbf{96.0} & 92.0 & \textbf{92.0} & 90.0 & \textbf{100.0} & \textbf{100.0}  \\ 
-			SmartPhone$^{3}$ & 5.0 & \textbf{7.0} & 5.0 & \textbf{6.0} & 0.0 & 1.0  \\ 
-			Zenotravel & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & 0.0 & 5.0  \\ 
-			\midrule 
-			Coverage & 240.0 & \textbf{263.0} & 231.0 & \textbf{243.0} & \textbf{114.0} & \textbf{268.0}  \\ 
-			Norm. coverage & 8.23 & \textbf{9.45} & 8.0 & \textbf{8.83} & 1.65 & 8.58  \\ 
-			\bottomrule 
+\midrule 
+Barman-BDI & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & \textbf{17.0} & \textbf{17.0}  \\ 
+Monroe Fully Observ.$^{7}$ & \textbf{25.0} & \textbf{25.0} & 22.0 & \textbf{23.0} & \textbf{25.0} & 18.0  \\ 
+Monroe Part. Observ.$^{2}$ & \textbf{14.0} & 13.0 & \textbf{14.0} & 13.0 & 3.0 & \textbf{20.0}  \\ 
+PCP$^{18}$ & \textbf{15.0} & \textbf{15.0} & \textbf{14.0} & \textbf{14.0} & 14.0 & 0.0  \\ 
+Rover & 6.0 & \textbf{15.0} & 4.0 & \textbf{14.0} & \textbf{20.0} & \textbf{20.0}  \\ 
+Satellite & 24.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & \textbf{25.0}  \\ 
+Transport & 12.0 & \textbf{27.0} & 13.0 & \textbf{14.0} & 26.0 & \textbf{35.0}  \\ 
+UM-Translog$^{1}$ & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & 21.0  \\ 
+Woodworking & \textbf{13.0} & 7.0 & \textbf{12.0} & 7.0 & 9.0 & 6.0  \\ 
+\midrule 
+Monroe & \textbf{96.0} & 92.0 & \textbf{92.0} & 90.0 & \textbf{100.0} & \textbf{100.0}  \\ 
+SmartPhone$^{3}$ & 5.0 & \textbf{7.0} & 5.0 & \textbf{6.0} & 6.0 & 1.0  \\ 
+Zenotravel & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0}  \\ 
+\midrule 
+Coverage & 240.0 & \textbf{263.0} & 231.0 & \textbf{243.0} & \textbf{272.0} & 268.0  \\ 
+Norm. coverage & 8.23 & \textbf{9.45} & 8.0 & \textbf{8.83} & \textbf{9.61} & 8.58  \\ 
+\bottomrule 
 		\end{tabular} 
 		
 	}
@@ -907,25 +910,23 @@ When using complex inference, the number of methods in all problems that are lin
 	& \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{RC FF} & HyperTensioN & Lilotane \\ 
 	\cmidrule(lr){2-3} \cmidrule(lr){4-5} 
 	&PO & TO & PO & TO  \\  
-	\midrule 
-	Barman-BDI & 0.07 & \textbf{0.38} & 0.07 & \textbf{0.35} & 0.0 & \textbf{0.72}  \\ 
-
-
-	Monroe Fully Observ.$^{7}$ & \textbf{0.56} & 0.52 & \textbf{0.47} & 0.45 & 0.0 & 0.54   \\ 
-	Monroe Part. Observ.$^{2}$ & \textbf{0.31} & 0.28 & \textbf{0.31} & 0.29 & 0.09 & 0.63   \\ 
-	PCP$^{18}$ & \textbf{0.83} & \textbf{0.83} & \textbf{0.82} & \textbf{0.82} & 0.0 & 0.0   \\ 
-	Rover & 0.28 & \textbf{0.61} & 0.2 & \textbf{0.56} & 0.0 & \textbf{0.97}  \\ 
-	Satellite & 0.9 & \textbf{1.0} & 0.99 & \textbf{1.0} & 0.0 & \textbf{1.0}   \\ 
-	Transport & 0.24 & \textbf{0.6} & 0.27 & \textbf{0.32} & 0.22 & 0.78   \\ 
-	UM-Translog$^{1}$ & \textbf{1.0} & 0.99 & \textbf{1.0} & \textbf{1.0} & 0.0 & 0.92   \\ 
-	Woodworking & \textbf{0.38} & 0.23 & \textbf{0.36} & 0.23 & 0.26 & 0.2  \\ 
-	\midrule 
-	Monroe & \textbf{0.77} & 0.74 & \textbf{0.76} & 0.73 & \textbf{1.0} & 0.96  \\ 
-	SmartPhone$^{3}$ & 0.71 & \textbf{1.0} & 0.71 & \textbf{0.86} & 0.0 & 0.14   \\ 
-	Zenotravel & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & 0.0 & 1.0   \\ 
-	\midrule 
-	IPC score & 7.1 & \textbf{8.2} & 7.0 & \textbf{7.6} & \textbf{1.6} & \textbf{7.9}   \\ 
-	\bottomrule 
+\midrule 
+Barman-BDI & 0.07 & \textbf{0.38} & 0.07 & \textbf{0.35} & \textbf{0.85} & 0.72  \\ 
+Monroe Fully Observ.$^{7}$ & \textbf{0.56} & 0.52 & \textbf{0.47} & 0.45 & \textbf{0.95} & 0.54  \\ 
+Monroe Part. Observ.$^{2}$ & \textbf{0.31} & 0.28 & \textbf{0.31} & 0.29 & 0.09 & \textbf{0.63}  \\ 
+PCP$^{18}$ & \textbf{0.83} & \textbf{0.83} & \textbf{0.82} & \textbf{0.82} & 0.82 & 0.0  \\ 
+Rover & 0.28 & \textbf{0.61} & 0.2 & \textbf{0.56} & \textbf{0.99} & 0.97  \\ 
+Satellite & 0.9 & \textbf{1.0} & 0.99 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0}  \\ 
+Transport & 0.24 & \textbf{0.6} & 0.27 & \textbf{0.32} & 0.61 & \textbf{0.78}  \\ 
+UM-Translog$^{1}$ & \textbf{1.0} & 0.99 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & 0.92  \\ 
+Woodworking & \textbf{0.38} & 0.23 & \textbf{0.36} & 0.23 & 0.26 & 0.2  \\ 
+\midrule 
+Monroe & \textbf{0.77} & 0.74 & \textbf{0.76} & 0.73 & \textbf{1.0} & 0.96  \\ 
+SmartPhone$^{3}$ & 0.71 & \textbf{1.0} & 0.71 & \textbf{0.86} & 0.79 & 0.14  \\ 
+Zenotravel & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0}  \\ 
+\midrule 
+IPC score & 7.1 & \textbf{8.2} & 7.0 & \textbf{7.6} & \textbf{9.4} & 7.9  \\ 
+\bottomrule 
 \end{tabular} 
 	}
 \end{table} 
