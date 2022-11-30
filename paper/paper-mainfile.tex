@@ -50,6 +50,7 @@
 \usepackage{csquotes}
 \usepackage{subcaption}
 \usepackage{amssymb} 
+\usepackage{mathbbol}
 \usepackage{tikz}
 \usetikzlibrary{aiplans}
 
@@ -257,7 +258,7 @@ preprocessing technique is guaranteed to be solvability-preserving.
 \section{Hierarchical Planning Formalism}
 \input{02--htn.tex}
 
-\section{Inference of Preconditions and Effects}
+\section{Linearizing Grounded HTN Problems}
 \input{03--linearization-ground.tex}
 
 The basic linearization process consists of inferring preconditions and effects for compound tasks, inferring additional orderings to the sub-tasks based on the preconditions and effects (inferred or \enquote{real} in the case of primitive tasks) of method sub-tasks. We first attempt to add them all, and then randomly remove orderings that conflict with the originally required orderings, or each other. This random removal of contradicting orderings is called \textbf{\textit{cycle-breaking}}.
