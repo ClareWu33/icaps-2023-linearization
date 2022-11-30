@@ -213,7 +213,7 @@ Planning Problems is Half the Job (to Getting them Solved More Efficiently))
 }
 \fi
 
-\title{Ordering is half the battle -- Establishing Totally Ordered HTN
+\title{Order is half of life -- Establishing Totally Ordered HTN
 	Planning Problems is Half the Job (to Getting them Solved More Efficiently)}
 
 %\title{Ordnung ist das halbe Leben -- Establishing Totally Ordered HTN
@@ -1009,6 +1009,7 @@ IPC score & 7.1 & \textbf{8.2} & 7.0 & \textbf{7.6} & \textbf{9.4} & 7.9  \\
 \begin{table} 
 	\centering  
 	\caption{Number of Problems per Domain for Which \emph{all} methods were linearizable, and the Average Number of Methods with more than 1 sub-task that were in that Domain}
+	\label{table:FullyLinearizedProblems}
 	\scalebox{0.75} { 
 	\begin{tabular}{lcccl} 
 		\toprule
@@ -1078,8 +1079,9 @@ Zenotravel & 190.2 & 99.4 & 47.0  \\
 \end{table} 
 
 While simple linearization can linearize almost none of the actaully partially ordered methods, with complex linearization, we can successfully linearize a fair amount of the partially-ordered methods too. (Note that this does not result in a guaranteed solvability-preserving problem unless all methods conform to the criteria though.)
+
 \begin{table} 
-	\caption{For the Problems in Each Domain, Average Percentage of Partially-Ordered Methods Linearized Without Cycle-break per Problem, for each Domain. Shows Results for Both Inference Methods.}\label{} 
+	\caption{For the Problems in Each Domain, Average Percentage of Partially-Ordered Methods Linearized Without Cycle-break per Problem, for each Domain. Shows Results for Both Inference Methods.}\label{table:POMethodBreak} 
 	\begin{tabular}{lccl} 
 		\toprule 
 		Domain & Complex & Simple &  \\ 
