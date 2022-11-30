@@ -70,6 +70,15 @@
 }
 
 
+\scheme{SinglePrecAlt}{0}{
+	text = {\textbf{D}},
+	pre  = {a}
+}
+
+\scheme{SingleAddAlt}{0}{
+	text = {\textbf{E}},
+	effs = { a}
+} 
 
 \scheme{PrimitiveA}{0}{
 	text = {\textbf{A}},
@@ -439,9 +448,11 @@ In this paper, we will be utilising both of these, as seen in the next section.
 
 
 From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1} to get an linearized problem.
-For an visual demonstration of what this algorithm is doing:
+For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig:OrderingRules} and \ref{fig:CycleBreaking}.% and \ref{fig:NotCycleBreaking}:
 
  \begin{figure}[h]
+ 	\caption{Example of Desired Additional Orderings}
+ 	\label{fig:OrderingRules}
 	\scalebox{0.75}{
 		\begin{subfigure}{4.5cm} 
 			\begin{tikzpicture}[auto,node distance=1.2cm,
@@ -536,8 +547,13 @@ For an visual demonstration of what this algorithm is doing:
  
 
 \begin{figure}[h]
+	\caption{Example of Cycle-Breaking the Desired Additional Orderings}
+	\label{fig:CycleBreaking}
 	\scalebox{0.75}{
 		\begin{subfigure}{7cm} 
+		 	\centering
+			\caption{Resulting method ordering has a cycle}
+			\label{fig:CycleBreaking1}
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
@@ -573,13 +589,15 @@ For an visual demonstration of what this algorithm is doing:
 			(C) edge [->,bend right] node [left]  {} (B);
 			\end{tikzpicture}
 			
-			\caption{Resulting method ordering has a cycle}
-			
+	
 		\end{subfigure}
 	}   
 
 	\scalebox{0.75}{
 		\begin{subfigure}{6cm} 
+		 %	\centering
+			\caption{Delete any random ordering to break it}
+			\label{fig:CycleBreaking2}
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
@@ -615,15 +633,45 @@ For an visual demonstration of what this algorithm is doing:
 			(C) edge [->,bend right] node [left]  {} (B);
 			\end{tikzpicture}
 			
-			\caption{Delete any random ordering to break it}
 		\end{subfigure}
 	}  
+
+
+%	\scalebox{0.75}{
+%		\begin{subfigure}{7cm} 
+%				\caption{Example of Not Needing to Cycle-Break the Desired Additional Orderings}
+%			\label{fig:NotCycleBreaking}
+%			\begin{tikzpicture}[auto,node distance=1.2cm,
+%			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+%			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
+			
+			
+%			\action{B}{SingleAddAlt,
+%				width  = 2.5em, 
+%				height = 2.5em, 
+%				pre length = 1em,
+%				eff length = 1em 
+%			};			
+			
+%			\action{A}{SinglePrecAlt,
+%				width  = 2.5em, 
+%				height = 2.5em, 
+%				pre length = 1em,
+%				eff length = 1em,
+%				body = {right = 4em of first} 		
+%			};  			
+	 		 
+			
+%			\path[every node/.style={font=\sffamily\small}]
+%			(B) edge [->,bend right] node [left]  {} (A);
+%			\end{tikzpicture}
+			
+%			\caption{Resulting method ordering has no cycle}
+%			
+%		\end{subfigure}
+%	}   
 \end{figure}
 
-
-
-	
-	
 % We can use either sets of preconditions and effects (from either possible inference algorithm) as input to the next linearization phase. Since the effects and preconditions are guaranteed, it may find a linearization that leads to a problem whose solution is yet faster to find,
 % or has better make-span than the simple inference. Specifically, the mandatory precondition-relaxed effects, $\RelEffPlus$, $\RelEffMinus$.
 
