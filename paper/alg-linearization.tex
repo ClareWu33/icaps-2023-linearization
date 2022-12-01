@@ -5,5 +5,8 @@
 \begin{algorithmic}[1]
     \State $G \leftarrow (V, E)$ with $V = T$ and $E = \parOrd{}$
     \ForAll{$t, t' \in T$}
+        \If{$\preCondExt{t'} \cap \effPosExt{t} \neq \emptyset \lor \effNegExt{t} \cap \effPosExt{t'} \neq \emptyset \lor \preCondExt{t} \cap \effNegExt{t'} \neq \emptyset$}
+            \State $E \leftarrow E \cup \left\{(t, t')\right\}$
+        \EndIf
     \EndFor
 \end{algorithmic}

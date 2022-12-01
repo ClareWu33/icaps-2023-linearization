@@ -44,9 +44,11 @@
 \usepackage{todonotes}
 \usepackage{booktabs}
 \usepackage{varwidth}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 \usepackage{xcolor}
 \usepackage{booktabs} 
-\usepackage[ruled, noend, linesnumbered]{algorithm2e}  
+% \usepackage[ruled, noend, linesnumbered]{algorithm2e}  
 \usepackage{csquotes}
 \usepackage{subcaption}
 \usepackage{amssymb} 
@@ -342,41 +344,47 @@ In this paper, we will be utilising both of these, as seen in the next section.
 
 \section{Linearization of Methods Using Any Set of Inferred Preconditions and Effects}
 
-\begin{algorithm}[h]
-	\caption{Calculation of linearized methods}
+\begin{algorithm}
+	\input{alg-linearization.tex}
+	\caption{Lineraizing a method.}
 	\label{alg:Algorithm1}
-	\KwData{$(F, T_P, T_C, \delta, M)$}
-	\KwResult{$(F, T_P, T_C, \delta, M)$}
-	
-	\For {$m=(t, (T_m, \singlePrec, \alpha)) \in M$} 
-	{
-		\tcc{An edge $(t, t')$ in $G$ means $t$ is ordered before $t'$}  
-		$G \gets \singlePrec$ \\
-		\label{alg:StartBuildGraph}
-		\For{a $\in$ F}{  
-			\For{$t \in T_m$}{
-				\For{$t' \in T_m$}{
-					if $a \in \AddS(t)$ and $a \in \PreS(t')$, add $(t, t')$ to $G$  \\ 
-					if $a \in \AddS(t)$ and $a \in \DelS(t')$, add $(t', t)$ to $G$  \\ 
-					if $a \in \DelS(t)$ and $a \in \PreS(t')$, add $(t', t)$ to $G$  \\ 
-					if $a \in \DelS(t)$ and $a \in \AddS(t')$, add $(t, t')$ to $G$ \\  
-				}
-			} 
-			\label{alg:EndBuildGraph}	
-		}	
-		\label{alg:StartCycleBreak}
-		\While{$G$ has cycles in it}{
-			Delete a random ordering in $G$ that is not in $\singlePrec$ \\   % $\PreS, \DelS, \AddS$, rather than $prec$ \;
-		}
-		\label{alg:EndCycleBreak}
-		$\prec'$ = Any linearization of $G$ \\
-		\label{alg:TopSort}
-		$m' = (tasks(m), \prec', \alpha(t))$ \\
-		$M' = M' \cup  \{m'\}$ \\
-		
-	}
-	\Return $D' = (F, T_P, T_C, \delta, M')$ \\
 \end{algorithm}
+
+% \begin{algorithm}[h]
+% 	\caption{Calculation of linearized methods}
+% 	\label{alg:Algorithm1}
+% 	\KwData{$(F, T_P, T_C, \delta, M)$}
+% 	\KwResult{$(F, T_P, T_C, \delta, M)$}
+	
+% 	\For {$m=(t, (T_m, \singlePrec, \alpha)) \in M$} 
+% 	{
+% 		\tcc{An edge $(t, t')$ in $G$ means $t$ is ordered before $t'$}  
+% 		$G \gets \singlePrec$ \\
+% 		\label{alg:StartBuildGraph}
+% 		\For{a $\in$ F}{  
+% 			\For{$t \in T_m$}{
+% 				\For{$t' \in T_m$}{
+% 					if $a \in \AddS(t)$ and $a \in \PreS(t')$, add $(t, t')$ to $G$  \\ 
+% 					if $a \in \AddS(t)$ and $a \in \DelS(t')$, add $(t', t)$ to $G$  \\ 
+% 					if $a \in \DelS(t)$ and $a \in \PreS(t')$, add $(t', t)$ to $G$  \\ 
+% 					if $a \in \DelS(t)$ and $a \in \AddS(t')$, add $(t, t')$ to $G$ \\  
+% 				}
+% 			} 
+% 			\label{alg:EndBuildGraph}	
+% 		}	
+% 		\label{alg:StartCycleBreak}
+% 		\While{$G$ has cycles in it}{
+% 			Delete a random ordering in $G$ that is not in $\singlePrec$ \\   % $\PreS, \DelS, \AddS$, rather than $prec$ \;
+% 		}
+% 		\label{alg:EndCycleBreak}
+% 		$\prec'$ = Any linearization of $G$ \\
+% 		\label{alg:TopSort}
+% 		$m' = (tasks(m), \prec', \alpha(t))$ \\
+% 		$M' = M' \cup  \{m'\}$ \\
+		
+% 	}
+% 	\Return $D' = (F, T_P, T_C, \delta, M')$ \\
+% \end{algorithm}
 
 
 
