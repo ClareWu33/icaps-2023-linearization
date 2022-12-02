@@ -51,7 +51,15 @@ Thus, for linearizing a task network, we would like to add ordering constraints 
 \end{inparaenum}
 After adding all ordering constraints, we could view the tasks together with the \emph{extended} set of ordering constraints as a graph $G$ where each task is a vertex and each ordering constraint is an edge. A linearization can then be obtained by ordering $G$ in a \emph{topological} order.
 
-Notably, the graph $G$ might \emph{not} have a topological order because it may contain cycles. That is, some ordering constraints we add might conflict with each other. If this is the case, we \emph{randomly} remove some edges $(t, t')$ from $G$ with $(t, t') \notin \parOrd{}^{+}$ (because we \emph{cannot} violate the original ordering constraints in $tn$) until there exist no cycles. We call this step \emph{cycle-breaking}. The entire procedure is shown in Alg.~\ref{alg:Algorithm1}.
+Notably, the graph $G$ might \emph{not} have a topological order because it may contain cycles. That is, some ordering constraints we add might conflict with each other. If this is the case, we \emph{randomly} remove some edges $(t, t')$ from $G$ with $(t, t') \notin \parOrd{}^{+}$ (because we must \emph{not} contradict the original ordering constraints in $tn$) until there exist no cycles. We call this step \emph{cycle-breaking}. The entire procedure for linearizing a method is summarized in Alg.~\ref{alg:Algorithm1}.
+
+\begin{algorithm}[t]
+	\input{alg-linearization.tex}
+	\caption{Lineraizing a method.}
+	\label{alg:Algorithm1}
+\end{algorithm}
+
+Lastly, in order to transform a partially ordered HTN planning problem into a totally ordered one, we could call Alg.~\ref{alg:Algorithm1} on every method in the input problem.
 
 % Thus, when finding such a linearization, for every task $t'$ which is not placed at the beginning and every proposition $p \in \preCondExt{t'}$, there is supposed to be another task $t$ with $p \in \effPosExt{t}$ placed before it, i.e., an ordering constraint $(t, t')$ should be added. Similarly, consider a task $t^{\ast}$ with $p \in \effNegExt{t^{\ast}}$ (i.e., $t^{\ast}$ deletes $p$), we would like to place it before $t$ so that after $t^{\ast}$ deletes $p$, it can be added back by $t$ which thus satisfies the precondition of $t'$.
 
