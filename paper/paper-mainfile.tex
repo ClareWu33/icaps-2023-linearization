@@ -337,34 +337,34 @@ Also, we obtain a new class of decidable problems, namely those that satisfy the
 %$$ \RelEffPlus := ( \bigcap_{s \in E(c)} \bigcap_{s' \in R_s(c)} s') \backslash  \bigcap_{s \in E(c)} s    $$
 %$$ \RelEffMinus := \bigcap_{s \in E(c)}  (F \backslash \bigcap_{s' \in R_s(c)} s' ) $$
 
-Possible state-independent effects of a compound task $c$ are not guaranteed to hold (or not hold, resp.,)
-after every refinement of c but after at least one:
-$$ \PossEffPlus(c) := \bigcup_{s \in E(c)}  ( \bigcup_{s' \in R_s(c)}  s' \backslash s) $$
-$$ \PossEffMinus(c) := \bigcup_{s \in E(c)} ((\bigcup_{s' \in R_s(c)} (F \backslash s') \cap s ))$$
-if $E(c) \neq \emptyset$ and  $\Pre(c) := \ensuremath{\textit{undef}}$ otherwise.
+% Possible state-independent effects of a compound task $c$ are not guaranteed to hold (or not hold, resp.,)
+% after every refinement of c but after at least one:
+% $$ \PossEffPlus(c) := \bigcup_{s \in E(c)}  ( \bigcup_{s' \in R_s(c)}  s' \backslash s) $$
+% $$ \PossEffMinus(c) := \bigcup_{s \in E(c)} ((\bigcup_{s' \in R_s(c)} (F \backslash s') \cap s ))$$
+% if $E(c) \neq \emptyset$ and  $\Pre(c) := \ensuremath{\textit{undef}}$ otherwise.
 
 
-The set of executability-enabling states of c is
-$E(c) = \{s \in 2F  \mid  \exists$ t.o. refinement of $c$ applicable in $s \}$.
-The set of resulting states of c w.r.t. some state $s \in 2^F$ is
-$R_s(c) = \{s' \in 2^F | \exists$ t.o. refinement appl. in $s$ res. in $s' \}$.
+% The set of executability-enabling states of c is
+% $E(c) = \{s \in 2F  \mid  \exists$ t.o. refinement of $c$ applicable in $s \}$.
+% The set of resulting states of c w.r.t. some state $s \in 2^F$ is
+% $R_s(c) = \{s' \in 2^F | \exists$ t.o. refinement appl. in $s$ res. in $s' \}$.
 
-So, the precondition-relaxation of a domain D = $(F, A, C, M)$ is the domain $D' = (F, A', C, M)$
-with $A' = \{(\emptyset, add , del ) \mid (prec, add , del ) \in A\}$.
+% So, the precondition-relaxation of a domain D = $(F, A, C, M)$ is the domain $D' = (F, A', C, M)$
+% with $A' = \{(\emptyset, add , del ) \mid (prec, add , del ) \in A\}$.
 
-Then, the precondition-relaxed effects $\RelPossEffPlus$, $\RelPossEffMinus$. are defined just like the original ones but based on the precondition-relaxed variant of D.
-This means $\RelPossEffPlus$ and $\RelPossEffMinus$ has every effect that $\PossEffPlus$ and $\PossEffMinus$  do, respectively. But
-the precondition relaxation can make further refinements executable that produce
-effects that can not be achieved in the non-relaxed domain. 
-In other words, we can calculate a super-set, that might contain some false candidates, of the real preconditions and effects that might occur after any execution of $c$, i.e.\  $\PossEffMinus \subseteq \RelPossEffMinus$, and $\PossEffPlus  \subseteq \RelPossEffPlus$.
+% Then, the precondition-relaxed effects $\RelPossEffPlus$, $\RelPossEffMinus$. are defined just like the original ones but based on the precondition-relaxed variant of D.
+% This means $\RelPossEffPlus$ and $\RelPossEffMinus$ has every effect that $\PossEffPlus$ and $\PossEffMinus$  do, respectively. But
+% the precondition relaxation can make further refinements executable that produce
+% effects that can not be achieved in the non-relaxed domain. 
+% In other words, we can calculate a super-set, that might contain some false candidates, of the real preconditions and effects that might occur after any execution of $c$, i.e.\  $\PossEffMinus \subseteq \RelPossEffMinus$, and $\PossEffPlus  \subseteq \RelPossEffPlus$.
 
-\emph{Mandatory preconditions} of a compound task $c$ are facts that hold in every state for which there exists an executable refinement. So, they are required in every state in which a refinement of c shall be executed: prec(c) := $\cap_{s \in E(c)}  s$
-if $E(c) \neq \emptyset$ and $\Pre(c) := \ensuremath{\textit{undef}}$ otherwise.
+% \emph{Mandatory preconditions} of a compound task $c$ are facts that hold in every state for which there exists an executable refinement. So, they are required in every state in which a refinement of c shall be executed: prec(c) := $\cap_{s \in E(c)}  s$
+% if $E(c) \neq \emptyset$ and $\Pre(c) := \ensuremath{\textit{undef}}$ otherwise.
 
-A fact $f \in F$ is an \emph{executability-relaxed precondition} of $c$ if and only if for all t.o. refinements (ignoring executability of the refinement) $\langle a_0 ... a_n \rangle$ of $c$ there exists an action $a_i$ with $f \in \prec(a_i)$ and there does not exist an action $a_j$ with $j < i$ and $f \in add(a_j)$, where $i, j \in \{0, ..., n\}$.
+% A fact $f \in F$ is an \emph{executability-relaxed precondition} of $c$ if and only if for all t.o. refinements (ignoring executability of the refinement) $\langle a_0 ... a_n \rangle$ of $c$ there exists an action $a_i$ with $f \in \prec(a_i)$ and there does not exist an action $a_j$ with $j < i$ and $f \in add(a_j)$, where $i, j \in \{0, ..., n\}$.
 
-There exists a polynomial-time algorithm for inferring the executability-relaxed preconditions and precondition-relaxed effects, see \cite{ConnyPreEstimation} for details.
-In this paper, we will be utilising both of these, as seen in the next section.
+% There exists a polynomial-time algorithm for inferring the executability-relaxed preconditions and precondition-relaxed effects, see \cite{ConnyPreEstimation} for details.
+% In this paper, we will be utilising both of these, as seen in the next section.
 %the precondition-relaxed possible effects, which may hold after at least one refinement of c.
 
 %A fact $f \in F$ is an executability-relaxed precondition of c if and only if for all t.o. refinements (ignoring ex-
