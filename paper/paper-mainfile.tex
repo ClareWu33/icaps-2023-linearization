@@ -73,6 +73,15 @@
 }
 
 
+\scheme{SinglePrecAlt}{0}{
+	text = {\textbf{D}},
+	pre  = {a}
+}
+
+\scheme{SingleAddAlt}{0}{
+	text = {\textbf{E}},
+	effs = { a}
+} 
 
 \scheme{PrimitiveA}{0}{
 	text = {\textbf{A}},
@@ -102,8 +111,10 @@
 % or commands are allowed.
 % Keep the /TemplateVersion tag as is
 \pdfinfo{
-/Title (Ordnung ist das halbe Leben -- Establishing Totally Ordered HTN
+/Title (ORdering is half the battle -- Establishing Totally Ordered HTN
 Planning Problems is Half the Job (to Getting them Solved More Efficiently))
+%/Title (Ordnung ist das halbe Leben -- Establishing Totally Ordered HTN
+%Planning Problems is Half the Job (to Getting them Solved More Efficiently))
 /Author (Anonymous)
 /TemplateVersion (2022.1)
 }
@@ -200,9 +211,9 @@ Planning Problems is Half the Job (to Getting them Solved More Efficiently))
 
 
 %Example, Multiple Authors, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
-\iffalse
-\title{Ordnung ist das halbe Leben -- Establishing Totally Ordered HTN
-	Planning Problems is Half the Job (to Getting them Solved More Efficiently)}
+\iffalse 
+%\title{Ordnung ist das halbe Leben -- Establishing Totally Ordered HTN
+%	Planning Problems is Half the Job (to Getting them Solved More Efficiently)}
 \author {
     % Authors
     Anonymous
@@ -214,8 +225,12 @@ Planning Problems is Half the Job (to Getting them Solved More Efficiently))
 }
 \fi
 
-\title{Ordnung ist das halbe Leben -- Establishing Totally Ordered HTN
+\title{Order is half of life -- Establishing Totally Ordered HTN
 	Planning Problems is Half the Job (to Getting them Solved More Efficiently)}
+
+%\title{Ordnung ist das halbe Leben -- Establishing Totally Ordered HTN
+%	Planning Problems is Half the Job (to Getting them Solved More Efficiently)}
+
 
 % REMOVE THIS: bibentry
 % This is only needed to show inline citations in the guidelines document. You should not need it and can safely delete it.
@@ -256,6 +271,23 @@ preprocessing technique is guaranteed to be solvability-preserving.
  
 \section{Introduction}
 \input{01--intro.tex}
+Hierarchical Task Network (HTN) planning is a hierarchical approach to planning. As defined by \cite{HTNSurvey},  %  and \cite{IntroGhallab},
+tasks in HTN planning are either primitive, corresponding to an action that can be taken, or compound. HTN problems have a set of methods that specify how one might achieve a given compound task, by decomposing it into a set of sub-tasks. A compound task may even decompose into itself, either directly via a method, or indirectly via a sequence of method applications. If decomposition leads to a sequence of primitive tasks executable from the initial state, then this sequence of actions is a solution to the problem, also known as a \enquote{plan}. 
+
+In totally ordered HTN planning, or TOHTN planning, methods specify a total order on the sub-tasks. In partially ordered HTN planning, or POHTN planning, methods might only specify a partial order on the sub-tasks. 
+
+% Certain kinds of problems might be naturally more suited to being modelled as a partially ordered problem, for example, the actions \enquote{deliver package 1 to city A} and \enquote{deliver package 2 to city B} -- these are essentially unrelated goals in a real transport scenario, and so modelling the problem to require that one task be completed before the other would be unnecessarily limiting the possible solution space. For some problems, such over-specification may remove all valid solutions. 
+
+Many problems might be naturally more suited to being modelled as POHTN problems. However, for \emph{solving} the problem, it is desirable to have additional constraints that reduces the search space, while still preserving at least some of the actual solutions. For example, \cite{ErolHTNExpressivity} proved that POHTN planning is expressive enough to model undecidable problems, such as the language intersection problem of two context-free languages. On the other hand, TOHTN planning is not expressive enough to model undecideable problems. Where this is possible, it results in lower worst-case solving time. Converting the problem to a TOHTN problem allows us to exploit that fact to solve the problem more quickly.
+
+Another benefit of transforming a POHTN problem to a TOHTN problem is that the additional structure to the problem could allow us to deploy specialised algorithms and heuristics for the totally ordered case. % Also, heuristic design is comparably easy for total-order problems due to the missing interaction between tasks.
+The drawback to this approach is that, due to the greater expressivity of POHTN planning, there may exist POHTN problems that cannot be solved when converted to a TOHTN problem. 
+Fortunately, not every POHTN problem is guaranteed to be undecidable, and so could still be transformed while preserving at least one solution.
+In this paper we present and investigate an algorithm for converting POHTN problems to TOHTN problems. We prove that when certain criteria are met, it guarantees that at least one solution will be preserved. 
+Also, we obtain a new class of decidable problems, namely those that satisfy the above mentioned criterion. Finally, we show that, even when these criteria are not met, very few problems are rendered unsolvable by the transformation, and that it greatly reduces solving time for problems, with gains being bigger for more difficult problems. 
+
+ 
+
 
 \section{Hierarchical Planning Formalism}
 \input{02--htn.tex}
@@ -263,43 +295,43 @@ preprocessing technique is guaranteed to be solvability-preserving.
 \section{Linearizing Grounded HTN Problems}
 \input{03--linearization-ground.tex}
 
-The basic linearization process consists of inferring preconditions and effects for compound tasks, inferring additional orderings to the sub-tasks based on the preconditions and effects (inferred or \enquote{real} in the case of primitive tasks) of method sub-tasks. We first attempt to add them all, and then randomly remove orderings that conflict with the originally required orderings, or each other. This random removal of contradicting orderings is called \textbf{\textit{cycle-breaking}}.
+% The basic linearization process consists of inferring preconditions and effects for compound tasks, inferring additional orderings to the sub-tasks based on the preconditions and effects (inferred or \enquote{real} in the case of primitive tasks) of method sub-tasks. We first attempt to add them all, and then randomly remove orderings that conflict with the originally required orderings, or each other. This random removal of contradicting orderings is called \textbf{\textit{cycle-breaking}}.
  
  
-\subsection{Simple Inference of Preconditions and Effects for Compound Tasks (For Lifted and Grounded Domain) }
+% \subsection{Simple Inference of Preconditions and Effects for Compound Tasks (For Lifted and Grounded Domain) }
 
-In a lifted format, tasks and methods accept parameters, referring to any object of a specific type. Thus actions within a method have effects and preconditions that are symmetrical in terms of interactions within the method. 
+% In a lifted format, tasks and methods accept parameters, referring to any object of a specific type. Thus actions within a method have effects and preconditions that are symmetrical in terms of interactions within the method. 
 
-E.g.\ the task \textit{navigate(waypoint1, waypoint2)} will end up with some set of actions  $\bar{a}$ once decomposed. If you replace the passed parameters \textit{waypoint1} with \textit{waypoint3} and \textit{waypoint2} with \textit{waypoint4}, then \textit{navigate(waypoint3, waypoint4)} will have the same set of actions $\bar{a}$. This is true for all possible tasks by simple induction over the decomposition process.
+% E.g.\ the task \textit{navigate(waypoint1, waypoint2)} will end up with some set of actions  $\bar{a}$ once decomposed. If you replace the passed parameters \textit{waypoint1} with \textit{waypoint3} and \textit{waypoint2} with \textit{waypoint4}, then \textit{navigate(waypoint3, waypoint4)} will have the same set of actions $\bar{a}$. This is true for all possible tasks by simple induction over the decomposition process.
 
-Thus for each method, we can \enquote{ground} it in the standard way, but using an arbitrary object instead of all objects that exist in the domain.
+% Thus for each method, we can \enquote{ground} it in the standard way, but using an arbitrary object instead of all objects that exist in the domain.
 
-Specifically, let $\sigma$ be the set of parameters for the method. Then for each parameter of the method, the set of typed objects $\omega$ has one object of the corresponding type, and $|\omega| = |\sigma|$. Then $\sigma(a, \omega)$, the groundings of a transition schema $a$ over $\omega$, corresponds to the ground method obtained by substituting $\sigma$ with the corresponding object of correct type taken from $\omega$.
+% Specifically, let $\sigma$ be the set of parameters for the method. Then for each parameter of the method, the set of typed objects $\omega$ has one object of the corresponding type, and $|\omega| = |\sigma|$. Then $\sigma(a, \omega)$, the groundings of a transition schema $a$ over $\omega$, corresponds to the ground method obtained by substituting $\sigma$ with the corresponding object of correct type taken from $\omega$.
 
-Where a task accepts two parameters of the same type under different names, it is assumed those are different objects. For example, for \textit{Navigate(pt0, pt1, rover)}, \textit{pt0} and \textit{pt1} are assumed as different objects. % This is illustrated in Figure~\ref{CompoundPreEffForLifted}.
+% Where a task accepts two parameters of the same type under different names, it is assumed those are different objects. For example, for \textit{Navigate(pt0, pt1, rover)}, \textit{pt0} and \textit{pt1} are assumed as different objects. % This is illustrated in Figure~\ref{CompoundPreEffForLifted}.
 
-This allows actions to have some ground \enquote{predicate} \textit{at\_waypoint1}, rather than $at(?waypoint)$. The resulting \enquote{predicates} can be used to order the sub-tasks, while groundings for methods are discarded. Only one linearized lifted method per partially-ordered lifted method is produced.
+% This allows actions to have some ground \enquote{predicate} \textit{at\_waypoint1}, rather than $at(?waypoint)$. The resulting \enquote{predicates} can be used to order the sub-tasks, while groundings for methods are discarded. Only one linearized lifted method per partially-ordered lifted method is produced.
 
-For a grounded method, there are no parameters in a task or method. Methods decompose to specific actions, actions have preconditions and effects on specific state variables. We can then use these to produce a linearized grounded method per grounded method.
+% For a grounded method, there are no parameters in a task or method. Methods decompose to specific actions, actions have preconditions and effects on specific state variables. We can then use these to produce a linearized grounded method per grounded method.
 
-In summary, for a lifted domain, where a predicate $f$ accepts parameters $p_1, ..., p_n$, 
-$f' = f(o_1, ..., o_n)$, where $o_1, ..., o_n$ are arbitrary objects of the appropriate type. For a grounded model, $f' = f$. The inferred preconditions and effects for a task are then defined as below:
-\begin{align*}
-& \forall t \in T_P : \PreS(t) := \Pre(t) \\
-& \forall t \in T_P : \AddS(t) := \Add(t) \\
-& \forall t \in T_P : \DelS(t) := \Del(t)  \\ %  \land
-& \forall t \in T_C : \PreS(t) := \{f'  \mid  \exists m \in M  \\
-& : m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \PreS(t') \}   \\
-& \forall t \in T_C : \AddS(t) := \{f'  \mid  \exists m \in M : \\
-& m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \AddS(t') \}   \\
-& \forall t \in T_C : \DelS(t) := \{f'  \mid  \exists m \in M : \\
-& m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \DelS(t') \}   \\ 
-\end{align*}
+% In summary, for a lifted domain, where a predicate $f$ accepts parameters $p_1, ..., p_n$, 
+% $f' = f(o_1, ..., o_n)$, where $o_1, ..., o_n$ are arbitrary objects of the appropriate type. For a grounded model, $f' = f$. The inferred preconditions and effects for a task are then defined as below:
+% \begin{align*}
+% & \forall t \in T_P : \PreS(t) := \Pre(t) \\
+% & \forall t \in T_P : \AddS(t) := \Add(t) \\
+% & \forall t \in T_P : \DelS(t) := \Del(t)  \\ %  \land
+% & \forall t \in T_C : \PreS(t) := \{f'  \mid  \exists m \in M  \\
+% & : m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \PreS(t') \}   \\
+% & \forall t \in T_C : \AddS(t) := \{f'  \mid  \exists m \in M : \\
+% & m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \AddS(t') \}   \\
+% & \forall t \in T_C : \DelS(t) := \{f'  \mid  \exists m \in M : \\
+% & m=(t,(T, \singlePrec, \alpha)) \forall t' \in T.  \forall  f \in \DelS(t') \}   \\ 
+% \end{align*}
 
 
 
-\subsection{Complex Inference of Preconditions and Effects for Compound Tasks (for Grounded Domain) }
-The work by~\cite{ConnyPreEstimation}, details a way to infer executability-relaxed preconditions and effects. Specifically, for a compound task $c$, they are a subset of the mentioned literals described in the Simple Inference section, and a super-set of the actual preconditions and effects for any given refinement and execution of a task $c$.
+% \subsection{Complex Inference of Preconditions and Effects for Compound Tasks (for Grounded Domain) }
+% The work by~\cite{ConnyPreEstimation}, details a way to infer executability-relaxed preconditions and effects. Specifically, for a compound task $c$, they are a subset of the mentioned literals described in the Simple Inference section, and a super-set of the actual preconditions and effects for any given refinement and execution of a task $c$.
 
 %State-independent positive and negative effects (cf. their Def. 4) of a compound task c are facts that are added or deleted, resp., by the successful execution of a refinement of c, independent of the state in which the task is executed, i.e.
 %$$ \RelEffPlus := ( \bigcap_{s \in E(c)} \bigcap_{s' \in R_s(c)} s') \backslash  \bigcap_{s \in E(c)} s    $$
@@ -383,9 +415,11 @@ In this paper, we will be utilising both of these, as seen in the next section.
 
 
 From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1} to get an linearized problem.
-For an visual demonstration of what this algorithm is doing:
+For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig:OrderingRules} and \ref{fig:CycleBreaking}.% and \ref{fig:NotCycleBreaking}:
 
  \begin{figure}[h]
+ 	\caption{Example of Desired Additional Orderings}
+ 	\label{fig:OrderingRules}
 	\scalebox{0.75}{
 		\begin{subfigure}{4.5cm} 
 			\begin{tikzpicture}[auto,node distance=1.2cm,
@@ -480,8 +514,13 @@ For an visual demonstration of what this algorithm is doing:
  
 
 \begin{figure}[h]
+	\caption{Example of Cycle-Breaking the Desired Additional Orderings}
+	\label{fig:CycleBreaking}
 	\scalebox{0.75}{
 		\begin{subfigure}{7cm} 
+		 	\centering
+			\caption{Resulting method ordering has a cycle}
+			\label{fig:CycleBreaking1}
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
@@ -517,13 +556,15 @@ For an visual demonstration of what this algorithm is doing:
 			(C) edge [->,bend right] node [left]  {} (B);
 			\end{tikzpicture}
 			
-			\caption{Resulting method ordering has a cycle}
-			
+	
 		\end{subfigure}
 	}   
 
 	\scalebox{0.75}{
 		\begin{subfigure}{6cm} 
+		 %	\centering
+			\caption{Delete any random ordering to break it}
+			\label{fig:CycleBreaking2}
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
@@ -559,15 +600,45 @@ For an visual demonstration of what this algorithm is doing:
 			(C) edge [->,bend right] node [left]  {} (B);
 			\end{tikzpicture}
 			
-			\caption{Delete any random ordering to break it}
 		\end{subfigure}
 	}  
+
+
+%	\scalebox{0.75}{
+%		\begin{subfigure}{7cm} 
+%				\caption{Example of Not Needing to Cycle-Break the Desired Additional Orderings}
+%			\label{fig:NotCycleBreaking}
+%			\begin{tikzpicture}[auto,node distance=1.2cm,
+%			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+%			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
+			
+			
+%			\action{B}{SingleAddAlt,
+%				width  = 2.5em, 
+%				height = 2.5em, 
+%				pre length = 1em,
+%				eff length = 1em 
+%			};			
+			
+%			\action{A}{SinglePrecAlt,
+%				width  = 2.5em, 
+%				height = 2.5em, 
+%				pre length = 1em,
+%				eff length = 1em,
+%				body = {right = 4em of first} 		
+%			};  			
+	 		 
+			
+%			\path[every node/.style={font=\sffamily\small}]
+%			(B) edge [->,bend right] node [left]  {} (A);
+%			\end{tikzpicture}
+			
+%			\caption{Resulting method ordering has no cycle}
+%			
+%		\end{subfigure}
+%	}   
 \end{figure}
 
-
-
-	
-	
 % We can use either sets of preconditions and effects (from either possible inference algorithm) as input to the next linearization phase. Since the effects and preconditions are guaranteed, it may find a linearization that leads to a problem whose solution is yet faster to find,
 % or has better make-span than the simple inference. Specifically, the mandatory precondition-relaxed effects, $\RelEffPlus$, $\RelEffMinus$.
 
@@ -703,14 +774,13 @@ The empirical evaluation was conducted on a machine with 30GiB of memory and 4 v
 
 We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20}, on their default configuration. This turns problem into a classical planning problem (in RC model), uses Greedy best first search, FF heuristic by \cite{FF}, and visited lists. The visited lists use task sequence hashing, visited checking with task sequences, layer hashing, order pairs hashing, and GI-complete equivalence checking for partially-ordered task networks.
 
-% visited checking with task sequences makes totally-ordered visited lists incomplete (with order)
+% \todo{visited checking with task sequences makes totally-ordered visited lists incomplete (with order) }
 
 %\todo{Most notably, note that TO problems allow for other visited list	configurations than PO problems. So we should also use a TO configuration there (this is however not reported)}
 
 We also try that configuration with FF swapped for the Add heuristic by \cite{Add}.
 %Filter by \cite{useClassicalHuristicICAPS18} and Landmark-cut by \cite{LM-Cut}. 
-We compare the performance of panda$_\pi$ on the original problem and the pre-processed problem. The same setting is used for re-runs. For other planners, panda$_\pi$ with rc2(Add) is used for re-runs. We also test the latest version of TOHTN planners HTN2SAS, HyperTensioN and Lilotane on the transformed problems. Re-runs use panda$_{\pi}$ with the best heuristic(Add). 
-We test both Complex and Simple Inference for linearization.
+We compare the performance of panda$_\pi$ on the original problem and the pre-processed problem. The same setting is used for re-runs. For other planners, panda$_\pi$ with rc2(Add) is used for re-runs. We also test the latest version of TOHTN planners HyperTensioN and Lilotane on the transformed problems. Re-runs use panda$_{\pi}$ with the best heuristic(Add). We test both Complex and Simple Inference for linearization. Note that Complex Inference can only be inferred on grounded problems, but Lilotane and HyperTensioN are lifted planners.
 
 The results table for both coverage and IPC score can be seen on page \pageref{table:GroundedSimpleIPC}--\pageref{table:GroundedComplexIPC}.
 As we can see from those figures, using complex inference results in ?  increase/decrease/similar, coverage and IPC score.
@@ -737,9 +807,11 @@ When using complex inference, the number of methods in all problems that are lin
 %		\multicolumn{2}{c}{   \rotatebox{90}{rc2(Filter)}} & 
 %		\multicolumn{2}{c}{  \rotatebox{90}{rc2(FF)}}
 %		& \multicolumn{2}{c}{   \rotatebox{90}{rc2(LMC)}}  
-%		& \multicolumn{2}{c}{  \rotatebox{90}{HTN2SAS}}
 %		& \multicolumn{2}{c}{  \rotatebox{90}{HyperTensioN}}
-%		& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\ 
+%		& \multicolumn{2}{c}{  \rotatebox{90}{Lilotane}} \\
+
+%\todo{proven unsolvable should not be in superscripts}
+ 
 \begin{table}
 	\centering
 	\caption{Coverage achieved, using Simple Inference on Grounded Problems}
@@ -821,24 +893,24 @@ When using complex inference, the number of methods in all problems that are lin
 			& \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{RC FF} & HyperTensioN & Lilotane \\ 
 			\cmidrule(lr){2-3} \cmidrule(lr){4-5}  
 			&PO & TO & PO & TO  \\ 
-			\midrule 
-			Barman-BDI & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & 0.0 & \textbf{17.0}  \\ 
-			Monroe Fully Observ.$^{7}$ & \textbf{25.0} & \textbf{25.0} & 22.0 & \textbf{23.0} & 0.0 & \textbf{18.0}   \\ 
-			Monroe Part. Observ.$^{2}$ & \textbf{14.0} & 13.0 & \textbf{14.0} & 13.0 & 3.0 & \textbf{20.0}   \\ 
-			PCP$^{18}$ & \textbf{15.0} & \textbf{15.0} & \textbf{14.0} & \textbf{14.0} & 0.0 & 0.0   \\ 
-			Rover & 6.0 & \textbf{15.0} & 4.0 & \textbf{14.0} & 0.0 & 20.0   \\ 
-			Satellite & 24.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & 0.0 & \textbf{25.0}   \\ 
-			Transport & 12.0 & \textbf{27.0} & 13.0 & \textbf{14.0} & 2.0 & \textbf{35.0}   \\ 
-			UM-Translog$^{1}$ & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & 0.0 & \textbf{21.0}   \\ 
-			Woodworking & \textbf{13.0} & 7.0 & \textbf{12.0} & 7.0 & 9.0 & 6.0  \\ 
-			\midrule
-			Monroe & \textbf{96.0} & 92.0 & \textbf{92.0} & 90.0 & \textbf{100.0} & \textbf{100.0}  \\ 
-			SmartPhone$^{3}$ & 5.0 & \textbf{7.0} & 5.0 & \textbf{6.0} & 0.0 & 1.0  \\ 
-			Zenotravel & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & 0.0 & 5.0  \\ 
-			\midrule 
-			Coverage & 240.0 & \textbf{263.0} & 231.0 & \textbf{243.0} & \textbf{114.0} & \textbf{268.0}  \\ 
-			Norm. coverage & 8.23 & \textbf{9.45} & 8.0 & \textbf{8.83} & 1.65 & 8.58  \\ 
-			\bottomrule 
+\midrule 
+Barman-BDI & 3.0 & \textbf{10.0} & 3.0 & \textbf{10.0} & \textbf{17.0} & \textbf{17.0}  \\ 
+Monroe Fully Observ.$^{7}$ & \textbf{25.0} & \textbf{25.0} & 22.0 & \textbf{23.0} & \textbf{25.0} & 18.0  \\ 
+Monroe Part. Observ.$^{2}$ & \textbf{14.0} & 13.0 & \textbf{14.0} & 13.0 & 3.0 & \textbf{20.0}  \\ 
+PCP$^{18}$ & \textbf{15.0} & \textbf{15.0} & \textbf{14.0} & \textbf{14.0} & 14.0 & 0.0  \\ 
+Rover & 6.0 & \textbf{15.0} & 4.0 & \textbf{14.0} & \textbf{20.0} & \textbf{20.0}  \\ 
+Satellite & 24.0 & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & \textbf{25.0} & \textbf{25.0}  \\ 
+Transport & 12.0 & \textbf{27.0} & 13.0 & \textbf{14.0} & 26.0 & \textbf{35.0}  \\ 
+UM-Translog$^{1}$ & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & \textbf{22.0} & 21.0  \\ 
+Woodworking & \textbf{13.0} & 7.0 & \textbf{12.0} & 7.0 & 9.0 & 6.0  \\ 
+\midrule 
+Monroe & \textbf{96.0} & 92.0 & \textbf{92.0} & 90.0 & \textbf{100.0} & \textbf{100.0}  \\ 
+SmartPhone$^{3}$ & 5.0 & \textbf{7.0} & 5.0 & \textbf{6.0} & 6.0 & 1.0  \\ 
+Zenotravel & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0} & \textbf{5.0}  \\ 
+\midrule 
+Coverage & 240.0 & \textbf{263.0} & 231.0 & \textbf{243.0} & \textbf{272.0} & 268.0  \\ 
+Norm. coverage & 8.23 & \textbf{9.45} & 8.0 & \textbf{8.83} & \textbf{9.61} & 8.58  \\ 
+\bottomrule 
 		\end{tabular} 
 		
 	}
@@ -857,25 +929,23 @@ When using complex inference, the number of methods in all problems that are lin
 	& \multicolumn{2}{c}{RC Add} & \multicolumn{2}{c}{RC FF} & HyperTensioN & Lilotane \\ 
 	\cmidrule(lr){2-3} \cmidrule(lr){4-5} 
 	&PO & TO & PO & TO  \\  
-	\midrule 
-	Barman-BDI & 0.07 & \textbf{0.38} & 0.07 & \textbf{0.35} & 0.0 & \textbf{0.72}  \\ 
-
-
-	Monroe Fully Observ.$^{7}$ & \textbf{0.56} & 0.52 & \textbf{0.47} & 0.45 & 0.0 & 0.54   \\ 
-	Monroe Part. Observ.$^{2}$ & \textbf{0.31} & 0.28 & \textbf{0.31} & 0.29 & 0.09 & 0.63   \\ 
-	PCP$^{18}$ & \textbf{0.83} & \textbf{0.83} & \textbf{0.82} & \textbf{0.82} & 0.0 & 0.0   \\ 
-	Rover & 0.28 & \textbf{0.61} & 0.2 & \textbf{0.56} & 0.0 & \textbf{0.97}  \\ 
-	Satellite & 0.9 & \textbf{1.0} & 0.99 & \textbf{1.0} & 0.0 & \textbf{1.0}   \\ 
-	Transport & 0.24 & \textbf{0.6} & 0.27 & \textbf{0.32} & 0.22 & 0.78   \\ 
-	UM-Translog$^{1}$ & \textbf{1.0} & 0.99 & \textbf{1.0} & \textbf{1.0} & 0.0 & 0.92   \\ 
-	Woodworking & \textbf{0.38} & 0.23 & \textbf{0.36} & 0.23 & 0.26 & 0.2  \\ 
-	\midrule 
-	Monroe & \textbf{0.77} & 0.74 & \textbf{0.76} & 0.73 & \textbf{1.0} & 0.96  \\ 
-	SmartPhone$^{3}$ & 0.71 & \textbf{1.0} & 0.71 & \textbf{0.86} & 0.0 & 0.14   \\ 
-	Zenotravel & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & 0.0 & 1.0   \\ 
-	\midrule 
-	IPC score & 7.1 & \textbf{8.2} & 7.0 & \textbf{7.6} & \textbf{1.6} & \textbf{7.9}   \\ 
-	\bottomrule 
+\midrule 
+Barman-BDI & 0.07 & \textbf{0.38} & 0.07 & \textbf{0.35} & \textbf{0.85} & 0.72  \\ 
+Monroe Fully Observ.$^{7}$ & \textbf{0.56} & 0.52 & \textbf{0.47} & 0.45 & \textbf{0.95} & 0.54  \\ 
+Monroe Part. Observ.$^{2}$ & \textbf{0.31} & 0.28 & \textbf{0.31} & 0.29 & 0.09 & \textbf{0.63}  \\ 
+PCP$^{18}$ & \textbf{0.83} & \textbf{0.83} & \textbf{0.82} & \textbf{0.82} & 0.82 & 0.0  \\ 
+Rover & 0.28 & \textbf{0.61} & 0.2 & \textbf{0.56} & \textbf{0.99} & 0.97  \\ 
+Satellite & 0.9 & \textbf{1.0} & 0.99 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0}  \\ 
+Transport & 0.24 & \textbf{0.6} & 0.27 & \textbf{0.32} & 0.61 & \textbf{0.78}  \\ 
+UM-Translog$^{1}$ & \textbf{1.0} & 0.99 & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & 0.92  \\ 
+Woodworking & \textbf{0.38} & 0.23 & \textbf{0.36} & 0.23 & 0.26 & 0.2  \\ 
+\midrule 
+Monroe & \textbf{0.77} & 0.74 & \textbf{0.76} & 0.73 & \textbf{1.0} & 0.96  \\ 
+SmartPhone$^{3}$ & 0.71 & \textbf{1.0} & 0.71 & \textbf{0.86} & 0.79 & 0.14  \\ 
+Zenotravel & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0} & \textbf{1.0}  \\ 
+\midrule 
+IPC score & 7.1 & \textbf{8.2} & 7.0 & \textbf{7.6} & \textbf{9.4} & 7.9  \\ 
+\bottomrule 
 \end{tabular} 
 	}
 \end{table} 
@@ -954,6 +1024,7 @@ When using complex inference, the number of methods in all problems that are lin
 \begin{table} 
 	\centering  
 	\caption{Number of Problems per Domain for Which \emph{all} methods were linearizable, and the Average Number of Methods with more than 1 sub-task that were in that Domain}
+	\label{table:FullyLinearizedProblems}
 	\scalebox{0.75} { 
 	\begin{tabular}{lcccl} 
 		\toprule
@@ -1023,8 +1094,9 @@ Zenotravel & 190.2 & 99.4 & 47.0  \\
 \end{table} 
 
 While simple linearization can linearize almost none of the actaully partially ordered methods, with complex linearization, we can successfully linearize a fair amount of the partially-ordered methods too. (Note that this does not result in a guaranteed solvability-preserving problem unless all methods conform to the criteria though.)
+
 \begin{table} 
-	\caption{For the Problems in Each Domain, Average Percentage of Partially-Ordered Methods Linearized Without Cycle-break per Problem, for each Domain. Shows Results for Both Inference Methods.}\label{} 
+	\caption{For the Problems in Each Domain, Average Percentage of Partially-Ordered Methods Linearized Without Cycle-break per Problem, for each Domain. Shows Results for Both Inference Methods.}\label{table:POMethodBreak} 
 	\begin{tabular}{lccl} 
 		\toprule 
 		Domain & Complex & Simple &  \\ 
