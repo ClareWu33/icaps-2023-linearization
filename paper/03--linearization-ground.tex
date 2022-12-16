@@ -1,0 +1,66 @@
+We now introduce how to transform a general (i.e., partially ordered) grounded HTN planning problem into a totally ordered one. Given a grounded HTN planning problem, our goal is to linearize every method's task network by adding ordering constraints to them. In particular, in order to decide which ordering constraints are to be added to a task network, we want to \emph{infer} the precondition and effects of each compound task in the task network. % from all primitive tasks into which it can be decomposed. 
+
+The reason for doing such inference is that our intent is to let every linearized task network be able to be decomposed into at least one executable action sequence (though it is not always possible), and we thus want to capture the state transition information about the action sequences that can be obtained from the task network. In other words, we want to acquire the knowledge that for each compound task $c$ in the task network, which propositions are required so that there is an action sequence $\pi \in \seqSet{c}$ this is executable (i.e., the precondition of $c$), and which propositions will be obtained (or deleted) by applying such a $\pi$ (i.e., the effects of $c$). % which can be loosely acquired by inferring the preconditions and the effects of the compound tasks. 
+
+Thus, generally speaking, our linearization approach consists of two phases. The first one is to infer preconditions and effects of compound tasks, and the second one is to add ordering constraints to each method's task network according to those inferred preconditions and effects. We now elaborate these two phases in detail as follows.
+
+\subsection{Inferring Preconditions and Effects}
+We present two approaches for inferring preconditions and effects of compound tasks. The first one is a polynomial time procedure that overly \emph{approximates} a compound task $c$'s precondition and effects by collecting all propositions that are in some action's precondition (or effects) into which can be decomposed from $c$. The second inference approach is developed by \shortCite{ConnyPreEstimation} which can extract more precise preconditions and effects but also has higher computational complexity. 
+
+For the purpose of simplicity, for every $t \in \pTasks{} \cup \cTasks{}$, we extend the previous notations to let $\preCondExt{t}$, $\effPosExt{t}$, $\effNegExt{t}$ refer to the (inferred) precondition, positive effects, and negative effects of the task $t$, respectively.
+
+\paragraph{Simple Inference} For a compound task $c$, our simple inference approach collects a proposition into $c$'s precondition (or effects) if it is in some action's precondition (or effects) into which can be decomposed from $c$. 
+% In other words, the approach collects all \emph{possible} propositions that can be in the precondition and effects of a compound task. %
+Concretely, for a task $t \in \pTasks{} \cup \cTasks{}$, the inference is done inductively as follows:
+\begin{description}
+    \item[Basis:] If $t \in \pTasks{}$, $\preCondExt{t} = \preCond{t}$, $\effPosExt{t} = \effPos{t}$, and $\effNegExt{t} = \effNeg{t}$.
+    \item[Induction:] If $t \in \cTasks{}$, for each $X \in \left\{\mathtt{prec}, \mathtt{eff}^{+}, \mathtt{eff}^{-}\right\}$,
+    \begin{displaymath}
+        X(t) = \bigcup_{\substack{(t, (T, \parOrd{}, \alpha)) \in \methods{}\\t' \in T}}X(t')
+    \end{displaymath}
+\end{description}
+
+One can easily recognize that the inductive procedure can be done in polynomial time because it will terminate after visiting all methods in $\methods{}$.  
+
+\paragraph{Complex Inference} Compared with the simple inference approach, the one by \shortCite{ConnyPreEstimation} extracts more accurate precondition and effects for each compound task.
+
+% TODO: maybe define a notation for the set of action sequences obtained from a compound tasks.
+In particular, while inferring the effects (positive or negative) of a compound task $c$, the approach by \shortCite{ConnyPreEstimation} can further rule out some propositions that are \emph{impossible} to occur in \emph{any} state resulting from executing an action sequence into which can be decomposed from $c$. That is, the effects $\effPosExt{c}$ or $\effNegExt{c}$ found by this complex approach will form a \emph{subset} of the one found by the simple inference approach described above. For more technical details about this approach, we refer to the authors' original work.
+
+\subsection{Linearizing Methods}
+
+We now move on to introduce how to linearize a method's task network. Bearing the inferred preconditions and effects of the compound tasks in a task network, we could formulate this task as follows. Given a task network $tn = (T, \parOrd{}, \alpha)$, we want to find a linearization $\langle t_{1} \cdots t_{|T|} \rangle$ of $tn$ respecting $\parOrd{}$ such that there exists a state sequence $\langle s_{1} \cdots s_{|T| - 1} \rangle$ in which $s_{1} = \effPosExt{\alpha(t_{1})}$, and for each $1 \leq i \leq |T| - 1$, $\preCondExt{t_{i + 1}} \subseteq s_{i}$ and $s_{i} \to_{\alpha(t_{i + 1})} s_{i + 1}$, namely we can view each compound task as an ``action'' and interpret linearizing a task network as the problem of finding an \emph{executable} linearization of the task network consisting solely of actions.
+
+This task is \NP{}-complete, as proved by \shortCite{Erol1996HTNComplexity}. Thus, under the conjecture that $\PTIME{} \neq \NP{}$, no polynomial time algorithms exist that can solve this problem precisely. In order to avoid high computational cost, we present here a poly-time procedure which approximates a linearization which is \emph{most likely} to be executable.
+
+One essential observation for making such an approximation is that in any executable linearization, the precondition of every task except the first one must be satisfied, i.e., in any such linearizations, the following criteria must be satisfied: 
+\begin{compactenum}[1)]
+    \item if $t$ is a task that is not at the beginning of the sequence, and there is a proposition $p \in \preCondExt{t}$, then there must be a task $t'$ with $p \in \effPosExt{t'}$ placed before $t$ (because otherwise $t$'s precondition cannot be satisfied), and 
+    \item for any task $t^{\ast}$ with $p \in \effNegExt{t^{\ast}}$, either
+    \begin{compactenum}[a)]
+        \item $t^{\ast}$ is placed after $t$, or
+        \item $t^{\ast}$ is ordered before some $t'$ with $p \in \effPosExt{t'}$ so that after $t^{\ast}$ deletes $p$, it can be added back by $t'$ and thus satisfies $t$'s precondition. % i.e., there must be a task $t'$ adding back $p$ that is placed somewhere between $t^{\ast}$ and $t$.
+    \end{compactenum}
+\end{compactenum}
+
+Thus, for linearizing a task network, we would like to add ordering constraints to enforce that the above criteria hold. More concretely, given a task network $tn = (T, \parOrd{}, \alpha)$ with $\parOrd{}^{+}$ being the transitive closure of $\parOrd{}$, we will add an ordering constraint $(t, t')$ with $t, t' \in T$, provided that $(t' ,t ) \notin \parOrd{}^{+}$, if there exists a proposition $p$ such that one of the following conditions holds:
+\begin{inparaenum}[1)]
+    \item $p \in \preCondExt{t}$ and $p \in \effPosExt{t'}$,
+    \item $p \in \effPosExt{t}$ and $p \in \effNegExt{t'}$, or
+    \item $p \in \effNegExt{t}$ and $p \in \preCondExt{t'}$. 
+\end{inparaenum}
+After adding all ordering constraints, we could view the tasks together with the \emph{extended} set of ordering constraints as a graph $G$ where each task is a vertex and each ordering constraint is an edge. A linearization can then be obtained by ordering $G$ in a \emph{topological} order.
+
+Notably, the graph $G$ might \emph{not} have a topological order because it may contain cycles. That is, some ordering constraints we add might conflict with each other. If this is the case, we \emph{randomly} remove some edges $(t, t')$ from $G$ with $(t, t') \notin \parOrd{}^{+}$ (because we must \emph{not} contradict the original ordering constraints in $tn$) until there exist no cycles. We call this step \emph{cycle-breaking}. The entire procedure for linearizing a method is summarized in Alg.~\ref{alg:Algorithm1}.
+
+\begin{algorithm}[t]
+	\input{alg-linearization.tex}
+	\caption{Lineraizing a method.}
+	\label{alg:Algorithm1}
+\end{algorithm}
+
+Lastly, in order to transform a partially ordered HTN planning problem into a totally ordered one, we could call Alg.~\ref{alg:Algorithm1} on every method in the input problem.
+
+% Thus, when finding such a linearization, for every task $t'$ which is not placed at the beginning and every proposition $p \in \preCondExt{t'}$, there is supposed to be another task $t$ with $p \in \effPosExt{t}$ placed before it, i.e., an ordering constraint $(t, t')$ should be added. Similarly, consider a task $t^{\ast}$ with $p \in \effNegExt{t^{\ast}}$ (i.e., $t^{\ast}$ deletes $p$), we would like to place it before $t$ so that after $t^{\ast}$ deletes $p$, it can be added back by $t$ which thus satisfies the precondition of $t'$.
+
+

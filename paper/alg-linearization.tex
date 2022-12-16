@@ -1,0 +1,31 @@
+\algnewcommand{\LineComment}[1]{\State \(\triangleright\) #1}
+
+\hspace*{\algorithmicindent} \textbf{Input}: A method $(c, (T, \parOrd{}, \alpha))$\\[3pt]
+\hspace*{\algorithmicindent} \textbf{Output}: A linearized method
+\begin{algorithmic}[1]
+    \State $G \leftarrow (V, E)$ with $V = T$ and $E = \parOrd{}$
+    \ForAll{$t \in T$}
+       \ForAll{$t' \in T$}
+            \ForAll{$p \in \preCondExt{t}$} 
+                \If{$p \in \effPosExt{t'} \land (t, t') \notin \parOrd{}^{+}$}
+                    \State $E \leftarrow E \cup \left\{(t', t)\right\}$
+                \EndIf
+                \If{$p \in \effNegExt{t'} \land (t', t) \notin \parOrd{}^{+}$}
+                    \State $E \leftarrow E \cup \left\{(t, t')\right\}$
+                \EndIf
+            \EndFor
+            % \ForAll{$p \in \effPosExt{t}$}
+            %     \If{$p \in \preCondExt{t'} \land (t', t) \notin \parOrd{}^{+}$}
+            %         \State $E \leftarrow E \cup \left\{(t, t')\right\}$
+            %     \EndIf
+            % \EndFor
+       \EndFor
+    \EndFor
+    \While{$G$ has cycles}
+        \LineComment{randomly pick an edge $(t, t') \in E$}
+        \State $(t, t') \leftarrow (t, t') \in E$ with $(t, t') \notin \parOrd{}^{+}$
+        \State $E \leftarrow E \setminus \left\{(t, t')\right\}$
+    \EndWhile
+    \State $\parOrd^{\ast} \leftarrow$ a topological order of $G$
+    \State \Return $(c, (T, \parOrd^{\ast}, \alpha))$
+\end{algorithmic}
