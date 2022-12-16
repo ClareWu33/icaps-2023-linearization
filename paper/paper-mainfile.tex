@@ -454,18 +454,26 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
  	\caption{Example of Desired Additional Orderings}
  	\label{fig:OrderingRules}
 	\scalebox{0.75}{
-		\begin{subfigure}{4.5cm} 
+		\begin{subfigure}{7cm} 
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
 			
+						
+			\action{Del}{SingleDelete,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em 
+			};	
 			
 			
 			\action{first}{SingleAdd,
 				width  = 2.5em, 
 				height = 2.5em, 
 				pre length = 1em,
-				eff length = 1em 
+				eff length = 1em ,
+					body = {right = 4em of Del} 
 			};			
 			
 			\action{second}{SinglePrec,
@@ -486,13 +494,14 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 			
 		\end{subfigure}
 	}  
+
 	\scalebox{0.75}{
-		\begin{subfigure}{4.5cm} 
+		\begin{subfigure}{7cm} 
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
 			
-			\action{A}{SingleDelete,
+			\action{Del}{SingleDelete,
 				width  = 2.5em, 
 				height = 2.5em, 
 				pre length = 1em,
@@ -500,45 +509,62 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 				%body = {below left = 2em and 2em of } 
 			};			
 			
-			\action{B}{SinglePrec,
+			\action{Prec}{SinglePrec,
 				width  = 2.5em, 
 				height = 2.5em, 
 				pre length = 1em,
 				eff length = 1em,
-				body = {left = 4em of A} 
-			};  			 
+				body = {left = 4em of Del} 
+			};  		
+			
+			\action{Add}{SingleAdd,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em,
+				body = {left = 4em of Prec} 
+		};	
+					  
 			
 			\path[every node/.style={font=\sffamily\small}]
-			(B) edge [->,bend right] node [left]  {} (A);
+			(Prec) edge [->,bend right] node [left]  {} (Del);
 			\end{tikzpicture}
 			\caption{C deletes a fact in preconditions of A  -- so A before C}	
 		\end{subfigure}
 	} 
 	
 	\scalebox{0.75}{
-		\begin{subfigure}{4.5cm} 
+		\begin{subfigure}{7cm} 
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
 			
-			\action{A}{SingleAdd,
+			\action{Add}{SingleAdd,
 				width  = 2.5em, 
 				height = 2.5em, 
 				pre length = 1em,
-				eff length = 1em
-				%body = {below left = 2em and 2em of } 
-			};			
+				eff length = 1em 
+			};	
+				
+			\action{Prec}{SinglePrec,
+			width  = 2.5em, 
+			height = 2.5em, 
+			pre length = 1em,
+			eff length = 1em,
+			body = {left = 4em of Add} 
+			};  		
+				
 			
-			\action{B}{SingleDelete,
+			\action{Del}{SingleDelete,
 				width  = 2.5em, 
 				height = 2.5em, 
 				pre length = 1em,
 				eff length = 1em,
-				body = {left = 4em of A} 
+				body = {left = 4em of Prec} 
 			};  			 
 			
 			\path[every node/.style={font=\sffamily\small}]
-			(B) edge [->, bend right] node [left]  {} (A);
+			(Del) edge [->, bend right] node [left]  {} (Add);
 			\end{tikzpicture}
 			\caption{B adds a fact that C deletes -- so C before B}
 		\end{subfigure}
@@ -564,7 +590,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 				height = 2.5em, 
 				pre length = 1em,
 				eff length = 1em 
-			};			
+			};
 			
 			\action{A}{SinglePrec,
 				width  = 2.5em, 
@@ -805,14 +831,23 @@ We compare the runtime of several state-of-the-art planning systems on some tran
 \subsection{Hardware and Planning Systems}
 The empirical evaluation was conducted on a machine with 30GiB of memory and 4 vCPUs, each with 2 GiB RAM. Recent work by \cite{HTN2SAS} shows that the PO panda$_\pi$, achieved similar coverage and slightly lower IPC score than the best TO planner tested. Also tested is HyperTensioN by \cite{hypertension} an TOHTN solver and the IPC 2020 winner, and Lilotane by \cite{Lilotane} another TOHTN solver and the IPC 2020 runner-up. 
 
-We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20}, on their default configuration. This turns problem into a classical planning problem (in RC model), uses Greedy best first search, FF heuristic by \cite{FF}, and visited lists. The visited lists use task sequence hashing, visited checking with task sequences, layer hashing, order pairs hashing, and GI-complete equivalence checking for partially-ordered task networks.
+We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20} on both the original and the linearized problems. According to \cite{holler2021loop} the best setting for solving partial-order problems is \textit{GA* FF th+gi}, and the best setting for total-order is \textit{GBFS Add th+s}. 
+Both turn the problem into a classical planning problem (in RC model). The former uses weighted A* search \todo{confirm weight}, the FF heuristic by \cite{FF}, and visited lists.  The latter uses Greedy best first search, Add heuristic by \cite{Add}, and visited lists.
 
-% \todo{visited checking with task sequences makes totally-ordered visited lists incomplete (with order) }
+Hashing is used to speed up checks to the visited list. Both approaches use \textit{th}, i.e. uses task hash approximation (computes  a  hash  value  that  only  incorporates  information  on which task is how often in a given TN) to replace tests for task network isomorphism. 
+For \textit{th+s} first hash with taskhash and then use the exact test on all TNs in the hash bucket.
+When \textit{+gi} follows, the exact test is performed in case of a hash collision. 
 
-%\todo{Most notably, note that TO problems allow for other visited list	configurations than PO problems. So we should also use a TO configuration there (this is however not reported)}
 
-We also try that configuration with FF swapped for the Add heuristic by \cite{Add}.
-%Filter by \cite{useClassicalHuristicICAPS18} and Landmark-cut by \cite{LM-Cut}. 
+%incomplete: (GA* FF th)
+%/pandaPIengine -H "rc2(ff)" -w 2  --noLayers --noGIcheck (GA* FF oh)
+%/pandaPIengine -H "rc2(ff)" -w 2  --noLayers  (GA* FF oh+gi)
+
+%incomplete: ./pandaPIengine -H "rc2(add)" -g "none" -Q  --noLayers   --noOrderPairs   --noGIcheck  (GBFS Add th)
+%./pandaPIengine -H "rc2(add)" -g "none"  -T   --noLayers   --noOrderPairs   --noGIcheck  (GBFS Add s)
+%./pandaPIengine -H "rc2(add)" -g "none"  --noLayers   --noOrderPairs  --noGIcheck  (GBFS Add th+s)
+
+
 We compare the performance of panda$_\pi$ on the original problem and the pre-processed problem. The same setting is used for re-runs. For other planners, panda$_\pi$ with rc2(Add) is used for re-runs. We also test the latest version of TOHTN planners HyperTensioN and Lilotane on the transformed problems. Re-runs use panda$_{\pi}$ with the best heuristic(Add). We test both Complex and Simple Inference for linearization. Note that Complex Inference can only be inferred on grounded problems, but Lilotane and HyperTensioN are lifted planners.
 
 The results table for both coverage and IPC score can be seen on page \pageref{table:GroundedSimpleIPC}--\pageref{table:GroundedComplexIPC}.
