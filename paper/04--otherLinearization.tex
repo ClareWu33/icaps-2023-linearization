@@ -1,0 +1,187 @@
+\section{Linearization of Methods Using Any Set of Inferred Preconditions and Effects}
+
+From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (which may have been derived using the ground or lifted variant), we can run Algorithm~\ref{alg:Algorithm1} to get an linearized problem.
+For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig:OrderingRules} and \ref{fig:CycleBreaking}.
+
+ \begin{figure}[h]
+ 	\caption{Example of Desired Additional Orderings}
+ 	\label{fig:OrderingRules}
+	\scalebox{0.75}{
+		\begin{subfigure}{4.5cm}
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
+
+
+
+			\action{first}{SingleAdd,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em
+			};
+
+			\action{second}{SinglePrec,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of first}
+			};
+
+			\path[every node/.style={font=\sffamily\small}]
+			(first) edge [->,bend right] node [left]  {} (second);
+			\end{tikzpicture}
+
+			\caption{B adds a fact in preconditions of A -- so B before A}
+
+
+
+		\end{subfigure}
+	}
+	\scalebox{0.75}{
+		\begin{subfigure}{4.5cm}
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
+
+			\action{A}{SingleDelete,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em
+				%body = {below left = 2em and 2em of }
+			};
+
+			\action{B}{SinglePrec,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em,
+				body = {left = 4em of A}
+			};
+
+			\path[every node/.style={font=\sffamily\small}]
+			(B) edge [->,bend right] node [left]  {} (A);
+			\end{tikzpicture}
+			\caption{C deletes a fact in preconditions of A  -- so A before C}
+		\end{subfigure}
+	}
+
+	\scalebox{0.75}{
+		\begin{subfigure}{4.5cm}
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
+
+			\action{A}{SingleAdd,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em
+			};
+
+			\action{B}{SingleDelete,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em,
+				body = {left = 4em of A}
+			};
+
+			\path[every node/.style={font=\sffamily\small}]
+			(B) edge [->, bend right] node [left]  {} (A);
+			\end{tikzpicture}
+			\caption{B adds a fact that C deletes -- so C before B}
+		\end{subfigure}
+	}
+\end{figure}
+
+
+\begin{figure}[h]
+	\caption{Example of Cycle-Breaking the Desired Additional Orderings}
+	\label{fig:CycleBreaking}
+	\scalebox{0.75}{
+		\begin{subfigure}{7cm}
+		 	\centering
+			\caption{Resulting method ordering has a cycle}
+			\label{fig:CycleBreaking1}
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
+
+
+			\action{B}{SingleAdd,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em
+			};
+
+			\action{A}{SinglePrec,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of first}
+			};
+
+			\action{C}{SingleDelete,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of second}
+			};
+
+			\path[every node/.style={font=\sffamily\small}]
+			(B) edge [->,bend right] node [left]  {} (A)
+			(A) edge [->,bend right] node [left]  {} (C)
+			(C) edge [->,bend right] node [left]  {} (B);
+			\end{tikzpicture}
+
+
+		\end{subfigure}
+	}
+
+	\scalebox{0.75}{
+		\begin{subfigure}{6cm}
+		 %	\centering
+			\caption{Delete any random ordering to break it}
+			\label{fig:CycleBreaking2}
+			\begin{tikzpicture}[auto,node distance=1.2cm,
+			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
+			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
+
+
+			\action{B}{SingleAdd,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em
+			};
+
+			\action{A}{SinglePrec,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of first}
+			};
+
+			\action{C}{SingleDelete,
+				width  = 2.5em,
+				height = 2.5em,
+				pre length = 1em,
+				eff length = 1em,
+				body = {right = 4em of second}
+			};
+
+			\path[every node/.style={font=\sffamily\small}]
+			(B) edge [->,bend right] node [left]  {} (A)
+			(C) edge [->,bend right] node [left]  {} (B);
+			\end{tikzpicture}
+
+		\end{subfigure}
+	}
+\end{figure}

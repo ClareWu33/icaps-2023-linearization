@@ -1,0 +1,9 @@
+\section{Conclusion}
+
+This paper finds that, at least for the POHTN problems in the IPC domain, most of them are not undecidable. In other words, it is as if the POHTN domains are compressed TO domains - this linearization separates one of them back out.
+
+We can also see this pre-processing technique leads to large gains in time/efficiency for a number of planners, at least for the problems tested here. Furthermore, there is demonstrably much more room for improvement. Though the criteria does not fire all the time, it's producing a linearization that is almost always solvable.
+
+This method can also be used to increase the number of TOHTN problems available for purposes like comparing TOHTN planners or grounding techniques. Suppose there were $n$ POHTN problms and $m$ TOHTN problems, and this linearization could make those $n$ POHTN problems into $k$ solvable $TOHTN$ problems. Then $k+m$ (lifted or grounded) TOHTN problems exist now. And from empirical evaluation, $k$ may be close to $n$.
+
+Finally, in this paper we identify a subset of decidable problems within POHTN problems, and this subset is orthogonal to all others discussed in other works.

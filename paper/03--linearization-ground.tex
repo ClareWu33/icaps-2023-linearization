@@ -1,3 +1,5 @@
+\section{Linearizing Grounded HTN Problems}
+
 We now introduce how to transform a general (i.e., partially ordered) grounded HTN planning problem into a totally ordered one. Given a grounded HTN planning problem, our goal is to linearize every method's task network by adding ordering constraints to them. In particular, in order to decide which ordering constraints are to be added to a task network, we want to \emph{infer} the precondition and effects of each compound task in the task network. % from all primitive tasks into which it can be decomposed. 
 
 The reason for doing such inference is that our intent is to let every linearized task network be able to be decomposed into at least one executable action sequence (though it is not always possible), and we thus want to capture the state transition information about the action sequences that can be obtained from the task network. In other words, we want to acquire the knowledge that for each compound task $c$ in the task network, which propositions are required so that there is an action sequence $\pi \in \seqSet{c}$ this is executable (i.e., the precondition of $c$), and which propositions will be obtained (or deleted) by applying such a $\pi$ (i.e., the effects of $c$). % which can be loosely acquired by inferring the preconditions and the effects of the compound tasks. 
@@ -54,13 +56,13 @@ After adding all ordering constraints, we could view the tasks together with the
 Notably, the graph $G$ might \emph{not} have a topological order because it may contain cycles. That is, some ordering constraints we add might conflict with each other. If this is the case, we \emph{randomly} remove some edges $(t, t')$ from $G$ with $(t, t') \notin \parOrd{}^{+}$ (because we must \emph{not} contradict the original ordering constraints in $tn$) until there exist no cycles. We call this step \emph{cycle-breaking}. The entire procedure for linearizing a method is summarized in Alg.~\ref{alg:Algorithm1}.
 
 \begin{algorithm}[t]
-	\input{alg-linearization.tex}
+	\input{alg-linearization}
 	\caption{Lineraizing a method.}
 	\label{alg:Algorithm1}
 \end{algorithm}
 
 Lastly, in order to transform a partially ordered HTN planning problem into a totally ordered one, we could call Alg.~\ref{alg:Algorithm1} on every method in the input problem.
 
-% Thus, when finding such a linearization, for every task $t'$ which is not placed at the beginning and every proposition $p \in \preCondExt{t'}$, there is supposed to be another task $t$ with $p \in \effPosExt{t}$ placed before it, i.e., an ordering constraint $(t, t')$ should be added. Similarly, consider a task $t^{\ast}$ with $p \in \effNegExt{t^{\ast}}$ (i.e., $t^{\ast}$ deletes $p$), we would like to place it before $t$ so that after $t^{\ast}$ deletes $p$, it can be added back by $t$ which thus satisfies the precondition of $t'$.
+
 
 

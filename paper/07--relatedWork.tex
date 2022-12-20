@@ -1,0 +1,15 @@
+\section{Related Work}
+
+There exist other planners that also compile POHTN problems to decidable planning classes e.g. the planners by \cite{HTN2STRIPS} and HTN2SAS planner by \cite{HTN2SAS} convert POHTN to classical planning problems. To the best of my knowledge, this is the first work that focuses on converting POHTN to TOHTN problems.
+
+\cite{ErolHTNExpressivity} proved that it is NP-complete to decide whether a partially ordered set
+of actions has an executable linearization. Our criteria would work on a problem where the only method is for the initial task, and it’s sub-tasks are actions. That is essentially just ordering a partially ordered plan, so the criteria can also identify a proper subset of all partially ordered plans that can be linearized in polynomial time. It can also find a executable linearization for that subset in polynomial time.
+
+
+\cite{NEBEL1994125} studied various questions regarding partially ordered plans, such as the complexity of plan existence, plan optimisation, possible or necessary truth of properties before or after plan steps, given various constraints on the types of tasks allowed.  \cite{KambhampatiModalTruth1996} studied related questions and criteria under different assumptions.
+In the paper by \cite{TanGruningerPOPlanComplexity}, the authors refine \cite{NEBEL1994125}'s results and show the impact of the interaction of preconditions and effects thereby giving a more detailed picture for when finding a linearization for a partially-ordered plan is possible in polynomial time, and when it remains NP-hard.
+
+Criteria presented in \cite{NEBEL1994125} and \cite{KambhampatiModalTruth1996} and  \cite{TanGruningerPOPlanComplexity} analyse cases where actions have singleton precondition and add lists. This is a less general case than our criteria can cover, but their criteria also correctly identifies some cases as linearizable in polynomial time that our criteria is unable to determine. Thus their results are orthogonal to ours.
+
+The paper by \shortCite{DeleteRelaxation,Bercher2021POCLComplexities} generalised \cite{NEBEL1994125}'s as well as \cite{ErolHTNExpressivity}'s result (deciding whether a partially ordered
+set of actions possesses an executable linearization) by showing that this problem does not become easier when one is allowed to insert delete-relaxed  actions.
