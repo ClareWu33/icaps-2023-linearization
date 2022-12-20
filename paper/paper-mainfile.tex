@@ -41,7 +41,8 @@
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{mathbbol}
+\usepackage{todonotes}
+% \usepackage{mathbbol}
 \usepackage[noend]{algpseudocode}
 \usepackage{paralist}
 \usepackage{booktabs}
@@ -124,6 +125,17 @@ HTN planning is in general undecidable, yet there exist efficient planning algor
 
 
 \input{00--macros}
+
+\Psays{Ying, there are several unresolved references, can you please fix all of them? \includegraphics[width=\textwidth]{errors}}
+
+\Psays{There are quote a range of 'typical' errors throughout, see the list below}
+\begin{itemize}
+  \item Your quotes are wrong. You have to always use `6/9', ``66/99'', not '9/9'
+  \item Most citations are wrong. See my template for the rules.
+  \item You cite a paper by Erol twice, please fix (and remove the duplicate reference)
+  \item Gregor's AAAI'22 is missing page numbers.
+  \item Sometimes you have a dot that's not ending a sentence, yet you don't protect the next whitespace (see my template for an explanation)
+\end{itemize}
 
 \input{01--introduction}
 \input{02--formalism}

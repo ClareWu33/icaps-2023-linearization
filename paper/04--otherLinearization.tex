@@ -4,8 +4,6 @@ From these inferred preconditions and effects $\PreS(t), \AddS(t), \DelS(t)$, (w
 For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig:OrderingRules} and \ref{fig:CycleBreaking}.
 
  \begin{figure}[h]
- 	\caption{Example of Desired Additional Orderings}
- 	\label{fig:OrderingRules}
 	\scalebox{0.75}{
 		\begin{subfigure}{4.5cm}
 			\begin{tikzpicture}[auto,node distance=1.2cm,
@@ -95,12 +93,11 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 			\caption{B adds a fact that C deletes -- so C before B}
 		\end{subfigure}
 	}
+	 	\caption{Example of Desired Additional Orderings\label{fig:OrderingRules}}
 \end{figure}
 
 
 \begin{figure}[h]
-	\caption{Example of Cycle-Breaking the Desired Additional Orderings}
-	\label{fig:CycleBreaking}
 	\scalebox{0.75}{
 		\begin{subfigure}{7cm}
 		 	\centering
@@ -181,7 +178,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 			(B) edge [->,bend right] node [left]  {} (A)
 			(C) edge [->,bend right] node [left]  {} (B);
 			\end{tikzpicture}
-
 		\end{subfigure}
 	}
+	\caption{Example of Cycle-Breaking the Desired Additional Orderings\label{fig:CycleBreaking}\Psays{Ying, captions come in figures always below the graphics. Can you fix this? The captions are also not self-explanatory. E.g. in (a) you mention 'resulting', but it's completely unclear what you are referring to. Caption (b) is also not self-explanatory.}}
 \end{figure}
