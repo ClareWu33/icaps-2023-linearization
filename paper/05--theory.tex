@@ -1,24 +1,32 @@
 \section{Theoretical Properties of Linearization Result}
 
-We now discuss the implications of the above-described linearization procedure.
+We now discuss the implications of the above-described linearization procedure, starting by the runtime of the procedure.
+
+The procedure clearly runs in polynomial time, independent of which inference procedure is used for inferring compound tasks' preconditions and effects. Concretely, given a POHTN planning problem, the task of inferring a compound task's precondition and effects in a method using the simple inference takes time at most $\mathcal{O}(|\methods{}| \times M)$ with
+\begin{displaymath}
+	M =  \max_{(c, (T, \parOrd{}, \alpha)) \in \methods{}} |T|
+\end{displaymath}
+that is, $M$ is the number of tasks in the largest task network among all methods. This upper bound holds because at the worst case, the inductive inference procedure will visit all methods, and each method contains at most $M$ subtasks. Further, the complex inference procedure by \shortCite{ConnyPreEstimation} also has polynomial time complexity, as shown in their original work.
+
+The task of adding ordering constraints to a method $m = (c, (T, \parOrd{}, \alpha))$ takes time $\mathcal{O}(|T|^{2})$ because we need to check, for \emph{every} pair of $t, t' \in T$, whether an ordering constraint over them should be added. Further, since at most $\mathcal{O}(|T|^{2})$ ordering constraints will be added, the number of ordering constraints that will be removed for cycle-breaking will not exceed this number. Taken together, linearizing a POHTN planning problem can be done in polynomial time.
 
 \begin{theorem}\label{thm:Runtime}
-	Given a problem $P = (F, T_P, T_C, \delta, M)$, Algorithm~\ref{alg:Algorithm1} takes polynomial time.
+	Transforming a POHTN planning problem into a totally ordered one takes polynomial time, independent of which inference procedure is used.
 \end{theorem}
-\begin{proof}
-	Let $|T|$ = $|T_P| + |T_C|$.
+% \begin{proof}
+% 	Let $|T|$ = $|T_P| + |T_C|$.
 
-	To calculate $\PreS, \AddS, \DelS$ for each task $t$. We explore it's compound sub-tasks until we collect all primitive tasks. Then loop over $\PreS, \AddS, \DelS$ for the root $t$, over each fact, over each primitive task in the sub-tree. This is obviously polynomial in terms of $|T|$.
+% 	To calculate $\PreS, \AddS, \DelS$ for each task $t$. We explore it's compound sub-tasks until we collect all primitive tasks. Then loop over $\PreS, \AddS, \DelS$ for the root $t$, over each fact, over each primitive task in the sub-tree. This is obviously polynomial in terms of $|T|$.
 
-	Lines~\ref{alg:StartBuildGraph}-\ref{alg:EndBuildGraph} of Algorithm~\ref{alg:Algorithm1} iterates over every method, which iterates over every fact, which iterates over every sub-task in that method, which iterates over every other sub-task in that method. Leading to at most $\mathcal{O}(|M| * |F| * |T|^2)$, since number of sub-tasks per method is upper bounded by $T$.
+% 	Lines~\ref{alg:StartBuildGraph}-\ref{alg:EndBuildGraph} of Algorithm~\ref{alg:Algorithm1} iterates over every method, which iterates over every fact, which iterates over every sub-task in that method, which iterates over every other sub-task in that method. Leading to at most $\mathcal{O}(|M| * |F| * |T|^2)$, since number of sub-tasks per method is upper bounded by $T$.
 
-	Cycle-breaking, done by lines \ref{alg:StartCycleBreak} to \ref{alg:EndCycleBreak} can be done via depth-first search per cycle to break, which is also polynomial to $|T|$.
+% 	Cycle-breaking, done by lines \ref{alg:StartCycleBreak} to \ref{alg:EndCycleBreak} can be done via depth-first search per cycle to break, which is also polynomial to $|T|$.
 
-	Line~\ref{alg:TopSort} can be done via topological sort of a graph where sub-tasks are nodes, and orderings are edges, which is known to be in $\mathcal{O}(V+E)$ in time.
-	The number of sub-tasks and edges are upper bounded by $T$, so approximately $\mathcal{O}(|M| * |T|)$.
+% 	Line~\ref{alg:TopSort} can be done via topological sort of a graph where sub-tasks are nodes, and orderings are edges, which is known to be in $\mathcal{O}(V+E)$ in time.
+% 	The number of sub-tasks and edges are upper bounded by $T$, so approximately $\mathcal{O}(|M| * |T|)$.
 
-	So the algorithm takes polynomial time.
-\end{proof}
+% 	So the algorithm takes polynomial time.
+% \end{proof}
 
 
 \begin{theorem}\label{thm:Soundness}
