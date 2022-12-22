@@ -2,13 +2,14 @@
 
 We now discuss the implications of the above-described linearization procedure, starting by the runtime of the procedure.
 
-The procedure clearly runs in polynomial time, independent of which inference procedure is used for inferring compound tasks' preconditions and effects. Concretely, given a POHTN planning problem, the task of inferring a compound task's precondition and effects in a method using the simple inference takes time at most $\mathcal{O}(|\methods{}| \times M)$ with
+\paragraph{Runtime} The procedure runs in polynomial time, independent of which inference procedure is used for inferring compound tasks' preconditions and effects. Concretely, given a POHTN planning problem, inferring the precondition and effects of \emph{one} compound tasks using the simple inference takes time at most $\mathcal{O}(|\methods{}| \times M)$ with
 \begin{displaymath}
 	M =  \max_{(c, (T, \parOrd{}, \alpha)) \in \methods{}} |T|
 \end{displaymath}
-that is, $M$ is the number of tasks in the largest task network among all methods. This upper bound holds because at the worst case, the inductive inference procedure will visit all methods, and each method contains at most $M$ subtasks. Further, the complex inference procedure by \shortCite{ConnyPreEstimation} also has polynomial time complexity, as shown in their original work.
+% that is, $M$ is the number of tasks in the largest task network among all methods. 
+This upper bound holds because the inductive inference procedure visits all methods at the worst case, and each method contains at most $M$ subtasks. In fact, one can also observe that this number is also the upper bound for the runtime of inferring \emph{all} compound tasks' preconditions and effects. This is because after visiting all methods, the inductive procedure has naturally done processing (inferring) all compound tasks. Further, the complex inference procedure by \shortCite{ConnyPreEstimation} also has polynomial time complexity, as shown in their original work.
 
-The task of adding ordering constraints to a method $m = (c, (T, \parOrd{}, \alpha))$ takes time $\mathcal{O}(|T|^{2})$ because we need to check, for \emph{every} pair of $t, t' \in T$, whether an ordering constraint over them should be added. Further, since at most $\mathcal{O}(|T|^{2})$ ordering constraints will be added, the number of ordering constraints that will be removed for cycle-breaking will not exceed this number. Taken together, linearizing a POHTN planning problem can be done in polynomial time.
+The task of adding ordering constraints to a method $m = (c, (T, \parOrd{}, \alpha))$ takes time $\mathcal{O}(|T|^{2})$ because we need to check, for \emph{every} pair of $t, t' \in T$, whether an ordering constraint over them should be added. Additionally, since at most $\mathcal{O}(|T|^{2})$ ordering constraints will be inserted, the number of ordering constraints that will be removed for cycle-breaking will not exceed this number. Taken together, linearizing a POHTN planning problem can be done in polynomial time.
 
 \begin{theorem}\label{thm:Runtime}
 	Transforming a POHTN planning problem into a totally ordered one takes polynomial time, independent of which inference procedure is used.
@@ -28,12 +29,13 @@ The task of adding ordering constraints to a method $m = (c, (T, \parOrd{}, \alp
 % 	So the algorithm takes polynomial time.
 % \end{proof}
 
+\paragraph{Soundness} More importantly, the presented linearization approach ensures that any solution to the TOHTN planning problem $\Pi'$ obtained by linearizing a partially ordered one $\Pi$ is also a solution to $\Pi$. That is, the solution set of $\Pi'$ is a \emph{subset} of that of $\Pi$.
 
-\begin{theorem}\label{thm:Soundness}
-	Given a POHTN planning problem $P$ and TOHTN problem
-	$P'$ obtained from $P$ by using Algorithm~\ref{alg:Algorithm1}
-	then the solution set of $P'$, denoted $sol(P')$ is a subset of $sol(P)$.
+\begin{theorem}
+	Let $\Pi$ be a POHTN planning problem, $\Pi'$ a TOHTN planning problem obtained from $\Pi$ by using the linearization approach, and $\mathcal{S}(\Pi)$ and $\mathcal{S}(\Pi')$ the set of all solutions to $\Pi$ and to $\Pi'$, respectively. Then, $\mathcal{S}(\Pi') \subseteq \mathcal{S}(\Pi)$. 
+	\label{thm:Soundness}
 \end{theorem}
+
 \begin{proof}
 	The new desired orderings for a method include all of the orderings already required by the method originally. The algorithm then turns the tasks and new desired orderings between them into a directed graph, and the new ordering is produced by performing a topological sort on the nodes of that graph. This means we do not modify the sub-tasks a method produces, just the ordering between them, so the set of plans from the totally ordered method is just a subset of the plans possible from the partially ordered one. Any solution to the linearized problem is then obviously a solution to the original problem.
 \end{proof}
