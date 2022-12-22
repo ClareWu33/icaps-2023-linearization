@@ -29,7 +29,7 @@ The task of adding ordering constraints to a method $m = (c, (T, \parOrd{}, \alp
 % 	So the algorithm takes polynomial time.
 % \end{proof}
 
-\paragraph{Soundness} More importantly, the presented linearization approach ensures that any solution to the TOHTN planning problem $\Pi'$ obtained by linearizing a partially ordered one $\Pi$ is also a solution to $\Pi$. That is, the solution set of $\Pi'$ is a \emph{subset} of that of $\Pi$.
+\paragraph{Soundness} More importantly, the presented linearization approach ensures that any solution to the TOHTN planning problem $\Pi'$ obtained by linearizing a partially ordered one $\Pi$ is also a solution to $\Pi$. That is, the solution set of $\Pi'$ is a \emph{subset} of that of $\Pi$. We can view this property as a certificate for the \emph{soundness} of our linearizing approach.
 
 \begin{theorem}
 	Let $\Pi$ be a POHTN planning problem, $\Pi'$ a TOHTN planning problem obtained from $\Pi$ by using the linearization approach, and $\mathcal{S}(\Pi)$ and $\mathcal{S}(\Pi')$ the set of all solutions to $\Pi$ and to $\Pi'$, respectively. Then, $\mathcal{S}(\Pi') \subseteq \mathcal{S}(\Pi)$. 
