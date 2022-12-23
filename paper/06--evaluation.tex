@@ -12,7 +12,7 @@ We also try that configuration with FF swapped for the Add heuristic by \cite{Ad
 We compare the performance of panda$_\pi$ on the original problem and the pre-processed problem. The same setting is used for re-runs. For other planners, panda$_\pi$ with rc2(Add) is used for re-runs. We also test the latest version of TOHTN planners HyperTensioN and Lilotane on the transformed problems. Re-runs use panda$_{\pi}$ with the best heuristic(Add). We test both Complex and Simple Inference for linearization. Note that Complex Inference can only be inferred on grounded problems, but Lilotane and HyperTensioN are lifted planners.
 
 The results table for both coverage and IPC score can be seen on page \pageref{table:GroundedSimpleIPC}--\pageref{table:GroundedComplexIPC}.
-As we can see from those figures, using complex inference results in ?  increase/decrease/similar, coverage and IPC score.
+As we can see from those figures, using complex inference results in [blank] increase/decrease/similar, coverage and IPC score.
 
 The planner that has achieved the highest overall coverage is panda$_\pi$ with FF, and highest IPC score is panda$_\pi$ planner with Add heuristic, which reflects findings in previous papers.
 
@@ -36,6 +36,6 @@ When using complex inference, the number of methods in all problems that are lin
 \input{table--SimpleLinearizable}
 \input{table--ComplexLinearizable}
 
-While simple linearization can linearize almost none of the actaully partially ordered methods, with complex linearization, we can successfully linearize a fair amount of the partially-ordered methods too. (Note that this does not result in a guaranteed solvability-preserving problem unless all methods conform to the criteria though.)
+While simple linearization can linearize almost none of the actually partially ordered methods, with complex linearization, we can successfully linearize a fair amount of the partially-ordered methods too. (Note that this does not result in a guaranteed solvability-preserving problem unless all methods conform to the criteria though.)
 
 \input{table--POMethodBreak}

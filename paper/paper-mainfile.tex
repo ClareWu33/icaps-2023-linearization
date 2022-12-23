@@ -75,7 +75,7 @@
 % PDF Info Is REQUIRED.
 % Please **do not** include Title and Author information
 \pdfinfo{
-/TemplateVersion (IJCAI.2022.0)
+	/TemplateVersion (IJCAI.2022.0)
 }
 
 \title{``Order is Half of Life'' -- Establishing Totally Ordered HTN Planning Problems is Half the Job (to Getting them Solved Efficiently)}
@@ -94,20 +94,20 @@
 % Multiple author syntax (remove the single-author syntax above and the \iffalse ... \fi here)
 \iffalse
 \author{
-First Author$^1$
-\and
-Second Author$^2$\and
-Third Author$^{2,3}$\And
-Fourth Author$^4$
-\affiliations
-$^1$First Affiliation\\
-$^2$Second Affiliation\\
-$^3$Third Affiliation\\
-$^4$Fourth Affiliation
-\emails
-\{first, second\}@example.com,
-third@other.example.com,
-fourth@example.com
+	First Author$^1$
+	\and
+	Second Author$^2$\and
+	Third Author$^{2,3}$\And
+	Fourth Author$^4$
+	\affiliations
+	$^1$First Affiliation\\
+	$^2$Second Affiliation\\
+	$^3$Third Affiliation\\
+	$^4$Fourth Affiliation
+	\emails
+	\{first, second\}@example.com,
+	third@other.example.com,
+	fourth@example.com
 }
 \fi
 
@@ -116,26 +116,41 @@ fourth@example.com
 
 
 \begin{document}
-
-\maketitle
-
-\begin{abstract}
-HTN planning is in general undecidable, yet there exist efficient planning algorithms. An important subclass is that of totally ordered HTN planning problems. Not only is this class decidable, but also easier to handle algorithmically since tasks cannot interleave anymore. Consequently, several specialized solvers exist, and dedicated tracks at the International Planning Competition (IPC) in both 2020 and 2023. We were able to show that almost all currently existing partially ordered planning benchmarks can be turned into totally ordered ones without sacrificing solvability. Establishing totally ordered problems in a preprocessing technique thus allows to use planning systems, heuristics, pruning techniques (etc.) that are only available for totally ordered problems. This allows solving problems more efficiently and with better-informed techniques, at the (little) cost of doing a preprocessing technique. We show that in only a very few cases linearization isn't possible, and in all others establishing a total order pays off \emph{significantly}, thus establishing our technique as a significant ingredient in the state of the art for solving partially ordered HTN problems. As a side contribution, we identify a new class of decidable (EXPTIME-complete) HTN problems, namely those where our preprocessing technique is guaranteed to be solvability-preserving.
-\end{abstract} 
-
-\input{01--introduction}
-\input{02--formalism}
-\input{03--linearization-ground}
-\input{04--otherLinearization}
-\input{05--theory}
-\input{06--evaluation}
-\input{07--relatedWork}
-\input{08--futureWork}
-\input{09--conclusion}
-
-%% The file named.bst is a bibliography style file for BibTeX 0.99c
-\bibliographystyle{named}
-\bibliography{bib}
-
+	
+	\maketitle
+	
+	\begin{abstract}
+		HTN planning is in general undecidable, yet there exist efficient planning algorithms. An important subclass is that of totally ordered HTN planning problems. Not only is this class decidable, but also easier to handle algorithmically since tasks cannot interleave anymore. Consequently, several specialized solvers exist, and dedicated tracks at the International Planning Competition (IPC) in both 2020 and 2023. We were able to show that almost all currently existing partially ordered planning benchmarks can be turned into totally ordered ones without sacrificing solvability. Establishing totally ordered problems in a preprocessing technique thus allows to use planning systems, heuristics, pruning techniques (etc.) that are only available for totally ordered problems. This allows solving problems more efficiently and with better-informed techniques, at the (little) cost of doing a preprocessing technique. We show that in only a very few cases linearization isn't possible, and in all others establishing a total order pays off \emph{significantly}, thus establishing our technique as a significant ingredient in the state of the art for solving partially ordered HTN problems. As a side contribution, we identify a new class of decidable (EXPTIME-complete) HTN problems, namely those where our preprocessing technique is guaranteed to be solvability-preserving.
+	\end{abstract}
+	
+	
+	\input{00--macros}
+	
+	\Psays{Ying, there are several unresolved references, can you please fix all of them? \includegraphics[width=\textwidth]{errors}}
+	
+	\Psays{There are quote a range of 'typical' errors throughout, see the list below}
+	\begin{itemize}
+		%\item Your quotes are wrong. You have to always use `6/9', ``66/99'', not '9/9'
+		\item Most citations are wrong. See my template for the rules.
+		%\item You cite a paper by Erol twice, please fix (and remove the duplicate reference)
+		%\item Gregor's AAAI'22 is missing page numbers.
+		\item Sometimes you have a dot that's not ending a sentence, yet you don't protect the next whitespace (see my template for an explanation)
+	\end{itemize}
+	
+	\input{01--introduction}
+	\input{02--formalism}
+	\input{03--linearization-ground}
+	\input{04--otherLinearization}
+	\input{05--theory}
+	\input{06--evaluation}
+	\input{07--relatedWork}
+	\input{08--futureWork}
+	\input{09--conclusion}
+	
+	%% The file named.bst is a bibliography style file for BibTeX 0.99c
+	\bibliographystyle{named}
+	\bibliography{bib}
+	
 \end{document}
+
 

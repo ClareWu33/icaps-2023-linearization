@@ -5,7 +5,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 
  \begin{figure}[h]
 	\scalebox{0.75}{
-		\begin{subfigure}{4.5cm}
+		\begin{subfigure}{4cm}
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
@@ -38,7 +38,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 		\end{subfigure}
 	}
 	\scalebox{0.75}{
-		\begin{subfigure}{4.5cm}
+		\begin{subfigure}{4cm}
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
@@ -67,7 +67,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 	}
 
 	\scalebox{0.75}{
-		\begin{subfigure}{4.5cm}
+		\begin{subfigure}{4cm}
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
@@ -100,9 +100,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 \begin{figure}[h]
 	\scalebox{0.75}{
 		\begin{subfigure}{7cm}
-		 	\centering
-			\caption{Resulting method ordering has a cycle}
-			\label{fig:CycleBreaking1}
+		 %	\centering
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
@@ -136,16 +134,14 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 			(A) edge [->,bend right] node [left]  {} (C)
 			(C) edge [->,bend right] node [left]  {} (B);
 			\end{tikzpicture}
-
-
+			\caption{A method that has the orderings from Figure~\ref{fig:OrderingRules} has a cycle}
+			\label{fig:CycleBreaking1}
 		\end{subfigure}
 	}
 
 	\scalebox{0.75}{
 		\begin{subfigure}{6cm}
 		 %	\centering
-			\caption{Delete any random ordering to break it}
-			\label{fig:CycleBreaking2}
 			\begin{tikzpicture}[auto,node distance=1.2cm,
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]
@@ -178,6 +174,8 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 			(B) edge [->,bend right] node [left]  {} (A)
 			(C) edge [->,bend right] node [left]  {} (B);
 			\end{tikzpicture}
+			\caption{Delete any random ordering to break the cycle}
+			\label{fig:CycleBreaking2}
 		\end{subfigure}
 	}
 	\caption{Example of Cycle-Breaking the Desired Additional Orderings\label{fig:CycleBreaking}\Psays{Ying, captions come in figures always below the graphics. Can you fix this? The captions are also not self-explanatory. E.g. in (a) you mention 'resulting', but it's completely unclear what you are referring to. Caption (b) is also not self-explanatory.}}

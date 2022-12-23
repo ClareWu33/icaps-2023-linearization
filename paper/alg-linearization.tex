@@ -4,6 +4,7 @@
 \hspace*{\algorithmicindent} \textbf{Output}: A linearized method
 \begin{algorithmic}[1]
     \State $G \leftarrow (V, E)$ with $V = T$ and $E = \parOrd{}$
+    \label{alg:StartBuildGraph}  
     \ForAll{$t \in T$}
        \ForAll{$t' \in T$}
             \ForAll{$p \in \preCondExt{t}$} 
@@ -21,11 +22,15 @@
             % \EndFor
        \EndFor
     \EndFor
-    \While{$G$ has cycles}
+    \label{alg:EndBuildGraph}  
+       
+	\label{alg:StartBreakCycle}
+    \While{$G$ has cycles}  
         \LineComment{randomly pick an edge $(t, t') \in E$}
         \State $(t, t') \leftarrow (t, t') \in E$ with $(t, t') \notin \parOrd{}^{+}$
         \State $E \leftarrow E \setminus \left\{(t, t')\right\}$
     \EndWhile
-    \State $\parOrd^{\ast} \leftarrow$ a topological order of $G$
+    \label{alg:EndBreakCycle}
+    \State $\parOrd^{\ast} \leftarrow$ a topological order of $G$ \label{alg:TopSort}
     \State \Return $(c, (T, \parOrd^{\ast}, \alpha))$
 \end{algorithmic}
