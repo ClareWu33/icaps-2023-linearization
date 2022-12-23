@@ -505,20 +505,21 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 			thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries},
 			square effect/.style={rectangle,draw,font=\sffamily\Large\bfseries}]		
 			
-			\action{Add}{SingleAdd,
+			\action{Prec}{SinglePrec,
 				width  = 2.5em, 
 				height = 2.5em, 
 				pre length = 1em,
 				eff length = 1em 
-			};	
-				
-			\action{Prec}{SinglePrec,
-			width  = 2.5em, 
-			height = 2.5em, 
-			pre length = 1em,
-			eff length = 1em,
-			body = {left = 4em of Add} 
 			};  		
+			
+			
+			\action{Add}{SingleAdd,
+				width  = 2.5em, 
+				height = 2.5em, 
+				pre length = 1em,
+				eff length = 1em,				
+				body = {left = 4em of Prec}
+			};	
 				
 			
 			\action{Del}{SingleDelete,
@@ -526,7 +527,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 				height = 2.5em, 
 				pre length = 1em,
 				eff length = 1em,
-				body = {left = 4em of Prec} 
+				body = {left = 4em of Add} 
 			};  			 
 			
 			\path[every node/.style={font=\sffamily\small}]
@@ -563,7 +564,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 				height = 2.5em, 
 				pre length = 1em,
 				eff length = 1em,
-				body = {right = 4em of first} 		
+				body = {right = 4em of B}	
 			};  
 		
 			\action{C}{SingleDelete,
@@ -571,8 +572,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 				height = 2.5em, 
 				pre length = 1em,
 				eff length = 1em,
-				body = {right = 4em of second} 	
-				%body = {below left = 2em and 2em of } 
+				body = {right = 4em of A} 
 			};				 
 			
 			\path[every node/.style={font=\sffamily\small}]
@@ -585,8 +585,10 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 		\end{subfigure}
 	}   
 
+
+	\vspace{2em}
 	\scalebox{0.75}{
-		\begin{subfigure}{6cm} 
+		\begin{subfigure}{7cm} 
 		 %	\centering
 			\caption{Delete any random ordering to break it}
 			\label{fig:CycleBreaking2}
@@ -607,7 +609,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 				height = 2.5em, 
 				pre length = 1em,
 				eff length = 1em,
-				body = {right = 4em of first} 		
+				body = {right = 4em of B}	
 			};  
 			
 			\action{C}{SingleDelete,
@@ -615,8 +617,7 @@ For an visual demonstration of what this algorithm is doing, see Figure~\ref{fig
 				height = 2.5em, 
 				pre length = 1em,
 				eff length = 1em,
-				body = {right = 4em of second} 	
-				%body = {below left = 2em and 2em of } 
+				body = {right = 4em of A} 
 			};				 
 			
 			\path[every node/.style={font=\sffamily\small}]
