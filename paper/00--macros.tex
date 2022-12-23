@@ -1,0 +1,84 @@
+% ToDo stuff
+\newcommand{\Xsays}[3]   {\todo[inline,color=#2]{\textbf{#1 says:} #3}}
+\newcommand{\Ysays}[1]   {\Xsays{Ying}{green!40}{#1}}
+\newcommand{\Psays}[1]   {\Xsays{Pascal}{orange!40}{#1}}
+\newcommand{\Ssays}[1]   {\Xsays{Songtuan}{purple!40}{#1}}
+% \renewcommand{\Xsays}[3] {}
+
+% citiation commands
+\newcommand{\shortCite}[1] {\citeauthor{#1} (\citeyear{#1})}
+
+% symbols
+\newcommand{\groundProb}{\ensuremath{\Pi}}
+\newcommand{\lit}{\ensuremath{\mathcal{F}}}
+\newcommand{\cTasks}{\ensuremath{\mathcal{C}}}
+\newcommand{\pTasks}{\ensuremath{\mathcal{A}}}
+\newcommand{\methods}{\ensuremath{\mathcal{M}}}
+\newcommand{\domain}{\ensuremath{\mathcal{D}}}
+\newcommand{\eff}{\ensuremath{\mathit{eff}}}
+\newcommand{\effPos}[1]{\ensuremath{\eff{}^{+}(#1)}}
+\newcommand{\effNeg}[1]{\ensuremath{\eff{}^{-}(#1)}}
+\newcommand{\preCond}[1]{\ensuremath{\mathit{prec}(#1)}}
+\newcommand{\effPosExt}[1]{\ensuremath{\mathtt{eff}^{+}(#1)}}
+\newcommand{\effNegExt}[1]{\ensuremath{\mathtt{eff}^{-}(#1)}}
+\newcommand{\preCondExt}[1]{\ensuremath{\mathtt{prec}(#1)}}
+\newcommand{\parOrd}{\ensuremath{\mathord{\prec}}}
+\newcommand{\seqSet}[1]{\ensuremath{\mathcal{L}(#1)}}
+
+% math notations
+\newcommand{\NP}{\ensuremath{\mathbb{NP}}}
+\newcommand{\PTIME}{\ensuremath{\mathbb{P}}}
+\newcommand{\EXPTIME}{\ensuremath{\mathbb{EXPTIME}}}
+\newcommand{\powerSet}[1]{\ensuremath{2^{#1}}}
+
+% preconditions and effects
+\newcommand{\Add} {\ensuremath{\mathit{add}}}
+\newcommand{\Del} {\ensuremath{\mathit{del}}}
+\newcommand{\PreS} {\ensuremath{\mathit{pre^{*}}}}
+\newcommand{\AddS} {\ensuremath{\mathit{add^{*}}}}
+\newcommand{\DelS} {\ensuremath{\mathit{del^{*}}}}
+\newcommand{\singlePrec} {\ensuremath{\mathit{ \mathord{\prec} }}}
+\newcommand{\tasks} {\ensuremath{\mathit{tasks}}}
+\newcommand{\Eff} {\ensuremath{\mathit{eff}}}  % example command without arguments
+\newcommand{\Pre} {\ensuremath{\mathit{pre}}}  % (again)
+\newcommand{\PossEffPlus} {\ensuremath{\mathit{\textit{poss-eff}^{+}_{*}}}}
+\newcommand{\PossEffMinus} {\ensuremath{\mathit{\textit{poss-eff}^{-}_{*}}}}
+\newcommand{\RelPossEffPlus} {\ensuremath{\mathit{\textit{poss-eff}^{\emptyset +}_{*}}}}
+\newcommand{\RelPossEffMinus} {\ensuremath{\mathit{\textit{poss-eff}^{\emptyset -}_{*}}}}
+
+% action definitions for self-written package 'aiplans'
+\scheme{SinglePrec}{0}{
+  text = {\textbf{A}},
+  pre  = {a}
+}
+\scheme{SingleAdd}{0}{
+  text = {\textbf{B}},
+  effs = { a}
+}
+\scheme{SingleDelete}{0}{
+  text = {\textbf{C}},
+  effs = { {{$\neg$}a} }
+}
+\scheme{SinglePrecAlt}{0}{
+  text = {\textbf{D}},
+  pre  = {a}
+}
+\scheme{SingleAddAlt}{0}{
+  text = {\textbf{E}},
+  effs = { a}
+}
+\scheme{PrimitiveA}{0}{
+  text = {\textbf{A}},
+  pre  = {a},
+  effs = { {{$\neg$}a}, {b} }
+}
+\scheme{PrimitiveB}{0}{
+  text = {\textbf{B}},
+  pre = {b},
+  effs = {{{$\neg$}b}, {c}}
+}
+\scheme{PrimitiveC}{0}{
+  text = {\textbf{C}},
+  pre = {c},
+  eff = {{$\neg$}c}
+}

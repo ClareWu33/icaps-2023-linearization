@@ -24,6 +24,7 @@ all:
 	$(BIBTEX) $(BIBFILE)
 	$(LATEX) -halt-on-error $(TEXFILE)
 	$(LATEX) -halt-on-error $(TEXFILE)
+	$(LATEX) -halt-on-error $(TEXFILE)
 
 clear:
 	rm -rf $(TRASH)

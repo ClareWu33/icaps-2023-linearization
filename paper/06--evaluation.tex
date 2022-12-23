@@ -1,0 +1,41 @@
+\section{Empirical Evaluation}
+
+We compare the runtime of several state-of-the-art planning systems on some transformed POHTN problems. All problems are taken from two benchmark sets prepared for the International Planning Competition (IPC) 2020. The first set \footnote{https://github.com/panda-planner-dev/ipc2020-domains/tree/master/partial-order} was used in the partially ordered track in the 2020 IPC benchmark, while the second set \footnote{https://github.com/panda-planner-dev/domains/tree/master/partial-order} went un-used for various reasons. Each problem has the standard IPC time limit of 30 minutes. Any grounding and pre-processing time needed is included as part of the 'solving' time. Since the pre-processing may \emph{potentially} remove all solutions, where the planning system can prove that the pre-processing renders a problem unsolvable, we use the remaining time to solve the original problem, called a \textit{re-run}.
+
+\subsection{Hardware and Planning Systems}
+The empirical evaluation was conducted on a machine with 30GiB of memory and 4 vCPUs, each with 2 GiB RAM. Recent work by \cite{HTN2SAS} shows that the PO panda$_\pi$, achieved similar coverage and slightly lower IPC score than the best TO planner tested. Also tested is HyperTensioN by \cite{hypertension} an TOHTN solver and the IPC 2020 winner, and Lilotane by \cite{Lilotane} another TOHTN solver and the IPC 2020 runner-up.
+
+We test the $panda_{\pi}$ solver by \cite{useClassicalHuristicICAPS18,useClassicalHeuristicIJCAI19,progressionsearchJAIR20}, on their default configuration. This turns problem into a classical planning problem (in RC model), uses Greedy best first search, FF heuristic by \cite{FF}, and visited lists. The visited lists use task sequence hashing, visited checking with task sequences, layer hashing, order pairs hashing, and GI-complete equivalence checking for partially-ordered task networks.
+
+We also try that configuration with FF swapped for the Add heuristic by \cite{Add}.
+
+We compare the performance of panda$_\pi$ on the original problem and the pre-processed problem. The same setting is used for re-runs. For other planners, panda$_\pi$ with rc2(Add) is used for re-runs. We also test the latest version of TOHTN planners HyperTensioN and Lilotane on the transformed problems. Re-runs use panda$_{\pi}$ with the best heuristic(Add). We test both Complex and Simple Inference for linearization. Note that Complex Inference can only be inferred on grounded problems, but Lilotane and HyperTensioN are lifted planners.
+
+The results table for both coverage and IPC score can be seen on page \pageref{table:GroundedSimpleIPC}--\pageref{table:GroundedComplexIPC}.
+As we can see from those figures, using complex inference results in ?  increase/decrease/similar, coverage and IPC score.
+
+The planner that has achieved the highest overall coverage is panda$_\pi$ with FF, and highest IPC score is panda$_\pi$ planner with Add heuristic, which reflects findings in previous papers.
+
+For each partial-order planner, e.g. RC Add represents panda$_\pi$ using RC and Add heuristic,
+the PO column shows it's performance on the original problem, and the TO column shows performance on the linearized problem. For each total-order planner, the column beneath it shows performance on the linearized problem.
+The IPC score has a maximum of 1 per domain, for the 12 domains in total.
+
+The best results for Simple Inference on Grounded problems, as in Table~\ref{table:GroundedSimpleCoverage} and ~\ref{table:GroundedSimpleIPC},
+achieve lower coverage but higher IPC score than Complex Inference on Grounded problems, as seen in Table~\ref{table:GroundedComplexCoverage} and \ref{table:GroundedComplexIPC}. This is due to complex inference taking a much greater ~98 seconds on average, where simple inference takes ~3 seconds on average. However, the slightly higher coverage does make it appear the complex inference pays off with \emph{better} linearized domains. E.g.\ using complex inference consistently makes 7 problems solvable, whereas using simple inference, or no pre-processing, only solves for 5.
+
+Unfortunately, when using simple inference, there are no problems for which all methods are linearized without conflict.
+When using complex inference, the number of methods in all problems that are linearized without conflict is generally higher, with a few problems being provably solvable.
+
+\input{table--GroundedSimpleCoverage}
+\input{table--GroundedSimpleIPC}
+\input{table--LiftedSimpleCoverage}
+\input{table--LiftedSimpleIPC}
+\input{table--GroundedComplexCoverage}
+\input{table--GroundedComplexIPC}
+\input{table--FullyLinearizedProblems}
+\input{table--SimpleLinearizable}
+\input{table--ComplexLinearizable}
+
+While simple linearization can linearize almost none of the actaully partially ordered methods, with complex linearization, we can successfully linearize a fair amount of the partially-ordered methods too. (Note that this does not result in a guaranteed solvability-preserving problem unless all methods conform to the criteria though.)
+
+\input{table--POMethodBreak}

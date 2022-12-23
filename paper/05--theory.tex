@@ -1,0 +1,113 @@
+\section{Theoretical Properties of Linearization Result}
+
+We now discuss the implications of the above-described linearization procedure, starting by the runtime of the procedure.
+
+\paragraph{Runtime} The procedure runs in polynomial time, independent of which inference procedure is used for inferring compound tasks' preconditions and effects. Concretely, given a POHTN planning problem, inferring the precondition and effects of \emph{one} compound tasks using the simple inference takes time at most $\mathcal{O}(|\methods{}| \times M)$ with
+\begin{displaymath}
+	M =  \max_{(c, (T, \parOrd{}, \alpha)) \in \methods{}} |T|
+\end{displaymath}
+% that is, $M$ is the number of tasks in the largest task network among all methods. 
+This upper bound holds because the inductive inference procedure visits all methods at the worst case, and each method contains at most $M$ subtasks. In fact, one can also observe that this number is also the upper bound for the runtime of inferring \emph{all} compound tasks' preconditions and effects. This is because after visiting all methods, the inductive procedure has naturally done processing (inferring) all compound tasks. Further, the complex inference procedure by \shortCite{ConnyPreEstimation} also has polynomial time complexity, as shown in their original work.
+
+The task of adding ordering constraints to a method $m = (c, (T, \parOrd{}, \alpha))$ takes time $\mathcal{O}(|T|^{2})$ because we need to check, for \emph{every} pair of $t, t' \in T$, whether an ordering constraint over them should be added. Additionally, since at most $\mathcal{O}(|T|^{2})$ ordering constraints will be inserted, the number of ordering constraints that will be removed for cycle-breaking will not exceed this number. Taken together, linearizing a POHTN planning problem can be done in polynomial time.
+
+\begin{theorem}\label{thm:Runtime}
+	Transforming a POHTN planning problem into a totally ordered one takes polynomial time, independent of which inference procedure is used.
+\end{theorem}
+% \begin{proof}
+% 	Let $|T|$ = $|T_P| + |T_C|$.
+
+% 	To calculate $\PreS, \AddS, \DelS$ for each task $t$. We explore it's compound sub-tasks until we collect all primitive tasks. Then loop over $\PreS, \AddS, \DelS$ for the root $t$, over each fact, over each primitive task in the sub-tree. This is obviously polynomial in terms of $|T|$.
+
+% 	Lines~\ref{alg:StartBuildGraph}-\ref{alg:EndBuildGraph} of Algorithm~\ref{alg:Algorithm1} iterates over every method, which iterates over every fact, which iterates over every sub-task in that method, which iterates over every other sub-task in that method. Leading to at most $\mathcal{O}(|M| * |F| * |T|^2)$, since number of sub-tasks per method is upper bounded by $T$.
+
+% 	Cycle-breaking, done by lines \ref{alg:StartCycleBreak} to \ref{alg:EndCycleBreak} can be done via depth-first search per cycle to break, which is also polynomial to $|T|$.
+
+% 	Line~\ref{alg:TopSort} can be done via topological sort of a graph where sub-tasks are nodes, and orderings are edges, which is known to be in $\mathcal{O}(V+E)$ in time.
+% 	The number of sub-tasks and edges are upper bounded by $T$, so approximately $\mathcal{O}(|M| * |T|)$.
+
+% 	So the algorithm takes polynomial time.
+% \end{proof}
+
+\paragraph{Soundness} More importantly, the presented linearization approach ensures that any solution to the TOHTN planning problem $\Pi'$ obtained by linearizing a partially ordered one $\Pi$ is also a solution to $\Pi$. That is, the solution set of $\Pi'$ is a \emph{subset} of that of $\Pi$. We can view this property as a certificate for the \emph{soundness} of our linearizing approach.
+
+\begin{theorem}
+	Let $\Pi$ be a POHTN planning problem, $\Pi'$ a TOHTN planning problem obtained from $\Pi$ by using the linearization approach, and $\mathcal{S}(\Pi)$ and $\mathcal{S}(\Pi')$ the set of all solutions to $\Pi$ and to $\Pi'$, respectively. Then, $\mathcal{S}(\Pi') \subseteq \mathcal{S}(\Pi)$. 
+	\label{thm:Soundness}
+\end{theorem}
+
+\begin{proof}
+	The new desired orderings for a method include all of the orderings already required by the method originally. The algorithm then turns the tasks and new desired orderings between them into a directed graph, and the new ordering is produced by performing a topological sort on the nodes of that graph. This means we do not modify the sub-tasks a method produces, just the ordering between them, so the set of plans from the totally ordered method is just a subset of the plans possible from the partially ordered one. Any solution to the linearized problem is then obviously a solution to the original problem.
+\end{proof}
+
+\begin{theorem}\label{thm:notCompleteness}
+	Given a POHTN planning problem $P$ and TOHTN problem
+	$P'$ obtained from $P$ by using Algorithm~\ref{alg:Algorithm1}
+	then $sol(P')$ may be empty.
+\end{theorem}
+\begin{proof}
+	This algorithm linearizes all the methods to be totally ordered. Since sub-tasks inherit the orderings of their parents, it's impossible to preserve a solution that requires the interleaving of sub-tasks if their respective parents are already ordered with respect to each other. This proves that the algorithm can remove some possible action sequences, assuming the original domain was not already totally ordered. Consider the simple example problem:
+	The only decomposition for this problem results in the set of un-ordered actions $\{A, B, C\}$.
+	If we consider that for the $3!$ linearizations of this set, the only executable one is $A, B, C$. This is impossible to achieve by linearized methods, since ordering either AB before C or C before AB will exclude the solution.
+	Even if we were to produce $k!$ methods for each partially ordered method with $k$ unordered sub-tasks, we would not be able to preserve any solution for this problem.
+	This proves that the algorithm can remove all solutions, so Algorithm~\ref{alg:Algorithm1} is not complete. Note that incompleteness already follows from complexity theory as it's theoretically impossible to turn an arbitrary undecidable problem into a decidable one.
+	Specifically, solutions that require interleaving of sub-tasks will not be preserved, as the example above demonstrates.
+\end{proof}
+
+
+
+\begin{description}
+	\item[Linearization Criteria] If the linearization process does not find any desired ordering contradicting the existing ones for some method, or in other words, \emph{cycle-breaking} did not occur, that method is said to meet the linearization criteria. If all methods in a problem meet the linearization criteria, then the problem meets the linearization criteria as well.
+\end{description}
+
+
+
+\begin{theorem} \label{thm:RelaxedPreconditions}
+	Given a POHTN planning problem $P$ and TOHTN problem $P'$ obtained from $P$ by using Algorithm~\ref{alg:Algorithm1}, \emph{only if $P$, the entire problem meets the linearization criteria},
+	then we know executability-relaxed preconditions for any $c$ are indeed the only ones needed to execute any refinement of $c$.
+\end{theorem}
+\begin{proof}
+
+	For some method with at least two sub-tasks, $a$ and $b$,
+	the desired orderings are to put $a$ with $f \in \Add(a)$ before $b$ with $f \in \Pre(b)$. We're assuming no cycle-breaking, so this was actually achieved. If such a precondition can't be met this way, (such an $a$ does not exist, or the method already enforces that $b$ executes before $a$) by definition it must be in the executability-relaxed preconditions calculated.
+
+	Therefore, any precondition of $c$'s children that can't be met by placing other children of $c$ before it is part - so it is indeed a super-set of actual preconditions, assuming no cycle-breaking was needed.
+
+	If even one partially ordered method did need cycle-breaking, than of course it means nothing - we may indeed need other preconditions to make refinements of $c$ executable. Then those results no longer hold.
+\end{proof}
+
+We use Theorem~\ref{thm:RelaxedPreconditions} as support for the following main result. We will now prove that our algorithm preserves at least one solution as long as Algorithm~\ref{alg:Algorithm1} uses simple inference or preconditions and possible effects from complex inference, and this criterion is met.
+
+\begin{theorem}\label{thm:SpecialCase}
+	Given a POHTN planning problem $P$ and TOHTN problem $P'$ obtained from $P$ by using Algorithm~\ref{alg:Algorithm1}, if $P$ meets the linearization criteria and $sol(P)$ is non-empty, then $sol(P')$ will be non-empty as well.
+\end{theorem}
+\begin{proof}
+	Assume that there exists a solution in the PO domain. By using the same decomposition sequence in the linearized domain, we can produce the same set of actions as in the PO solution, but with a linearization of the actions decided by the linearized domain. Assume this sequence is $(a_0, a_1, ..., a_n)$. We then prove by induction over the sequence $(a_0, a_1, ..., a_n)$ that it is executable.
+	If $(a_0, a_1, ..., a_n)$ is not executable, that means there exists some action $a_k,  0 < k < n$ that is not executable in the corresponding state. The action $a_k$ could only be non-executable, if one or more of its preconditions was not met. Assume one of these unmet preconditions is for existence of the state variable $A$.
+	The action $a_k$ must be executable in some linearization of $\{a_0, ..., a_n\}$, as we assumed it was a PO solution. So there must exist an action $a_i$, $0 < i < n$, that will add A. Actions $a_0$ and $a_k$ must have a shared parent p in a Task Decomposition Tree. So p has subtasks $t_0$ and $t_k$ that are parents of $a_0$ and $a_k$ respectively.
+
+	The linearization of this method would have drawn an ordering $(t_i, t_k)$ due to the way the algorithm defines $prec^{*}, add^{*}$ etc. We are assuming that all methods meet the linearization criteria, so $(t_i, t_k)$ should not be required, either directly or via inheritance from parent tasks. This safely enforces $(a_k, a_0)$ ordering in the final TO plan, meaning $a_0$ is not the first action in the resulting total order imposed by the algorithm. In other words, if $a_k$’s precondition could be met by any action $a_i$, $a_i$ would be ordered in front of it.
+
+	If $a_i$ does not exist then $a_k$ can never be executed for any linearization of $\{a_0, ...a_n\}$, contradicting the assumption that this was a PO solution. Since each action in the solution is executable, the entire sequence is executable linearization of actions produced by decomposition of initial task, i.e.\ the solution.
+\end{proof}
+
+
+
+
+There are several possible levels of \emph{completeness} for a problem compilation.
+\begin{itemize}
+	\item all solutions remain
+	\item at least one solution remains
+	\item all optimal solutions remain
+	\item at least one optimal solution remains
+\end{itemize}
+Given what's proven in Theorem~\ref{thm:notCompleteness} and \ref{thm:SpecialCase}, Algorithm~\ref{alg:Algorithm1} guarantees at least one solution remains, if linearization criteria is met. Otherwise, Algorithm~\ref{alg:Algorithm1} makes no completeness guarantees at all -- it may remove all possible solutions. Finally, Algorithm~\ref{alg:Algorithm1} makes no decisions on any metric of optimality, so obviously cannot guarantee completeness that any optimal solutions remain.
+
+
+\begin{theorem}\label{thm:newClass}
+	Problems $P$ that satisfy the linearization criteria form a new class of decidable problems.
+\end{theorem}
+\begin{proof}
+	A problem $P'$ obtained from applying Algorithm~\ref{alg:Algorithm1} to any arbitrary $P$ is a totally ordered problem, which are known to be decidable, as proven by \cite{Alford2015TightHTNBounds}.
+\end{proof}
+
