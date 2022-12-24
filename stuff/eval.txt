@@ -1,0 +1,29 @@
+https://github.com/Maumagnaguagno/HyperTensioN  (Nov 27th version)
+ruby --disable=all  HyperTensioN-master/Hype.rb {domain} {problem} typredicate pullup dejavu run >>  "{solution_file}" 
+
+https://github.com/domschrei/lilotane (Dec 4 version)
+../lilotane/build/lilotane  {domain} {problem} -cs >>  "{solution_file}" 
+
+
+The best setting for partial-order in terms of normalized coverage, according to Hoeller and Behnke 2021, and Holler, Bercher, Behnke and Biundo 2020:
+     1. ./pandaPIengine -H "rc2(ff)" -w 2  -T  --noLayers --noOrderPairs (GA* FF th+gi)
+      incomplete: (GA* FF th)
+      incomplete: (GA* FF oh)   If you use --noGIcheck, it is incomplete for true PO domains (i.e. all the ones that are not ordered sequences)
+     2. ./pandaPIengine -H "rc2(ff)" -w 2  --noLayers (GA* FF oh+gi)
+     3. ./pandaPIengine -H "rc2(ff)" -w 2  -T  --noLayers --noOrderPairs (GA* Add th+gi)
+    
+
+Gregor would recommend to also run the configurations with the task-sequence-hash as it is (at least in Gregor's experience) better performing.
+     ./pandaPIengine -H "rc2(add)" -g "none" -O (GBFS Add th+s)
+    ./pandaPIengine -H "rc2(add)" -g "none"  -T  (GBFS Add s)
+     ./pandaPIengine -H "rc2(add)" -g "none"  (GBFS Add th+s)
+These have not been run, but the best settings for total-order in terms of normalized coverage, excluding incomplete ones, according to Hoeller and Behnke 202:
+    1. incomplete: ./pandaPIengine -H "rc2(add)" -g "none" -Q -O   (GBFS Add th)
+    2. ./pandaPIengine -H "rc2(add)" -g "none"  -T -Q   (GBFS Add s)
+    3. ./pandaPIengine -H "rc2(add)" -g "none" -Q (GBFS Add th+s)     
+     
+
+ If you apply the planner to TO problems, these switches (--noLayers   --noOrderPairs   --noGIcheck) are completely ignored as they only pertain to PO options.
+Further, since the 2021 paper, we have extended the TO visited lists a bit. Notably, the task-sequence-hash (now the -Q flag) did not exist in this version (see the paper), but is now available. Also the exact test for TO is the -O flag, not the -Q. 
+
+
