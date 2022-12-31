@@ -8,22 +8,65 @@ https://github.com/domschrei/lilotane (Dec 4 version)
 The best setting for partial-order in terms of normalized coverage, according to Hoeller and Behnke 2021, and Holler, Bercher, Behnke and Biundo 2020:
      1. ./pandaPIengine -H "rc2(ff)" -w 2  -T  --noLayers --noOrderPairs (GA* FF th+gi)
       incomplete: (GA* FF th)
-      incomplete: (GA* FF oh)   If you use --noGIcheck, it is incomplete for true PO domains (i.e. all the ones that are not ordered sequences)
+      incomplete: (GA* FF oh)  
      2. ./pandaPIengine -H "rc2(ff)" -w 2  --noLayers (GA* FF oh+gi)
-     3. ./pandaPIengine -H "rc2(ff)" -w 2  -T  --noLayers --noOrderPairs (GA* Add th+gi)
-    
+     3. ./pandaPIengine -H "rc2(add)" -w 2  -T  --noLayers --noOrderPairs (GA* Add th+gi)
+
 
 Gregor would recommend to also run the configurations with the task-sequence-hash as it is (at least in Gregor's experience) better performing.
-     ./pandaPIengine -H "rc2(add)" -g "none" -O (GBFS Add th+s)
-    ./pandaPIengine -H "rc2(add)" -g "none"  -T  (GBFS Add s)
-     ./pandaPIengine -H "rc2(add)" -g "none"  (GBFS Add th+s)
+     ./pandaPIengine -H "rc2(add)" -g "none" -O (GBFS Add th+s+task-seqence-hash)
+    ./pandaPIengine -H "rc2(add)" -g "none"  -T  (GBFS Add s+task-seqence-hash)
+     ./pandaPIengine -H "rc2(add)" -g "none"  (GBFS Add th+s+task-seqence-hash)
 These have not been run, but the best settings for total-order in terms of normalized coverage, excluding incomplete ones, according to Hoeller and Behnke 202:
     1. incomplete: ./pandaPIengine -H "rc2(add)" -g "none" -Q -O   (GBFS Add th)
     2. ./pandaPIengine -H "rc2(add)" -g "none"  -T -Q   (GBFS Add s)
     3. ./pandaPIengine -H "rc2(add)" -g "none" -Q (GBFS Add th+s)     
      
 
+ If you use --noGIcheck, it is incomplete for true PO domains (i.e. all the ones that are not ordered sequences)
  If you apply the planner to TO problems, these switches (--noLayers   --noOrderPairs   --noGIcheck) are completely ignored as they only pertain to PO options.
 Further, since the 2021 paper, we have extended the TO visited lists a bit. Notably, the task-sequence-hash (now the -Q flag) did not exist in this version (see the paper), but is now available. Also the exact test for TO is the -O flag, not the -Q. 
 
+
+
+
+
+
+pandaPIengine --help
+Planner Selection:
+  default=progression
+
+ Group: planningAlgorithm
+  -p, --progression             progression search
+  -s, --sat                     translation to SAT
+  -b, --bdd                     symbolic search
+  -I, --interactive             interactive search
+
+Progression Search Options:
+  -H, --heuristic=STRING        specify a heuristic  (default=`rc2(ff)')
+  -w, --astarweight=INT         weight of the heuristic for A*  (default=`1')
+  -g, --gValue=STRING           g value  (possible values="path", "action",
+                                  "mixed", "none" default=`path')
+      --suboptimal              suboptimal search (early goal test and visited
+                                  lists ignores costs)  (default=off)
+
+Visited List Options:
+  -V, --noVisitedList           disable visited lists [default=with lists]
+                                  (default=off)
+  -T, --taskHash                disable task hashing [default=with task hash]
+                                  (default=on)
+  -Q, --taskSequenceHash        disable task sequence hashing [default=with
+                                  task sequence hash]  (default=on)
+  -O, --topologicalOrdering     disable visited checking with task sequences,
+                                  this makes totally-ordered visited lists
+                                  incomplete [default=with order]  (default=on)
+      --noLayers                disable layer hashing [default=with layer hash]
+                                  (default=on)
+      --noOrderPairs            disable order pairs hashing [default=with order
+                                  pairs hash]  (default=on)
+      --noParallelSequences     disable optimisation for parallel sequences
+                                  [default=with optimisation]  (default=on)
+      --noGIcheck               disable GI-complete equivalence checking for
+                                  partially ordered task networks [default=with
+                                  GI-complete checking]  (default=on)
 
