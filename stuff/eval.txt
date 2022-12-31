@@ -14,7 +14,7 @@ The best setting for partial-order in terms of normalized coverage, according to
 
 
 Gregor would recommend to also run the configurations with the task-sequence-hash as it is (at least in Gregor's experience) better performing.
-     ./pandaPIengine -H "rc2(add)" -g "none" -O (GBFS Add th+s+task-seqence-hash)
+     ./pandaPIengine -H "rc2(add)" -g "none" -O (GBFS Add th+task-seqence-hash)
     ./pandaPIengine -H "rc2(add)" -g "none"  -T  (GBFS Add s+task-seqence-hash)
      ./pandaPIengine -H "rc2(add)" -g "none"  (GBFS Add th+s+task-seqence-hash)
 These have not been run, but the best settings for total-order in terms of normalized coverage, excluding incomplete ones, according to Hoeller and Behnke 202:
@@ -25,7 +25,7 @@ These have not been run, but the best settings for total-order in terms of norma
 
  If you use --noGIcheck, it is incomplete for true PO domains (i.e. all the ones that are not ordered sequences)
  If you apply the planner to TO problems, these switches (--noLayers   --noOrderPairs   --noGIcheck) are completely ignored as they only pertain to PO options.
-Further, since the 2021 paper, we have extended the TO visited lists a bit. Notably, the task-sequence-hash (now the -Q flag) did not exist in this version (see the paper), but is now available. Also the exact test for TO is the -O flag, not the -Q. 
+Further, since the 2021 paper, we have extended the TO visited lists a bit. Notably, the task-sequence-hash (now the -Q flag) did not exist in this version (see the paper), but is now available. Also the exact test for TO is the -O flag.
 
 
 
